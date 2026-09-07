@@ -105,6 +105,45 @@ async def test_openai_tts_sends_configured_model_voice_speed_and_bearer_token() 
     assert api_key not in repr(result)
 
 
+@pytest.mark.parametrize(
+    ("caption", "seed", "expected_options"),
+    [
+        (None, None, {}),
+        ("穏やかに話す。", None, {"caption": "穏やかに話す。"}),
+        (None, 0, {"seed": 0}),
+        ("", None, {"caption": ""}),
+        ("明るい声。", 1234, {"caption": "明るい声。", "seed": 1234}),
+    ],
+)
+async def test_openai_tts_sends_only_configured_irodori_options(
+    caption: str | None, seed: int | None, expected_options: dict[str, str | int]
+) -> None:
+    async def handle(request: httpx.Request) -> httpx.Response:
+        payload = json.loads(await request.aread())
+        if expected_options:
+            assert payload.pop("irodori") == expected_options
+        assert payload == {
+            "model": "irodori-tts",
+            "input": "こんにちは。",
+            "voice": "sample",
+            "speed": 1.0,
+            "response_format": "wav",
+        }
+        return httpx.Response(200, content=make_wav(), headers={"Content-Type": "audio/wav"})
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as client:
+        adapter = OpenAICompatibleTtsAdapter(
+            client,
+            endpoint="http://127.0.0.1:8088/v1/audio/speech",
+            model="irodori-tts",
+            voice="sample",
+            irodori_caption=caption,
+            irodori_seed=seed,
+        )
+
+        await adapter.synthesize("こんにちは。")
+
+
 @pytest.mark.parametrize("text", ["", " \n\t"])
 async def test_openai_tts_rejects_empty_text_without_request(text: str) -> None:
     def reject_request(_request: httpx.Request) -> httpx.Response:

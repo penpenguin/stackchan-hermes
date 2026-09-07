@@ -504,6 +504,8 @@ def _build_tts_adapter(
                 model=selected.model,
                 voice=selected.voice,
                 speed=selected.speed,
+                irodori_caption=selected.irodori.caption,
+                irodori_seed=selected.irodori.seed,
                 api_key=selected.api_key,
                 gain=settings.audio.tts_gain,
                 leading_silence_ms=settings.audio.tts_preroll_ms,

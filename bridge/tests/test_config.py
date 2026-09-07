@@ -167,9 +167,81 @@ def test_config_supports_openai_tts_with_named_secret_and_speed_default() -> Non
     assert settings.tts.model == "irodori-tts"
     assert settings.tts.voice == "sample"
     assert settings.tts.speed == 1.0
+    assert settings.tts.irodori.caption is None
+    assert settings.tts.irodori.seed is None
     assert settings.tts.api_key is not None
     assert settings.tts.api_key.get_secret_value() == api_key
     assert api_key not in repr(settings)
+
+
+@pytest.mark.parametrize(
+    ("environment", "caption", "seed"),
+    [
+        ({}, "明るく親しみやすい声。", 1234),
+        (
+            {
+                "STACKCHAN_TTS__IRODORI__CAPTION": "穏やかに話す。",
+                "STACKCHAN_TTS__IRODORI__SEED": "0",
+            },
+            "穏やかに話す。",
+            0,
+        ),
+    ],
+)
+def test_config_loads_irodori_options_with_environment_overrides(
+    tmp_path: Path, environment: dict[str, str], caption: str, seed: int
+) -> None:
+    config_path = tmp_path / "config.toml"
+    config_path.write_text(
+        """
+[tts]
+adapter = "openai"
+endpoint = "http://127.0.0.1:8088/v1/audio/speech"
+model = "irodori-tts"
+voice = "sample"
+
+[tts.irodori]
+caption = "明るく親しみやすい声。"
+seed = 1234
+""".strip(),
+        encoding="utf-8",
+    )
+
+    settings = load_settings(config_path, environment=environment)
+
+    assert settings.tts.irodori.caption == caption
+    assert settings.tts.irodori.seed == seed
+
+
+@pytest.mark.parametrize(
+    ("name", "value"),
+    [
+        ("caption", 123),
+        ("caption", True),
+        ("caption", ["穏やかに話す。"]),
+        ("seed", True),
+        ("seed", 1.0),
+        ("seed", 1.5),
+        ("seed", "1234"),
+        ("unknown_option", "value"),
+    ],
+)
+def test_config_rejects_invalid_irodori_options(name: str, value: object) -> None:
+    with pytest.raises(ValidationError) as raised:
+        load_settings(
+            environment={},
+            cli_overrides={
+                "tts": {
+                    "adapter": "openai",
+                    "endpoint": "http://127.0.0.1:8088/v1/audio/speech",
+                    "model": "irodori-tts",
+                    "voice": "sample",
+                    "irodori": {name: value},
+                }
+            },
+        )
+
+    assert raised.value.errors()[0]["loc"] == ("tts", "irodori", name)
 
 
 @pytest.mark.parametrize(
