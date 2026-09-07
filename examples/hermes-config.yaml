@@ -1,0 +1,12 @@
+# Merge this fragment into an existing Hermes config after replacing the
+# absolute project path below. Do not overwrite ~/.hermes/config.yaml.
+mcp_servers:
+  stackchan:
+    command: uv
+    args:
+      - --directory
+      - /absolute/path/to/stackchan-hermes
+      - run
+      - stackchan-mcp
+    env:
+      STACKCHAN_CONTROL_URL: http://127.0.0.1:8766

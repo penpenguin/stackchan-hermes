@@ -1,0 +1,450 @@
+diff --git a/main/application.cc b/main/application.cc
+index d69d43d..3b6f07e 100644
+--- a/main/application.cc
++++ b/main/application.cc
+@@ -610,33 +610,36 @@ void Application::InitializeProtocol() {
+ }
+ 
+ void Application::ShowActivationCode(const std::string& code, const std::string& message) {
+-    struct digit_sound {
+-        char digit;
+-        const std::string_view& sound;
+-    };
+-    static const std::array<digit_sound, 10> digit_sounds{{
+-        digit_sound{'0', Lang::Sounds::OGG_0},
+-        digit_sound{'1', Lang::Sounds::OGG_1}, 
+-        digit_sound{'2', Lang::Sounds::OGG_2},
+-        digit_sound{'3', Lang::Sounds::OGG_3},
+-        digit_sound{'4', Lang::Sounds::OGG_4},
+-        digit_sound{'5', Lang::Sounds::OGG_5},
+-        digit_sound{'6', Lang::Sounds::OGG_6},
+-        digit_sound{'7', Lang::Sounds::OGG_7},
+-        digit_sound{'8', Lang::Sounds::OGG_8},
+-        digit_sound{'9', Lang::Sounds::OGG_9}
+-    }};
+-
+-    // This sentence uses 9KB of SRAM, so we need to wait for it to finish
+-    Alert(Lang::Strings::ACTIVATION, message.c_str(), "link", Lang::Sounds::OGG_ACTIVATION);
+-
+-    for (const auto& digit : code) {
+-        auto it = std::find_if(digit_sounds.begin(), digit_sounds.end(),
+-            [digit](const digit_sound& ds) { return ds.digit == digit; });
+-        if (it != digit_sounds.end()) {
+-            audio_service_.PlaySound(it->sound);
+-        }
+-    }
++    // struct digit_sound {
++    //     char digit;
++    //     const std::string_view& sound;
++    // };
++    // static const std::array<digit_sound, 10> digit_sounds{{
++    //     digit_sound{'0', Lang::Sounds::OGG_0},
++    //     digit_sound{'1', Lang::Sounds::OGG_1}, 
++    //     digit_sound{'2', Lang::Sounds::OGG_2},
++    //     digit_sound{'3', Lang::Sounds::OGG_3},
++    //     digit_sound{'4', Lang::Sounds::OGG_4},
++    //     digit_sound{'5', Lang::Sounds::OGG_5},
++    //     digit_sound{'6', Lang::Sounds::OGG_6},
++    //     digit_sound{'7', Lang::Sounds::OGG_7},
++    //     digit_sound{'8', Lang::Sounds::OGG_8},
++    //     digit_sound{'9', Lang::Sounds::OGG_9}
++    // }};
++
++    // // This sentence uses 9KB of SRAM, so we need to wait for it to finish
++    // Alert(Lang::Strings::ACTIVATION, message.c_str(), "link", Lang::Sounds::OGG_ACTIVATION);
++
++    // for (const auto& digit : code) {
++    //     auto it = std::find_if(digit_sounds.begin(), digit_sounds.end(),
++    //         [digit](const digit_sound& ds) { return ds.digit == digit; });
++    //     if (it != digit_sounds.end()) {
++    //         audio_service_.PlaySound(it->sound);
++    //     }
++    // }
++
++    auto display = Board::GetInstance().GetDisplay();
++    display->SetChatMessage("system", "Please bind and set up in the mobile app.");
+ }
+ 
+ void Application::Alert(const char* status, const char* message, const char* emotion, const std::string_view& sound) {
+diff --git a/main/assets.cc b/main/assets.cc
+index ad61944..6b84daf 100644
+--- a/main/assets.cc
++++ b/main/assets.cc
+@@ -3,8 +3,8 @@
+ #include "display.h"
+ #include "application.h"
+ #include "lvgl_theme.h"
+-#include "emote_display.h"
+-#include "expression_emote.h"
++// #include "emote_display.h"
++// #include "expression_emote.h"
+ #if HAVE_LVGL
+ #include "display/lcd_display.h"
+ #include <spi_flash_mmap.h>
+@@ -356,72 +356,72 @@ bool Assets::LvglStrategy::Apply(Assets* assets) {
+ }
+ #endif // HAVE_LVGL
+ 
+-bool Assets::EmoteStrategy::InitializePartition(Assets* assets) {
+-    assets->partition_valid_ = false;
+-
+-    if (!Assets::FindPartition(assets)) {
+-        return false;
+-    }
+-
+-    esp_err_t ret = ESP_ERR_INVALID_STATE;
+-    auto display = Board::GetInstance().GetDisplay();
+-    auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
+-    if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
+-        const emote_data_t data = {
+-            .type = EMOTE_SOURCE_PARTITION,
+-            .source = {
+-                .partition_label = PARTITION_LABEL,
+-            },
+-            .flags = {
+-                .mmap_enable = true, //must be true here!!!
+-            },
+-        };
+-        ret = emote_mount_assets(emote_display->GetEmoteHandle(), &data);
+-    } else {
+-        ESP_LOGE(TAG, "Emote display is not initialized");
+-    }
+-    assets->partition_valid_ = ((ret == ESP_OK) ? true : false);
+-    return assets->partition_valid_;
+-}
+-
+-void Assets::EmoteStrategy::UnApplyPartition(Assets* assets) {
+-    auto display = Board::GetInstance().GetDisplay();
+-    auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
+-    if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
+-        emote_unmount_assets(emote_display->GetEmoteHandle());
+-    }
+-    (void)assets; // Unused parameter
+-}
+-
+-bool Assets::EmoteStrategy::GetAssetData(Assets* assets, const std::string& name, void*& ptr, size_t& size) {
+-    auto display = Board::GetInstance().GetDisplay();
+-    auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
+-    if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
+-        const uint8_t* data = nullptr;
+-        size_t data_size = 0;
+-        if (ESP_OK == emote_get_asset_data_by_name(emote_display->GetEmoteHandle(), name.c_str(), &data, &data_size)) {
+-            ptr = const_cast<void*>(static_cast<const void*>(data));
+-            size = data_size;
+-            return true;
+-        }
+-        ESP_LOGE(TAG, "Failed to get asset data by name: %s", name.c_str());
+-        return false;
+-    }
+-    (void)assets; // Unused parameter
+-    return false;
+-}
+-
+-bool Assets::EmoteStrategy::Apply(Assets* assets) {
+-    Assets::LoadSrmodelsFromIndex(assets);
+-
+-    auto display = Board::GetInstance().GetDisplay();
+-    auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
+-
+-    if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
+-        emote_load_assets(emote_display->GetEmoteHandle());
+-    }
+-    return true;
+-}
++// bool Assets::EmoteStrategy::InitializePartition(Assets* assets) {
++//     assets->partition_valid_ = false;
++
++//     if (!Assets::FindPartition(assets)) {
++//         return false;
++//     }
++
++//     esp_err_t ret = ESP_ERR_INVALID_STATE;
++//     auto display = Board::GetInstance().GetDisplay();
++//     auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
++//     if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
++//         const emote_data_t data = {
++//             .type = EMOTE_SOURCE_PARTITION,
++//             .source = {
++//                 .partition_label = PARTITION_LABEL,
++//             },
++//             .flags = {
++//                 .mmap_enable = true, //must be true here!!!
++//             },
++//         };
++//         ret = emote_mount_assets(emote_display->GetEmoteHandle(), &data);
++//     } else {
++//         ESP_LOGE(TAG, "Emote display is not initialized");
++//     }
++//     assets->partition_valid_ = ((ret == ESP_OK) ? true : false);
++//     return assets->partition_valid_;
++// }
++
++// void Assets::EmoteStrategy::UnApplyPartition(Assets* assets) {
++//     auto display = Board::GetInstance().GetDisplay();
++//     auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
++//     if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
++//         emote_unmount_assets(emote_display->GetEmoteHandle());
++//     }
++//     (void)assets; // Unused parameter
++// }
++
++// bool Assets::EmoteStrategy::GetAssetData(Assets* assets, const std::string& name, void*& ptr, size_t& size) {
++//     auto display = Board::GetInstance().GetDisplay();
++//     auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
++//     if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
++//         const uint8_t* data = nullptr;
++//         size_t data_size = 0;
++//         if (ESP_OK == emote_get_asset_data_by_name(emote_display->GetEmoteHandle(), name.c_str(), &data, &data_size)) {
++//             ptr = const_cast<void*>(static_cast<const void*>(data));
++//             size = data_size;
++//             return true;
++//         }
++//         ESP_LOGE(TAG, "Failed to get asset data by name: %s", name.c_str());
++//         return false;
++//     }
++//     (void)assets; // Unused parameter
++//     return false;
++// }
++
++// bool Assets::EmoteStrategy::Apply(Assets* assets) {
++//     Assets::LoadSrmodelsFromIndex(assets);
++
++//     auto display = Board::GetInstance().GetDisplay();
++//     auto* emote_display = dynamic_cast<emote::EmoteDisplay*>(display);
++
++//     if (emote_display && emote_display->GetEmoteHandle() != nullptr) {
++//         emote_load_assets(emote_display->GetEmoteHandle());
++//     }
++//     return true;
++// }
+ 
+ bool Assets::Download(std::string url, std::function<void(int progress, size_t speed)> progress_callback) {
+     ESP_LOGI(TAG, "Downloading new version of assets from %s", url.c_str());
+diff --git a/main/assets.h b/main/assets.h
+index 3692e0c..7bfbc5c 100644
+--- a/main/assets.h
++++ b/main/assets.h
+@@ -68,13 +68,13 @@ private:
+         bool checksum_valid_ = false;
+     };
+     
+-    class EmoteStrategy : public AssetStrategy {
+-    public:
+-        bool Apply(Assets* assets) override;
+-        bool InitializePartition(Assets* assets) override;
+-        void UnApplyPartition(Assets* assets) override;
+-        bool GetAssetData(Assets* assets, const std::string& name, void*& ptr, size_t& size) override;
+-    };
++    // class EmoteStrategy : public AssetStrategy {
++    // public:
++    //     bool Apply(Assets* assets) override;
++    //     bool InitializePartition(Assets* assets) override;
++    //     void UnApplyPartition(Assets* assets) override;
++    //     bool GetAssetData(Assets* assets, const std::string& name, void*& ptr, size_t& size) override;
++    // };
+     
+     // Strategy instance
+     std::unique_ptr<AssetStrategy> strategy_;
+diff --git a/main/audio/audio_service.cc b/main/audio/audio_service.cc
+index 350ac58..497ca34 100644
+--- a/main/audio/audio_service.cc
++++ b/main/audio/audio_service.cc
+@@ -2,6 +2,8 @@
+ #include <esp_log.h>
+ #include <cstring>
+ 
++#include <stackchan_bridge_client/audio_safety.h>
++
+ #define RATE_CVT_CFG(_src_rate, _dest_rate, _channel)        \
+     (esp_ae_rate_cvt_cfg_t)                                  \
+     {                                                        \
+@@ -297,6 +299,7 @@ void AudioService::AudioOutputTask() {
+ 
+         auto task = std::move(audio_playback_queue_.front());
+         audio_playback_queue_.pop_front();
++        playbackCompletion_.beginOutput();
+         audio_queue_cv_.notify_all();
+         lock.unlock();
+ 
+@@ -312,10 +315,13 @@ void AudioService::AudioOutputTask() {
+         last_output_time_ = std::chrono::steady_clock::now();
+         debug_statistics_.playback_count++;
+ 
++        lock.lock();
++        playbackCompletion_.finishOutput();
++        audio_queue_cv_.notify_all();
++
+ #if CONFIG_USE_SERVER_AEC
+         /* Record the timestamp for server AEC */
+         if (task->timestamp > 0) {
+-            lock.lock();
+             timestamp_queue_.push_back(task->timestamp);
+         }
+ #endif
+@@ -340,6 +346,7 @@ void AudioService::OpusCodecTask() {
+         if (!audio_decode_queue_.empty() && audio_playback_queue_.size() < MAX_PLAYBACK_TASKS_IN_QUEUE) {
+             auto packet = std::move(audio_decode_queue_.front());
+             audio_decode_queue_.pop_front();
++            const auto decodeGeneration = playbackCompletion_.beginDecode();
+             audio_queue_cv_.notify_all();
+             lock.unlock();
+ 
+@@ -377,17 +384,35 @@ void AudioService::OpusCodecTask() {
+                         resampled.resize(actual_output);
+                         task->pcm = std::move(resampled);
+                     }
++                    stackchan::bridge_client::applyPcmGain(
++                        task->pcm, playback_gain_percent_
++                    );
++                    if (callbacks_.on_decode_result) {
++                        callbacks_.on_decode_result(true);
++                    }
+                     lock.lock();
+-                    audio_playback_queue_.push_back(std::move(task));
++                    if (playbackCompletion_.finishDecode(decodeGeneration)) {
++                        audio_playback_queue_.push_back(std::move(task));
++                    }
+                     audio_queue_cv_.notify_all();
+                     debug_statistics_.decode_count++;
+                 } else {
+                     ESP_LOGE(TAG, "Failed to decode audio after resize, error code: %d", ret);
++                    if (callbacks_.on_decode_result) {
++                        callbacks_.on_decode_result(false);
++                    }
+                     lock.lock();
++                    playbackCompletion_.finishDecode(decodeGeneration);
++                    audio_queue_cv_.notify_all();
+                 }
+             } else {
+                 ESP_LOGE(TAG, "Audio decoder is not configured");
++                if (callbacks_.on_decode_result) {
++                    callbacks_.on_decode_result(false);
++                }
+                 lock.lock();
++                playbackCompletion_.finishDecode(decodeGeneration);
++                audio_queue_cv_.notify_all();
+             }
+             debug_statistics_.decode_count++;
+         }
+@@ -655,13 +680,21 @@ void AudioService::PlaySound(const std::string_view& ogg) {
+ 
+ bool AudioService::IsIdle() {
+     std::lock_guard<std::mutex> lock(audio_queue_mutex_);
+-    return audio_encode_queue_.empty() && audio_decode_queue_.empty() && audio_playback_queue_.empty() && audio_testing_queue_.empty();
++    return audio_encode_queue_.empty() && audio_testing_queue_.empty()
++        && playbackCompletion_.isIdle(
++            audio_decode_queue_.empty(),
++            audio_playback_queue_.empty()
++        );
+ }
+ 
+ void AudioService::WaitForPlaybackQueueEmpty() {
+     std::unique_lock<std::mutex> lock(audio_queue_mutex_);
+     audio_queue_cv_.wait(lock, [this]() { 
+-        return service_stopped_ || (audio_decode_queue_.empty() && audio_playback_queue_.empty()); 
++        return service_stopped_
++            || playbackCompletion_.isIdle(
++                audio_decode_queue_.empty(),
++                audio_playback_queue_.empty()
++            );
+     });
+ }
+ 
+@@ -672,6 +705,7 @@ void AudioService::ResetDecoder() {
+         esp_opus_dec_reset(opus_decoder_);
+     }
+     decoder_lock.unlock();
++    playbackCompletion_.invalidateDecode();
+     timestamp_queue_.clear();
+     audio_decode_queue_.clear();
+     audio_playback_queue_.clear();
+@@ -679,6 +713,12 @@ void AudioService::ResetDecoder() {
+     audio_queue_cv_.notify_all();
+ }
+ 
++void AudioService::SetPlaybackGainPercent(int gainPercent) {
++    if (gainPercent >= 0 && gainPercent <= 100) {
++        playback_gain_percent_ = gainPercent;
++    }
++}
++
+ void AudioService::CheckAndUpdateAudioPowerState() {
+     auto now = std::chrono::steady_clock::now();
+     auto input_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input_time_).count();
+diff --git a/main/audio/audio_service.h b/main/audio/audio_service.h
+index 99db546..d63cf59 100644
+--- a/main/audio/audio_service.h
++++ b/main/audio/audio_service.h
+@@ -12,6 +12,7 @@
+ #include <freertos/event_groups.h>
+ #include <esp_timer.h>
+ #include <model_path.h>
++#include <stackchan_bridge_client/audio_playback_completion.h>
+ #include "esp_audio_enc.h"
+ #include "esp_opus_enc.h"
+ #include "esp_opus_dec.h"
+@@ -80,6 +81,7 @@ struct AudioServiceCallbacks {
+     std::function<void(const std::string&)> on_wake_word_detected;
+     std::function<void(bool)> on_vad_change;
+     std::function<void(void)> on_audio_testing_queue_full;
++    std::function<void(bool)> on_decode_result;
+ };
+ 
+ 
+@@ -132,6 +134,7 @@ public:
+     void PlaySound(const std::string_view& sound);
+     bool ReadAudioData(std::vector<int16_t>& data, int sample_rate, int samples);
+     void ResetDecoder();
++    void SetPlaybackGainPercent(int gainPercent);
+     void SetModelsList(srmodel_list_t* models_list);
+ 
+ private:
+@@ -155,6 +158,7 @@ private:
+     int decoder_sample_rate_ = 0;
+     int decoder_duration_ms_ = OPUS_FRAME_DURATION_MS;
+     int decoder_frame_size_ = 0;
++    int playback_gain_percent_ = 100;
+     DebugStatistics debug_statistics_;
+     srmodel_list_t* models_list_ = nullptr;
+ 
+@@ -171,6 +175,7 @@ private:
+     std::deque<std::unique_ptr<AudioStreamPacket>> audio_testing_queue_;
+     std::deque<std::unique_ptr<AudioTask>> audio_encode_queue_;
+     std::deque<std::unique_ptr<AudioTask>> audio_playback_queue_;
++    stackchan::bridge_client::AudioPlaybackCompletion playbackCompletion_;
+     // For server AEC
+     std::deque<uint32_t> timestamp_queue_;
+ 
+@@ -192,4 +197,4 @@ private:
+     void CheckAndUpdateAudioPowerState();
+ };
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/main/boards/common/i2c_device.cc b/main/boards/common/i2c_device.cc
+index 835997d..ea50d51 100644
+--- a/main/boards/common/i2c_device.cc
++++ b/main/boards/common/i2c_device.cc
+@@ -32,4 +32,8 @@ uint8_t I2cDevice::ReadReg(uint8_t reg) {
+ 
+ void I2cDevice::ReadRegs(uint8_t reg, uint8_t* buffer, size_t length) {
+     ESP_ERROR_CHECK(i2c_master_transmit_receive(i2c_device_, &reg, 1, buffer, length, 100));
++}
++
++esp_err_t I2cDevice::TryReadRegs(uint8_t reg, uint8_t* buffer, size_t length, int timeout_ms) {
++    return i2c_master_transmit_receive(i2c_device_, &reg, 1, buffer, length, timeout_ms);
+ }
+\ No newline at end of file
+diff --git a/main/boards/common/i2c_device.h b/main/boards/common/i2c_device.h
+index 7bc917b..874b137 100644
+--- a/main/boards/common/i2c_device.h
++++ b/main/boards/common/i2c_device.h
+@@ -13,6 +13,7 @@ protected:
+     void WriteReg(uint8_t reg, uint8_t value);
+     uint8_t ReadReg(uint8_t reg);
+     void ReadRegs(uint8_t reg, uint8_t* buffer, size_t length);
++    esp_err_t TryReadRegs(uint8_t reg, uint8_t* buffer, size_t length, int timeout_ms = 100);
+ };
+ 
+ #endif // I2C_DEVICE_H

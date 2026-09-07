@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-09-07",
+  "scope": "Only the replacement font inputs and generated output, not the upstream excluded glyph assets",
+  "inputs": {
+    "schema_version": 1,
+    "inputs": {
+      "NotoSansCJKjp-Regular.otf": {
+        "sha256": "68a3fc98800b2a27b371f2fb79991daf3633bd89309d4ffaa6946fd587f375b5",
+        "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/523d033d6cb47f4a80c58a35753646f5c3608a78/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf",
+        "license": "OFL-1.1"
+      },
+      "MaterialIcons-Regular.ttf": {
+        "sha256": "ef149f08bdd2ff09a4e2c8573476b7b0f3fbb15b623954ade59899e7175bedda",
+        "url": "https://raw.githubusercontent.com/google/material-design-icons/0cbb08816df07faaae3dca060d4ebb10b66c214f/font/MaterialIcons-Regular.ttf",
+        "license": "Apache-2.0"
+      },
+      "MaterialIcons-Regular.codepoints": {
+        "sha256": "530f25bf7b2d71c8e1da9476d53f9a9bb6b7e187bff69bb7128bb679b8194894",
+        "url": "https://raw.githubusercontent.com/google/material-design-icons/0cbb08816df07faaae3dca060d4ebb10b66c214f/font/MaterialIcons-Regular.codepoints",
+        "license": "Apache-2.0"
+      },
+      "Montserrat-SemiBold.ttf": {
+        "sha256": "b4e1563393d73fdff491a869441245aef31add2ec03d9c97a6dae4de07c52fd0",
+        "url": "https://raw.githubusercontent.com/JulietaUla/Montserrat/555facfb2a18c72c3c0380f0d9c0f060453a9058/fonts/ttf/Montserrat-SemiBold.ttf",
+        "license": "OFL-1.1"
+      },
+      "NotoSans-Regular.ttf": {
+        "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5",
+        "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/ffebf8c1ee449e544955a7e813c54f9b73848eac/hinted/ttf/NotoSans/NotoSans-Regular.ttf",
+        "license": "OFL-1.1"
+      },
+      "NotoSansThai-Regular.ttf": {
+        "sha256": "404ddfb5ed0aaa6b6ec8a85700d682978992062d67da93903967b56cbd9a4acc",
+        "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/ffebf8c1ee449e544955a7e813c54f9b73848eac/hinted/ttf/NotoSansThai/NotoSansThai-Regular.ttf",
+        "license": "OFL-1.1"
+      },
+      "NotoSansMath-Regular.ttf": {
+        "sha256": "80b61fd613d3519197e64fff6f7e71fdc7f3e6526440ea4115b554ef7fd59af7",
+        "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/ffebf8c1ee449e544955a7e813c54f9b73848eac/hinted/ttf/NotoSansMath/NotoSansMath-Regular.ttf",
+        "license": "OFL-1.1"
+      }
+    },
+    "converter": {
+      "repository": "https://github.com/78/lv_font_conv.git",
+      "commit": "db011302d4f448027cbf1af6d0d47a27d59d22c1",
+      "package_lock_sha256": "626534e2949509b3f284c4afc4fcaa4dc8223a62d2e6a91dc1100ed08fd08b2c"
+    },
+    "repertoire": {
+      "description": "Original printable text repertoire plus JIS X 0208; only character identifiers, no upstream glyph shapes",
+      "original_count": 6658,
+      "jis_count": 6879,
+      "combined_count": 9561
+    }
+  },
+  "font_attributions": {
+    "NotoSansCJKjp-Regular.otf": {
+      "copyright": {
+        "en": "© 2014-2021 Adobe (http://www.adobe.com/)."
+      },
+      "license": {
+        "en": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software."
+      },
+      "licenseURL": {
+        "en": "http://scripts.sil.org/OFL"
+      },
+      "fontFamily": {
+        "en": "Noto Sans CJK JP",
+        "ja": "Noto Sans CJK JP"
+      },
+      "version": {
+        "en": "Version 2.004;hotconv 1.0.118;makeotfexe 2.5.65603"
+      }
+    },
+    "MaterialIcons-Regular.ttf": {
+      "copyright": {
+        "en": "Copyright 2018 Google, Inc. All Rights Reserved."
+      },
+      "fontFamily": {
+        "en": "Material Icons"
+      },
+      "version": {
+        "en": "Version 1.017"
+      }
+    },
+    "Montserrat-SemiBold.ttf": {
+      "copyright": {
+        "en": "Copyright 2011 The Montserrat Project Authors (https://github.com/JulietaUla/Montserrat)"
+      },
+      "license": {
+        "en": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://openfontlicense.org"
+      },
+      "licenseURL": {
+        "en": "https://openfontlicense.org"
+      },
+      "fontFamily": {
+        "en": "Montserrat SemiBold"
+      },
+      "version": {
+        "en": "Version 9.000; ttfautohint (v1.8.4.7-5d5b)"
+      }
+    },
+    "NotoSans-Regular.ttf": {
+      "copyright": {
+        "en": "Copyright 2015-2021 Google LLC. All Rights Reserved."
+      },
+      "license": {
+        "en": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software."
+      },
+      "licenseURL": {
+        "en": "http://scripts.sil.org/OFL"
+      },
+      "fontFamily": {
+        "en": "Noto Sans"
+      },
+      "version": {
+        "en": "Version 2.008; ttfautohint (v1.8) -l 8 -r 50 -G 200 -x 14 -D latn -f none -a qsq -X \"\""
+      }
+    },
+    "NotoSansThai-Regular.ttf": {
+      "copyright": {
+        "en": "Copyright 2016 Google Inc. All Rights Reserved."
+      },
+      "license": {
+        "en": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software."
+      },
+      "licenseURL": {
+        "en": "http://scripts.sil.org/OFL"
+      },
+      "fontFamily": {
+        "en": "Noto Sans Thai"
+      },
+      "version": {
+        "en": "Version 2.000; ttfautohint (v1.8) -l 8 -r 50 -G 200 -x 14 -D thai -f none -a qsq -X \"\""
+      }
+    },
+    "NotoSansMath-Regular.ttf": {
+      "copyright": {
+        "en": "Copyright 2018 Google LLC. All Rights Reserved."
+      },
+      "license": {
+        "en": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software."
+      },
+      "licenseURL": {
+        "en": "http://scripts.sil.org/OFL"
+      },
+      "fontFamily": {
+        "en": "Noto Sans Math"
+      },
+      "version": {
+        "en": "Version 2.001; ttfautohint (v1.8) -l 8 -r 50 -G 200 -x 14 -D latn -f none -a qsq -X \"\""
+      }
+    }
+  },
+  "notices": [
+    {
+      "original_path": "Noto CJK LICENSE",
+      "text": "LICENSES/texts/6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2.txt",
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+      "source": "https://raw.githubusercontent.com/notofonts/noto-cjk/523d033d6cb47f4a80c58a35753646f5c3608a78/LICENSE"
+    },
+    {
+      "original_path": "Noto fallback families LICENSE",
+      "text": "LICENSES/texts/0dab92d0544f7b233403f14b84a663bdbfa746982eda629e7f4f9ffe1b036feb.txt",
+      "sha256": "0dab92d0544f7b233403f14b84a663bdbfa746982eda629e7f4f9ffe1b036feb",
+      "source": "https://raw.githubusercontent.com/notofonts/noto-fonts/ffebf8c1ee449e544955a7e813c54f9b73848eac/LICENSE"
+    },
+    {
+      "original_path": "Montserrat OFL.txt",
+      "text": "LICENSES/texts/8b7141c03fa4f8d44e6345d5d4931709290f0f67875e452e95ac1fd3a027802e.txt",
+      "sha256": "8b7141c03fa4f8d44e6345d5d4931709290f0f67875e452e95ac1fd3a027802e",
+      "source": "https://raw.githubusercontent.com/JulietaUla/Montserrat/555facfb2a18c72c3c0380f0d9c0f060453a9058/OFL.txt"
+    },
+    {
+      "original_path": "Material Icons LICENSE",
+      "text": "LICENSES/texts/58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd.txt",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "source": "https://raw.githubusercontent.com/google/material-design-icons/0cbb08816df07faaae3dca060d4ebb10b66c214f/LICENSE"
+    },
+    {
+      "original_path": "lv_font_conv LICENSE",
+      "text": "LICENSES/texts/959add68a50f49e55cdb8c66c3c50112e3906a7a5210fb677e503f3ab281c018.txt",
+      "sha256": "959add68a50f49e55cdb8c66c3c50112e3906a7a5210fb677e503f3ab281c018",
+      "source": "https://raw.githubusercontent.com/78/lv_font_conv/db011302d4f448027cbf1af6d0d47a27d59d22c1/LICENSE"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "release-fonts/src/font_awesome_20_4.c",
+      "sha256": "c3489f62ce3355dd8cfa91ae6818187c52ea695d7a236d65d5c184ca67f85ec5",
+      "size": 121347,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "release-fonts/src/font_awesome_30_4.c",
+      "sha256": "55236e0c8a5d5a8e15a81a491397f441ba9cb1dd2dcffdf4209e2f36400a2980",
+      "size": 239330,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "release-fonts/src/font_awesome_30_1.c",
+      "sha256": "01a31747aaa703e42d0a135d86d1a1c96b52c3e5e6d9dc8119d6527fcf6972cf",
+      "size": 69876,
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "release-fonts/src/font_stackchan_basic_20_4.c",
+      "sha256": "943f3d93ef3d6a9669e60393752ffaac71ebd1a2e0523a390bcc40d91b2372bc",
+      "size": 110936,
+      "license": "OFL-1.1"
+    },
+    {
+      "path": "release-fonts/cbin/font_stackchan_common_20_4.bin",
+      "sha256": "77a86d7d6a0dc8c2d7930ff2d12f068a71cbc070d938cea7f87ab1cfe9593134",
+      "size": 1841812,
+      "license": "OFL-1.1"
+    },
+    {
+      "path": "main/assets/fonts/MontserratSemiBold26.c",
+      "sha256": "b72462aee6ef2cb83100fa97a6fdf0aa94c44a16804b7843a3c51535837538c4",
+      "size": 51977,
+      "license": "OFL-1.1"
+    }
+  ]
+}

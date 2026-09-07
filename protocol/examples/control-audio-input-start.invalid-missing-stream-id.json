@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "type": "audio.input.start",
+  "message_id": "36fd48e1-da9a-460a-91f4-346df20b03a3",
+  "turn_id": "e5070f04-20ff-4feb-9fd1-26cc4ccaf4c7",
+  "sent_at_ms": 100,
+  "payload": {
+    "codec": "opus",
+    "sample_rate": 16000,
+    "channels": 1,
+    "frame_ms": 60,
+    "trigger": "touch"
+  }
+}

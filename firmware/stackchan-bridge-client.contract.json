@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "upstream_pin_document": "firmware/UPSTREAM.md",
+  "required_esp_idf": "v5.5.4",
+  "transport": {
+    "websocket_path": "/v1/device/ws",
+    "capture_upload_path": "/v1/device/captures/{capture_id}",
+    "max_json_bytes": 16384,
+    "max_json_depth": 8,
+    "max_audio_packet_bytes": 1275,
+    "duplicate_message_ids": 256,
+    "input_streams_per_device": 1,
+    "output_streams_per_device": 1
+  },
+  "audio": {
+    "sample_rate": 16000,
+    "channels": 1,
+    "allowed_frame_ms": [20, 40, 60],
+    "queue_packets": 32,
+    "input_overflow_policy": "drop_oldest_and_report",
+    "output_overflow_policy": "reject_new_and_report",
+    "pcm_and_codec_buffers": "psram_bounded",
+    "network_and_device_tasks_separate": true,
+    "playback_preroll_ms": 500,
+    "cancel_discards_playback_queue": true
+  },
+  "camera": {
+    "format": "jpeg",
+    "width": 320,
+    "height": 240,
+    "max_jpeg_bytes": 2097152,
+    "concurrent_capture_policy": "device_busy",
+    "max_upload_attempts": 3,
+    "continuous_capture": false
+  },
+  "motion_safety": {
+    "board_limits_required": true,
+    "unconfigured_behavior": "reject_all_motion",
+    "out_of_range_behavior": "error_not_clamp",
+    "autonomous_motion_may_clamp": true,
+    "yaw": {
+      "minimum_degrees": -45,
+      "maximum_degrees": 45
+    },
+    "pitch": {
+      "minimum_degrees": 5,
+      "maximum_degrees": 85
+    },
+    "speed": {
+      "minimum": 1,
+      "maximum": 30,
+      "default": 15
+    },
+    "home": {
+      "yaw_degrees": 0,
+      "pitch_degrees": 45
+    },
+    "release_motion_lock_default": true,
+    "unlock_requires_explicit_build_and_physical_approval": true,
+    "attended_candidate_local_motion_lock_default": true,
+    "attended_candidate_allowed_source": "authenticated_bridge_only",
+    "flash_approval_does_not_authorize_motion": true,
+    "limit_source": {
+      "pinned_upstream_commit": "1b5765599fba8aaad1811d9a79358ccc7051f5f3",
+      "official_servo_documentation": "https://docs.m5stack.com/ja/arduino/stackchan/servo",
+      "selection": "conservative_subset"
+    }
+  },
+  "reconnect": {
+    "delays_seconds": [1, 2, 4, 8, 16, 30],
+    "maximum_seconds": 30,
+    "stable_reset_seconds": 30,
+    "destroy_stale_tasks_before_connect": true
+  },
+  "states": [
+    "BOOTING",
+    "CONNECTING_WIFI",
+    "CONNECTING_BRIDGE",
+    "IDLE",
+    "LISTENING",
+    "SPEAKING",
+    "ERROR",
+    "UPDATING"
+  ],
+  "bridge_url_precedence": [
+    "nvs.bridge.url",
+    "mdns._stackchan-hermes._tcp.local",
+    "nvs.bridge.fallback_url",
+    "kconfig.default_bridge_url",
+    "explicit_error"
+  ],
+  "nvs_keys": [
+    "device.id",
+    "device.name",
+    "bridge.url",
+    "bridge.fallback_url",
+    "bridge.token",
+    "bridge.discovery",
+    "audio.volume",
+    "display.brightness",
+    "motion.idle_level",
+    "touch.enabled"
+  ],
+  "commands": [
+    "device.get_status",
+    "device.get_info",
+    "audio.set_volume",
+    "display.set_brightness",
+    "display.show_text",
+    "avatar.set_expression",
+    "avatar.set_blink",
+    "head.get_angles",
+    "head.set_angles",
+    "head.home",
+    "led.set",
+    "led.set_all",
+    "led.clear",
+    "camera.capture",
+    "speech.cancel"
+  ],
+  "provisioning": {
+    "selected_path": "usb_serial_utility",
+    "status": "implemented_hardware_verified",
+    "runtime_change_without_rebuild": true,
+    "tracked_credentials": false
+  }
+}

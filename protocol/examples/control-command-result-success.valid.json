@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "type": "command_result",
+  "message_id": "2d93497d-b2f5-453c-923a-bbd19aa93dcc",
+  "request_id": "a75dff8d-b78a-4f14-9d33-848a817301da",
+  "sent_at_ms": 100,
+  "payload": {
+    "ok": true,
+    "result": {
+      "yaw": 15,
+      "pitch": 40
+    }
+  }
+}

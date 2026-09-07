@@ -1,0 +1,677 @@
+[
+  {
+    "name": "neutral",
+    "codepoint": "f5a4",
+    "material": "sentiment_neutral"
+  },
+  {
+    "name": "happy",
+    "codepoint": "f118",
+    "material": "sentiment_satisfied"
+  },
+  {
+    "name": "laughing",
+    "codepoint": "f59b",
+    "material": "sentiment_very_satisfied"
+  },
+  {
+    "name": "funny",
+    "codepoint": "f588",
+    "material": "mood"
+  },
+  {
+    "name": "sad",
+    "codepoint": "e384",
+    "material": "sentiment_dissatisfied"
+  },
+  {
+    "name": "angry",
+    "codepoint": "f556",
+    "material": "mood_bad"
+  },
+  {
+    "name": "crying",
+    "codepoint": "f5b3",
+    "material": "sentiment_very_dissatisfied"
+  },
+  {
+    "name": "loving",
+    "codepoint": "f584",
+    "material": "favorite"
+  },
+  {
+    "name": "embarrassed",
+    "codepoint": "f579",
+    "material": "face"
+  },
+  {
+    "name": "surprised",
+    "codepoint": "e36b",
+    "material": "sentiment_neutral"
+  },
+  {
+    "name": "shocked",
+    "codepoint": "e375",
+    "material": "sentiment_very_dissatisfied"
+  },
+  {
+    "name": "thinking",
+    "codepoint": "e39b",
+    "material": "psychology"
+  },
+  {
+    "name": "winking",
+    "codepoint": "f4da",
+    "material": "sentiment_satisfied_alt"
+  },
+  {
+    "name": "cool",
+    "codepoint": "e398",
+    "material": "face_retouching_natural"
+  },
+  {
+    "name": "relaxed",
+    "codepoint": "e392",
+    "material": "self_improvement"
+  },
+  {
+    "name": "delicious",
+    "codepoint": "e372",
+    "material": "restaurant"
+  },
+  {
+    "name": "kissy",
+    "codepoint": "f598",
+    "material": "favorite_border"
+  },
+  {
+    "name": "confident",
+    "codepoint": "e409",
+    "material": "sentiment_very_satisfied"
+  },
+  {
+    "name": "sleepy",
+    "codepoint": "e38d",
+    "material": "bedtime"
+  },
+  {
+    "name": "silly",
+    "codepoint": "e3a4",
+    "material": "mood"
+  },
+  {
+    "name": "confused",
+    "codepoint": "e36d",
+    "material": "help_outline"
+  },
+  {
+    "name": "battery_full",
+    "codepoint": "f240",
+    "material": "battery_full"
+  },
+  {
+    "name": "battery_three_quarters",
+    "codepoint": "f241",
+    "material": "battery_5_bar"
+  },
+  {
+    "name": "battery_half",
+    "codepoint": "f242",
+    "material": "battery_3_bar"
+  },
+  {
+    "name": "battery_quarter",
+    "codepoint": "f243",
+    "material": "battery_1_bar"
+  },
+  {
+    "name": "battery_empty",
+    "codepoint": "f244",
+    "material": "battery_0_bar"
+  },
+  {
+    "name": "battery_slash",
+    "codepoint": "f377",
+    "material": "battery_unknown"
+  },
+  {
+    "name": "battery_bolt",
+    "codepoint": "f376",
+    "material": "battery_charging_full"
+  },
+  {
+    "name": "wifi",
+    "codepoint": "f1eb",
+    "material": "wifi"
+  },
+  {
+    "name": "wifi_fair",
+    "codepoint": "f6ab",
+    "material": "wifi_2_bar"
+  },
+  {
+    "name": "wifi_weak",
+    "codepoint": "f6aa",
+    "material": "wifi_1_bar"
+  },
+  {
+    "name": "wifi_slash",
+    "codepoint": "f6ac",
+    "material": "wifi_off"
+  },
+  {
+    "name": "signal",
+    "codepoint": "f012",
+    "material": "signal_cellular_4_bar"
+  },
+  {
+    "name": "signal_strong",
+    "codepoint": "f68f",
+    "material": "signal_cellular_alt"
+  },
+  {
+    "name": "signal_good",
+    "codepoint": "f68e",
+    "material": "signal_cellular_alt_2_bar"
+  },
+  {
+    "name": "signal_fair",
+    "codepoint": "f68d",
+    "material": "signal_cellular_alt_1_bar"
+  },
+  {
+    "name": "signal_weak",
+    "codepoint": "f68c",
+    "material": "signal_cellular_0_bar"
+  },
+  {
+    "name": "signal_off",
+    "codepoint": "f695",
+    "material": "signal_cellular_off"
+  },
+  {
+    "name": "volume_high",
+    "codepoint": "f028",
+    "material": "volume_up"
+  },
+  {
+    "name": "volume",
+    "codepoint": "f6a8",
+    "material": "volume_down"
+  },
+  {
+    "name": "volume_low",
+    "codepoint": "f027",
+    "material": "volume_mute"
+  },
+  {
+    "name": "volume_xmark",
+    "codepoint": "f6a9",
+    "material": "volume_off"
+  },
+  {
+    "name": "music",
+    "codepoint": "f001",
+    "material": "music_note"
+  },
+  {
+    "name": "check",
+    "codepoint": "f00c",
+    "material": "check"
+  },
+  {
+    "name": "xmark",
+    "codepoint": "f00d",
+    "material": "close"
+  },
+  {
+    "name": "power_off",
+    "codepoint": "f011",
+    "material": "power_settings_new"
+  },
+  {
+    "name": "gear",
+    "codepoint": "f013",
+    "material": "settings"
+  },
+  {
+    "name": "trash",
+    "codepoint": "f1f8",
+    "material": "delete"
+  },
+  {
+    "name": "house",
+    "codepoint": "f015",
+    "material": "home"
+  },
+  {
+    "name": "image",
+    "codepoint": "f03e",
+    "material": "image"
+  },
+  {
+    "name": "pen_to_square",
+    "codepoint": "f044",
+    "material": "edit_square"
+  },
+  {
+    "name": "backward_step",
+    "codepoint": "f048",
+    "material": "skip_previous"
+  },
+  {
+    "name": "forward_step",
+    "codepoint": "f051",
+    "material": "skip_next"
+  },
+  {
+    "name": "play",
+    "codepoint": "f04b",
+    "material": "play_arrow"
+  },
+  {
+    "name": "pause",
+    "codepoint": "f04c",
+    "material": "pause"
+  },
+  {
+    "name": "stop",
+    "codepoint": "f04d",
+    "material": "stop"
+  },
+  {
+    "name": "arrow_left",
+    "codepoint": "f060",
+    "material": "arrow_back"
+  },
+  {
+    "name": "arrow_right",
+    "codepoint": "f061",
+    "material": "arrow_forward"
+  },
+  {
+    "name": "arrow_up",
+    "codepoint": "f062",
+    "material": "arrow_upward"
+  },
+  {
+    "name": "arrow_down",
+    "codepoint": "f063",
+    "material": "arrow_downward"
+  },
+  {
+    "name": "triangle_exclamation",
+    "codepoint": "f071",
+    "material": "warning"
+  },
+  {
+    "name": "bell",
+    "codepoint": "f0f3",
+    "material": "notifications"
+  },
+  {
+    "name": "location_dot",
+    "codepoint": "f3c5",
+    "material": "place"
+  },
+  {
+    "name": "globe",
+    "codepoint": "f0ac",
+    "material": "public"
+  },
+  {
+    "name": "location_arrow",
+    "codepoint": "f124",
+    "material": "navigation"
+  },
+  {
+    "name": "sd_card",
+    "codepoint": "f7c2",
+    "material": "sd_card"
+  },
+  {
+    "name": "bluetooth",
+    "codepoint": "f293",
+    "material": "bluetooth"
+  },
+  {
+    "name": "comment",
+    "codepoint": "f075",
+    "material": "chat_bubble"
+  },
+  {
+    "name": "microchip_ai",
+    "codepoint": "e1ec",
+    "material": "memory"
+  },
+  {
+    "name": "user",
+    "codepoint": "f007",
+    "material": "person"
+  },
+  {
+    "name": "user_robot",
+    "codepoint": "e04b",
+    "material": "smart_toy"
+  },
+  {
+    "name": "download",
+    "codepoint": "f019",
+    "material": "download"
+  },
+  {
+    "name": "lock",
+    "codepoint": "f023",
+    "material": "lock"
+  },
+  {
+    "name": "unlock",
+    "codepoint": "f09c",
+    "material": "lock_open"
+  },
+  {
+    "name": "key",
+    "codepoint": "f084",
+    "material": "key"
+  },
+  {
+    "name": "link",
+    "codepoint": "f0c1",
+    "material": "link"
+  },
+  {
+    "name": "circle_info",
+    "codepoint": "f05a",
+    "material": "info"
+  },
+  {
+    "name": "circle_question",
+    "codepoint": "f059",
+    "material": "help"
+  },
+  {
+    "name": "circle_check",
+    "codepoint": "f058",
+    "material": "check_circle"
+  },
+  {
+    "name": "circle_xmark",
+    "codepoint": "f057",
+    "material": "cancel"
+  },
+  {
+    "name": "clock",
+    "codepoint": "f017",
+    "material": "schedule"
+  },
+  {
+    "name": "alarm_clock",
+    "codepoint": "f34e",
+    "material": "alarm"
+  },
+  {
+    "name": "spinner",
+    "codepoint": "f110",
+    "material": "sync"
+  },
+  {
+    "name": "temperature_half",
+    "codepoint": "f2c9",
+    "material": "thermostat"
+  },
+  {
+    "name": "headphones",
+    "codepoint": "f025",
+    "material": "headphones"
+  },
+  {
+    "name": "microphone",
+    "codepoint": "f130",
+    "material": "mic"
+  },
+  {
+    "name": "microphone_slash",
+    "codepoint": "f131",
+    "material": "mic_off"
+  },
+  {
+    "name": "comment_question",
+    "codepoint": "e14b",
+    "material": "live_help"
+  },
+  {
+    "name": "camera",
+    "codepoint": "f030",
+    "material": "photo_camera"
+  },
+  {
+    "name": "calendar",
+    "codepoint": "f133",
+    "material": "calendar_month"
+  },
+  {
+    "name": "envelope",
+    "codepoint": "f0e0",
+    "material": "mail"
+  },
+  {
+    "name": "brightness",
+    "codepoint": "e0c9",
+    "material": "brightness_6"
+  },
+  {
+    "name": "phone",
+    "codepoint": "f095",
+    "material": "phone"
+  },
+  {
+    "name": "compass",
+    "codepoint": "f14e",
+    "material": "explore"
+  },
+  {
+    "name": "calculator",
+    "codepoint": "f1ec",
+    "material": "calculate"
+  },
+  {
+    "name": "glasses",
+    "codepoint": "f530",
+    "material": "visibility"
+  },
+  {
+    "name": "magnifying_glass",
+    "codepoint": "f002",
+    "material": "search"
+  },
+  {
+    "name": "heart",
+    "codepoint": "f004",
+    "material": "favorite"
+  },
+  {
+    "name": "star",
+    "codepoint": "f005",
+    "material": "star"
+  },
+  {
+    "name": "gamepad",
+    "codepoint": "f11b",
+    "material": "sports_esports"
+  },
+  {
+    "name": "watch",
+    "codepoint": "f2e1",
+    "material": "watch"
+  },
+  {
+    "name": "arrows_repeat",
+    "codepoint": "f364",
+    "material": "repeat"
+  },
+  {
+    "name": "arrows_rotate",
+    "codepoint": "f021",
+    "material": "refresh"
+  },
+  {
+    "name": "angle_left",
+    "codepoint": "f104",
+    "material": "chevron_left"
+  },
+  {
+    "name": "angle_right",
+    "codepoint": "f105",
+    "material": "chevron_right"
+  },
+  {
+    "name": "angle_up",
+    "codepoint": "f106",
+    "material": "expand_less"
+  },
+  {
+    "name": "angle_down",
+    "codepoint": "f107",
+    "material": "expand_more"
+  },
+  {
+    "name": "angles_left",
+    "codepoint": "f100",
+    "material": "keyboard_double_arrow_left"
+  },
+  {
+    "name": "angles_right",
+    "codepoint": "f101",
+    "material": "keyboard_double_arrow_right"
+  },
+  {
+    "name": "angles_up",
+    "codepoint": "f102",
+    "material": "keyboard_double_arrow_up"
+  },
+  {
+    "name": "angles_down",
+    "codepoint": "f103",
+    "material": "keyboard_double_arrow_down"
+  },
+  {
+    "name": "cloud_arrow_down",
+    "codepoint": "f0ed",
+    "material": "cloud_download"
+  },
+  {
+    "name": "cloud_arrow_up",
+    "codepoint": "f0ee",
+    "material": "cloud_upload"
+  },
+  {
+    "name": "cloud_slash",
+    "codepoint": "e137",
+    "material": "cloud_off"
+  },
+  {
+    "name": "sun",
+    "codepoint": "f185",
+    "material": "light_mode"
+  },
+  {
+    "name": "moon",
+    "codepoint": "f186",
+    "material": "dark_mode"
+  },
+  {
+    "name": "cloud",
+    "codepoint": "f0c2",
+    "material": "cloud"
+  },
+  {
+    "name": "clouds",
+    "codepoint": "f744",
+    "material": "filter_drama"
+  },
+  {
+    "name": "cloud_sun",
+    "codepoint": "f746",
+    "material": "wb_cloudy"
+  },
+  {
+    "name": "cloud_sun_rain",
+    "codepoint": "f743",
+    "material": "shower"
+  },
+  {
+    "name": "cloud_moon",
+    "codepoint": "f6c3",
+    "material": "nights_stay"
+  },
+  {
+    "name": "cloud_bolt",
+    "codepoint": "f76c",
+    "material": "thunderstorm"
+  },
+  {
+    "name": "cloud_hail",
+    "codepoint": "f73a",
+    "material": "grain"
+  },
+  {
+    "name": "cloud_sleet",
+    "codepoint": "f741",
+    "material": "ac_unit"
+  },
+  {
+    "name": "cloud_drizzle",
+    "codepoint": "f738",
+    "material": "grain"
+  },
+  {
+    "name": "cloud_fog",
+    "codepoint": "f74e",
+    "material": "foggy"
+  },
+  {
+    "name": "cloud_rain",
+    "codepoint": "f73d",
+    "material": "water_drop"
+  },
+  {
+    "name": "cloud_showers",
+    "codepoint": "f73f",
+    "material": "shower"
+  },
+  {
+    "name": "cloud_showers_heavy",
+    "codepoint": "f740",
+    "material": "thunderstorm"
+  },
+  {
+    "name": "snowflake",
+    "codepoint": "f2dc",
+    "material": "ac_unit"
+  },
+  {
+    "name": "snowflakes",
+    "codepoint": "f7cf",
+    "material": "severe_cold"
+  },
+  {
+    "name": "smog",
+    "codepoint": "f75f",
+    "material": "foggy"
+  },
+  {
+    "name": "wind",
+    "codepoint": "f72e",
+    "material": "air"
+  },
+  {
+    "name": "hurricane",
+    "codepoint": "f751",
+    "material": "cyclone"
+  },
+  {
+    "name": "tornado",
+    "codepoint": "f76f",
+    "material": "tornado"
+  }
+]

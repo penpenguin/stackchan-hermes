@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-09-07",
+  "scope": "Vendor and Twemoji notices, reviewed vendor asset hashes, and historical evidence for upstream glyphs excluded from the release. Replacement font provenance is in firmware-fonts.json; final SDK/link evidence is in firmware-sdk.json.",
+  "notices": {
+    "twemoji": {
+      "original_path": "Twemoji LICENSE-GRAPHICS (CC-BY-4.0; reference text, input graphics revision unrecorded)",
+      "text": "LICENSES/texts/8ae9438818c26e4873b91d8c6ad620526c011e27e125677f13031eda903f007c.txt",
+      "sha256": "8ae9438818c26e4873b91d8c6ad620526c011e27e125677f13031eda903f007c",
+      "source": "https://raw.githubusercontent.com/twitter/twemoji/v14.0.2/LICENSE-GRAPHICS"
+    },
+    "noto-sans": {
+      "original_path": "Noto Sans 2.015 OFL.txt (additional merged families require their own notices)",
+      "text": "LICENSES/texts/cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a.txt",
+      "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+      "source": "https://raw.githubusercontent.com/notofonts/latin-greek-cyrillic/NotoSans-v2.015/OFL.txt",
+      "usage": "Historical evidence for excluded upstream fonts; not the license attribution for replacement glyphs"
+    },
+    "esp-idf-license": {
+      "original_path": "ESP-IDF v5.5.4 LICENSE",
+      "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source": "https://raw.githubusercontent.com/espressif/esp-idf/735507283d5b2f9fb363a1901172dbd9e847945d/LICENSE"
+    },
+    "montserrat": {
+      "original_path": "scripts/built_in_font/font_license/Montserrat/OFL.txt",
+      "text": "LICENSES/texts/41f82bb4d24b304f30f7136bc47abdd083782e4265c984160f5649d1e78ea49c.txt",
+      "sha256": "41f82bb4d24b304f30f7136bc47abdd083782e4265c984160f5649d1e78ea49c",
+      "usage": "LVGL built-in fonts notice; project UI replacement attribution is in firmware-fonts.json"
+    },
+    "vendor-LICENSE": {
+      "original_path": "firmware/LICENSE",
+      "text": "LICENSES/texts/69de21aa5e3dea7723e781bc773a701db5afce066421c7518db2092d743e4a3e.txt",
+      "sha256": "69de21aa5e3dea7723e781bc773a701db5afce066421c7518db2092d743e4a3e",
+      "source": "repository snapshot; see firmware/upstream-lock.json"
+    },
+    "vendor-main/hal/drivers/FTServo_Arduino/LICENSE": {
+      "original_path": "firmware/main/hal/drivers/FTServo_Arduino/LICENSE",
+      "text": "LICENSES/texts/79548129370da7abd470cc7085e62629cca9eb930d08f213198701c39ec24431.txt",
+      "sha256": "79548129370da7abd470cc7085e62629cca9eb930d08f213198701c39ec24431",
+      "source": "repository snapshot; see firmware/upstream-lock.json"
+    },
+    "vendor-main/hal/drivers/bmi270/BMI270_SensorAPI/LICENSE": {
+      "original_path": "firmware/main/hal/drivers/bmi270/BMI270_SensorAPI/LICENSE",
+      "text": "LICENSES/texts/56df116398e0b72a12ae353d93002d29175583590283ced2c2510e3d8075546f.txt",
+      "sha256": "56df116398e0b72a12ae353d93002d29175583590283ced2c2510e3d8075546f",
+      "source": "repository snapshot; see firmware/upstream-lock.json"
+    },
+    "vendor-components/stackchan_bridge_client/third_party/esp-ml307-LICENSE": {
+      "original_path": "firmware/components/stackchan_bridge_client/third_party/esp-ml307-LICENSE",
+      "text": "LICENSES/texts/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "source": "repository snapshot; see firmware/upstream-lock.json"
+    }
+  },
+  "assets": [
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/ttf/noto-basic.ttf",
+      "sha256": "0e15dae1515c170e7c9fbd5447860374a71f8d098c7a35d29d89f5c064218085",
+      "font_names": [
+        {
+          "name_id": 0,
+          "value": "Copyright 2022 The Noto Project Authors (https://github.com/notofonts/latin-greek-cyrillic)"
+        },
+        {
+          "name_id": 1,
+          "value": "Noto Sans"
+        },
+        {
+          "name_id": 5,
+          "value": "Version 2.015"
+        }
+      ],
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/ttf/noto-qwen.ttf",
+      "sha256": "fbfd59a573a459abe932eb4aa58b5a8de860eb121b3ef20bcd4055afdd650a96",
+      "font_names": [
+        {
+          "name_id": 0,
+          "value": "Copyright 2022 The Noto Project Authors (https://github.com/notofonts/latin-greek-cyrillic)"
+        },
+        {
+          "name_id": 1,
+          "value": "Noto Sans"
+        },
+        {
+          "name_id": 5,
+          "value": "Version 2.015"
+        }
+      ],
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/ttf/puhui-basic.ttf",
+      "sha256": "ac34973ec45c789c91acf796be6f0aca61f47f03c52d53911f319c438296b6fb",
+      "font_names": [
+        {
+          "name_id": 0,
+          "value": "Copyright © 2019 Alibaba (China) Co., Ltd. All rights reserved."
+        },
+        {
+          "name_id": 1,
+          "value": "Alibaba Sans"
+        },
+        {
+          "name_id": 5,
+          "value": "Version 1.02"
+        }
+      ],
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/ttf/puhui-common.ttf",
+      "sha256": "e98f6b039ba78327edb4dac255bfbcd7cfeb7f00a09652103f235f41abb1a536",
+      "font_names": [
+        {
+          "name_id": 0,
+          "value": "Copyright © 2019 Alibaba (China) Co., Ltd. All rights reserved."
+        },
+        {
+          "name_id": 1,
+          "value": "Alibaba Sans"
+        },
+        {
+          "name_id": 5,
+          "value": "Version 1.02"
+        }
+      ],
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/app_center_bg.png",
+      "sha256": "67c1cec9d60e623327470f78d4dd9101ea1193f5f25f6a5dc52382afccd398b4",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_ai_agent.bin",
+      "sha256": "dd6eb6473dfc68a21429ad51aa1f92973eab22b67015f259a6a092feaa21f97a",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_app_center.bin",
+      "sha256": "d6cbf82499ece3b7749c267d2e405dc7da6aee3de85266869f05d26a84a2a348",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_bat_lightning.bin",
+      "sha256": "f26bdda69f074a9354efc672c41774af1a1cf80704b82348ad0ce7a6237b1499",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_bell.bin",
+      "sha256": "238d609fca281a9b207beb1145559a3e1091e438c4a8444679d151e1896024e2",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_controller.bin",
+      "sha256": "01b8a35ac670bd93185320abdcfaf776349b082ed81a3b544217f3882fe8aa03",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_dance.bin",
+      "sha256": "d622a2508c68337b8e280c1c16c590161c2dc9473ed32602fcbe29ef15438ca5",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_ezdata.bin",
+      "sha256": "a9d6db51bb89ba928f1ba9b9a63f6e38d5449480b708bbe009a246efd72adbb3",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_home.bin",
+      "sha256": "6bc37303930c96eafbf3a95f2c8a36471a4d738a856cbbc486a9db5121560f72",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_indicator_left.bin",
+      "sha256": "1703d8b55995b53f39eb170834b8cae8eae7e88877506eedccc91af41b54ff73",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_indicator_right.bin",
+      "sha256": "28fce6547fc962dd65f8d2d66670c5f9df26714903deb95971e45931587c9684",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_sentinel.bin",
+      "sha256": "13133fe862959ef072305c2e31f8f87dee453f3a6f88fddd3f2e897ab8d7ee8b",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_setup.bin",
+      "sha256": "cccada023bfdb7479d9446ab8e5438e403459ecf1c841a5d7a48a729c825e9c4",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_wifi_high.bin",
+      "sha256": "457136eda76d8f1053a4849ad9c68446b7101593c5da1e02301794ab7cdb27dc",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_wifi_low.bin",
+      "sha256": "3f0315379468bd5ba763e6e6e0f9349a0d1661a4aa76c6c2ba2d7d95aa7577e3",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_wifi_medium.bin",
+      "sha256": "60b7133f94323e62f88c762c77524b4fb7c642b2beef4249d84796e1fadc8b87",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/icon_wifi_slash.bin",
+      "sha256": "002556319724dc75c02a91bd23b7d5c117db4b6cd72509cb4ac3f40f5866e1ee",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/assets_bin/setup_stackchan_front_view.bin",
+      "sha256": "d8b32d6a29484e52d73bd8bda6b18168751a387032fafcc1163f041838d1b237",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/fonts/MontserratSemiBold26.c",
+      "sha256": "b72462aee6ef2cb83100fa97a6fdf0aa94c44a16804b7843a3c51535837538c4",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Regenerated from pinned OFL input; see firmware-fonts.json"
+    },
+    {
+      "path": "firmware/main/assets/sfx/camera_shutter.ogg",
+      "sha256": "5a3ddc05f72e6b9557cf6b55a6c474423b19189a7ee8660b5b3cbd001b72d1d7",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "firmware/main/assets/sfx/new_notification.ogg",
+      "sha256": "d0bd1a4c3fce59d635268aa782bb5a25523c8d4017bb5d4d8fe4d99c6d6ce6bc",
+      "provenance": "M5Stack snapshot; per-asset upstream provenance not separately recorded",
+      "release_status": "Unchanged M5Stack MIT vendor asset"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/font_awesome.py",
+      "sha256": "a7420e61f04c04208ceca70ef4643a46a34c796d6f0c764973bc1d92d7c49eab",
+      "provenance": "hash-verified managed component; see audit findings",
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/font_emoji.py",
+      "sha256": "51df8bc15eda35bc5704575783bf88242aa23b2f20ffccec5d31895cd6bc8023",
+      "provenance": "hash-verified managed component; see audit findings",
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/scripts/gen_ttf.py",
+      "sha256": "993366135e9321be490401f3ccd9913c9c807510b90bfbdf83795e4725fec720",
+      "provenance": "hash-verified managed component; see audit findings",
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/src/font_awesome_20_4.c",
+      "sha256": "dbcb7e4485716f67d7a92d49fad0d6500d441b3e892610292d6e4474200644cd",
+      "provenance": "hash-verified managed component; see audit findings",
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    },
+    {
+      "path": "78/xiaozhi-fonts@1.6.0/src/font_awesome_30_4.c",
+      "sha256": "9465caebbceed5cd74d43df56fc63de405f93801e22963096b69d25c4118f227",
+      "provenance": "hash-verified managed component; see audit findings",
+      "release_status": "Excluded input/generator evidence; not included in the source archive or release images"
+    }
+  ]
+}

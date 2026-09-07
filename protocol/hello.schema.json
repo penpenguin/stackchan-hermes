@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stackchan-hermes.local/schemas/hello.schema.json",
+  "title": "StackChan protocol v1 hello",
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/envelope"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "hello"
+        },
+        "payload": {
+          "$ref": "#/$defs/helloPayload"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "capabilities": {
+      "type": "object",
+      "required": [
+        "microphone",
+        "speaker",
+        "camera",
+        "touch",
+        "head",
+        "display",
+        "avatar",
+        "led_count"
+      ],
+      "properties": {
+        "microphone": { "type": "boolean" },
+        "speaker": { "type": "boolean" },
+        "camera": { "type": "boolean" },
+        "touch": { "type": "boolean" },
+        "head": { "type": "boolean" },
+        "display": { "type": "boolean" },
+        "avatar": { "type": "boolean" },
+        "led_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 256
+        }
+      },
+      "additionalProperties": true
+    },
+    "audio": {
+      "type": "object",
+      "required": ["codec", "sample_rate", "channels", "frame_ms"],
+      "properties": {
+        "codec": { "const": "opus" },
+        "sample_rate": { "const": 16000 },
+        "channels": { "const": 1 },
+        "frame_ms": {
+          "enum": [20, 40, 60]
+        }
+      },
+      "additionalProperties": true
+    },
+    "helloPayload": {
+      "type": "object",
+      "required": [
+        "device_id",
+        "device_name",
+        "firmware_version",
+        "hardware_model",
+        "protocol_versions",
+        "capabilities",
+        "audio"
+      ],
+      "properties": {
+        "device_id": {
+          "$ref": "common.schema.json#/$defs/deviceId"
+        },
+        "device_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        },
+        "firmware_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        },
+        "hardware_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        },
+        "protocol_versions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "capabilities": {
+          "$ref": "#/$defs/capabilities"
+        },
+        "audio": {
+          "$ref": "#/$defs/audio"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "inputs": {
+    "NotoSansCJKjp-Regular.otf": {
+      "sha256": "68a3fc98800b2a27b371f2fb79991daf3633bd89309d4ffaa6946fd587f375b5",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/523d033d6cb47f4a80c58a35753646f5c3608a78/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf",
+      "license": "OFL-1.1"
+    },
+    "MaterialIcons-Regular.ttf": {
+      "sha256": "ef149f08bdd2ff09a4e2c8573476b7b0f3fbb15b623954ade59899e7175bedda",
+      "url": "https://raw.githubusercontent.com/google/material-design-icons/0cbb08816df07faaae3dca060d4ebb10b66c214f/font/MaterialIcons-Regular.ttf",
+      "license": "Apache-2.0"
+    },
+    "MaterialIcons-Regular.codepoints": {
+      "sha256": "530f25bf7b2d71c8e1da9476d53f9a9bb6b7e187bff69bb7128bb679b8194894",
+      "url": "https://raw.githubusercontent.com/google/material-design-icons/0cbb08816df07faaae3dca060d4ebb10b66c214f/font/MaterialIcons-Regular.codepoints",
+      "license": "Apache-2.0"
+    },
+    "Montserrat-SemiBold.ttf": {
+      "sha256": "b4e1563393d73fdff491a869441245aef31add2ec03d9c97a6dae4de07c52fd0",
+      "url": "https://raw.githubusercontent.com/JulietaUla/Montserrat/555facfb2a18c72c3c0380f0d9c0f060453a9058/fonts/ttf/Montserrat-SemiBold.ttf",
+      "license": "OFL-1.1"
+    },
+    "NotoSans-Regular.ttf": {
+      "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/ffebf8c1ee449e544955a7e813c54f9b73848eac/hinted/ttf/NotoSans/NotoSans-Regular.ttf",
+      "license": "OFL-1.1"
+    },
+    "NotoSansThai-Regular.ttf": {
+      "sha256": "404ddfb5ed0aaa6b6ec8a85700d682978992062d67da93903967b56cbd9a4acc",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/ffebf8c1ee449e544955a7e813c54f9b73848eac/hinted/ttf/NotoSansThai/NotoSansThai-Regular.ttf",
+      "license": "OFL-1.1"
+    },
+    "NotoSansMath-Regular.ttf": {
+      "sha256": "80b61fd613d3519197e64fff6f7e71fdc7f3e6526440ea4115b554ef7fd59af7",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/ffebf8c1ee449e544955a7e813c54f9b73848eac/hinted/ttf/NotoSansMath/NotoSansMath-Regular.ttf",
+      "license": "OFL-1.1"
+    }
+  },
+  "converter": {
+    "repository": "https://github.com/78/lv_font_conv.git",
+    "commit": "db011302d4f448027cbf1af6d0d47a27d59d22c1",
+    "package_lock_sha256": "626534e2949509b3f284c4afc4fcaa4dc8223a62d2e6a91dc1100ed08fd08b2c"
+  },
+  "repertoire": {
+    "description": "Original printable text repertoire plus JIS X 0208; only character identifiers, no upstream glyph shapes",
+    "original_count": 6658,
+    "jis_count": 6879,
+    "combined_count": 9561
+  }
+}

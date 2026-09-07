@@ -1,0 +1,1091 @@
+{
+  "schema_version": 1,
+  "target": "esp32s3",
+  "sdk_commit": "735507283d5b2f9fb363a1901172dbd9e847945d",
+  "flash_settings": {
+    "flash_mode": "dio",
+    "flash_size": "16MB",
+    "flash_freq": "80m"
+  },
+  "flash_files": [
+    {
+      "offset": "0x0",
+      "path": "bootloader/bootloader.bin",
+      "sha256": "0dcf6a3982a8108bf446744b59f1efe3d57466a017ebf253a8de94ab5a3ef4d6",
+      "size": 23792
+    },
+    {
+      "offset": "0x20000",
+      "path": "stack-chan.bin",
+      "sha256": "086ca2fea0c4db620956d4b50715871b4b01ae383d176cd8ef8594147af278f5",
+      "size": 3808848
+    },
+    {
+      "offset": "0x8000",
+      "path": "partition_table/partition-table.bin",
+      "sha256": "48da0866f56d9d8eb1fe786412984d8f1a4a01b3f13f965621fcb916761e1a4b",
+      "size": 3072
+    },
+    {
+      "offset": "0xd000",
+      "path": "ota_data_initial.bin",
+      "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f",
+      "size": 8192
+    },
+    {
+      "offset": "0xa00000",
+      "path": "generated_assets.bin",
+      "sha256": "0826f0e0bb7c8aa68df65d916fb0db7e3ba280e00a9e341e8248140d59a29d12",
+      "size": 2899513
+    }
+  ],
+  "assets": [
+    {
+      "path": "angry.png",
+      "sha256": "be9d1330cc89fba8152443682706961d335a4b263d1d55acaf18ac350f036102",
+      "size": 2451
+    },
+    {
+      "path": "app_center_bg.png",
+      "sha256": "67c1cec9d60e623327470f78d4dd9101ea1193f5f25f6a5dc52382afccd398b4",
+      "size": 29218
+    },
+    {
+      "path": "confident.png",
+      "sha256": "1d3d3327e169c4f03a16ed4a439f8468b87f8d608d17411e49d81ff89503dd2e",
+      "size": 2555
+    },
+    {
+      "path": "confused.png",
+      "sha256": "dc1ac36de3ef1d9f1bbc8a547994b7844b37020d7a08a8ec8eb1a0c66b4fbd9f",
+      "size": 2643
+    },
+    {
+      "path": "cool.png",
+      "sha256": "ab9f3746a88d538866e0f3b069c8f5f753ffdac8a4874533e6721457dff190e9",
+      "size": 2503
+    },
+    {
+      "path": "crying.png",
+      "sha256": "223aa9135a113acc635045e91e00110d2a7948cfbe2f42095d7abc58a5596160",
+      "size": 3115
+    },
+    {
+      "path": "delicious.png",
+      "sha256": "977c5bde8406eb57d5ccf878ae0aae30f493bcd770079d8e1217960a58d660e9",
+      "size": 2669
+    },
+    {
+      "path": "embarrassed.png",
+      "sha256": "e7449313bef30a026e9c3a89c23ffca141da242666836b98574ea43a35967a54",
+      "size": 3385
+    },
+    {
+      "path": "font_stackchan_common_20_4.bin",
+      "sha256": "77a86d7d6a0dc8c2d7930ff2d12f068a71cbc070d938cea7f87ab1cfe9593134",
+      "size": 1841812
+    },
+    {
+      "path": "funny.png",
+      "sha256": "c5068269f9d0f28206add51a4881263a3353e08d91c9fec8bd3379dffa65d437",
+      "size": 3615
+    },
+    {
+      "path": "happy.png",
+      "sha256": "5798855c917ab98168f4d54cc0f07ba5b62cfc1bfcf17956cf40b7321eb74c81",
+      "size": 2123
+    },
+    {
+      "path": "icon_ai_agent.bin",
+      "sha256": "dd6eb6473dfc68a21429ad51aa1f92973eab22b67015f259a6a092feaa21f97a",
+      "size": 84612
+    },
+    {
+      "path": "icon_app_center.bin",
+      "sha256": "d6cbf82499ece3b7749c267d2e405dc7da6aee3de85266869f05d26a84a2a348",
+      "size": 84612
+    },
+    {
+      "path": "icon_bat_lightning.bin",
+      "sha256": "f26bdda69f074a9354efc672c41774af1a1cf80704b82348ad0ce7a6237b1499",
+      "size": 588
+    },
+    {
+      "path": "icon_bell.bin",
+      "sha256": "238d609fca281a9b207beb1145559a3e1091e438c4a8444679d151e1896024e2",
+      "size": 1740
+    },
+    {
+      "path": "icon_controller.bin",
+      "sha256": "01b8a35ac670bd93185320abdcfaf776349b082ed81a3b544217f3882fe8aa03",
+      "size": 84612
+    },
+    {
+      "path": "icon_dance.bin",
+      "sha256": "d622a2508c68337b8e280c1c16c590161c2dc9473ed32602fcbe29ef15438ca5",
+      "size": 84612
+    },
+    {
+      "path": "icon_ezdata.bin",
+      "sha256": "a9d6db51bb89ba928f1ba9b9a63f6e38d5449480b708bbe009a246efd72adbb3",
+      "size": 84612
+    },
+    {
+      "path": "icon_home.bin",
+      "sha256": "6bc37303930c96eafbf3a95f2c8a36471a4d738a856cbbc486a9db5121560f72",
+      "size": 3084
+    },
+    {
+      "path": "icon_indicator_left.bin",
+      "sha256": "1703d8b55995b53f39eb170834b8cae8eae7e88877506eedccc91af41b54ff73",
+      "size": 6708
+    },
+    {
+      "path": "icon_indicator_right.bin",
+      "sha256": "28fce6547fc962dd65f8d2d66670c5f9df26714903deb95971e45931587c9684",
+      "size": 6708
+    },
+    {
+      "path": "icon_sentinel.bin",
+      "sha256": "13133fe862959ef072305c2e31f8f87dee453f3a6f88fddd3f2e897ab8d7ee8b",
+      "size": 84612
+    },
+    {
+      "path": "icon_setup.bin",
+      "sha256": "cccada023bfdb7479d9446ab8e5438e403459ecf1c841a5d7a48a729c825e9c4",
+      "size": 84612
+    },
+    {
+      "path": "icon_wifi_high.bin",
+      "sha256": "457136eda76d8f1053a4849ad9c68446b7101593c5da1e02301794ab7cdb27dc",
+      "size": 1212
+    },
+    {
+      "path": "icon_wifi_low.bin",
+      "sha256": "3f0315379468bd5ba763e6e6e0f9349a0d1661a4aa76c6c2ba2d7d95aa7577e3",
+      "size": 1212
+    },
+    {
+      "path": "icon_wifi_medium.bin",
+      "sha256": "60b7133f94323e62f88c762c77524b4fb7c642b2beef4249d84796e1fadc8b87",
+      "size": 1212
+    },
+    {
+      "path": "icon_wifi_slash.bin",
+      "sha256": "002556319724dc75c02a91bd23b7d5c117db4b6cd72509cb4ac3f40f5866e1ee",
+      "size": 1212
+    },
+    {
+      "path": "index.json",
+      "sha256": "41ada81f116b6d4ae89010cd744f6fb56d95e1f1b12e92ed94e8b5c7114fcce9",
+      "size": 2501
+    },
+    {
+      "path": "kissy.png",
+      "sha256": "a980ebbaa95995d359ac8c07d15d6a3022701d6f441e9aa05c42fcb8d8a1fdba",
+      "size": 3193
+    },
+    {
+      "path": "laughing.png",
+      "sha256": "2396f33a65df86c484eb6302f4229c63fe934279ab012c1ec711df86f98c982f",
+      "size": 3097
+    },
+    {
+      "path": "loving.png",
+      "sha256": "f5a5443a84973bc7337a7be4de70b5fbf3e0d3b4df48e19cdf4d3b3535963919",
+      "size": 2546
+    },
+    {
+      "path": "neutral.png",
+      "sha256": "112c9112e09cea0f1032c54fb193057ea567bc70a9ecdf69fb904387d7951ec1",
+      "size": 1728
+    },
+    {
+      "path": "relaxed.png",
+      "sha256": "61af43fa6a882b4bd5a40a932a5e1a1f9399c9d3fb0fe9e78cf1110de234863f",
+      "size": 2603
+    },
+    {
+      "path": "sad.png",
+      "sha256": "f72b5aef6dc96f32ea011eef8e0094aceb6756a9bbe01f8903f16ff9cf9829ad",
+      "size": 2402
+    },
+    {
+      "path": "setup_stackchan_front_view.bin",
+      "sha256": "d8b32d6a29484e52d73bd8bda6b18168751a387032fafcc1163f041838d1b237",
+      "size": 58980
+    },
+    {
+      "path": "shocked.png",
+      "sha256": "3987dc5bf94868b6dafc69caf03b86d6ffbcfc58d2cff2c296de86df8860b1c2",
+      "size": 3377
+    },
+    {
+      "path": "silly.png",
+      "sha256": "2f8980ab8a3a16779dca6859ec5c7e04a61c6baec26a915e827dce7d53017e84",
+      "size": 2924
+    },
+    {
+      "path": "sleepy.png",
+      "sha256": "d88ab35bc3cf0796ce1d92e7116089fc79d6f77a077baf8bed14ef018468c544",
+      "size": 3041
+    },
+    {
+      "path": "srmodels.bin",
+      "sha256": "ad606ae10c2af09b29fba9a9fd99cc81a9dfb884f4b12646e93629bad316963e",
+      "size": 291070
+    },
+    {
+      "path": "surprised.png",
+      "sha256": "6050e7957368703d8821e5ccda2568f9db58d3adf6881c05e86d639f28ead23a",
+      "size": 2493
+    },
+    {
+      "path": "thinking.png",
+      "sha256": "4002133675d48c9218f9e5b071579f9bde4b946a17ba8eb6211b54f0868e37e5",
+      "size": 2893
+    },
+    {
+      "path": "winking.png",
+      "sha256": "9791afffc812d05839651bed37f276b4df7ca455b1f73263189b06b8324a7c71",
+      "size": 2672
+    }
+  ],
+  "models": [
+    {
+      "path": "wn9_histackchan_tts3/wn9_index",
+      "sha256": "5810ee84beac8e73b4080a7b765e09900627ff973f2654811dd6a8557f0769b4",
+      "size": 1200
+    },
+    {
+      "path": "wn9_histackchan_tts3/wn9_data",
+      "sha256": "dbba353b4b5cb923984de753012671aa122cd4373739173956d2071ba9618eb3",
+      "size": 289665
+    },
+    {
+      "path": "wn9_histackchan_tts3/_MODEL_INFO_",
+      "sha256": "96b2615dc51d471796fd5da91330c33733a8ff45ee465692cc630fddbda4572a",
+      "size": 45
+    }
+  ],
+  "linked_archives": [
+    {
+      "target": "app",
+      "path": "toolchain/xtensa-esp-elf/xtensa-esp-elf/lib/esp32s3/libc_nano.a",
+      "sha256": "43c41e34fc14c5f81338996e00ccfdb1d8682b2b3d368ad37c06740beaf56a55",
+      "size": 7381472
+    },
+    {
+      "target": "app",
+      "path": "toolchain/xtensa-esp-elf/xtensa-esp-elf/lib/esp32s3/libm_nano.a",
+      "sha256": "2c84e0e5416f1a889aca48ddf941b2818ba941d87bc8aebdb436e5b131969036",
+      "size": 2732526
+    },
+    {
+      "target": "app",
+      "path": "toolchain/xtensa-esp-elf/xtensa-esp-elf/lib/esp32s3/libstdc++.a",
+      "sha256": "842bd8bb66b09278ca47ea154a891daa7196f309eb81cd746c5895be94ab36ce",
+      "size": 30958380
+    },
+    {
+      "target": "app",
+      "path": "toolchain/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/esp32s3/libgcc.a",
+      "sha256": "3d9e8f506bf9121ce7b2b2b61bea6f8b4c84da709fd9f9fbcfe7b489f6542a09",
+      "size": 691662
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/bt/controller/lib_esp32c3_family/esp32s3/libbtdm_app.a",
+      "sha256": "ff3538c403108897cf34a74b45251ad2a3d0e1beab70979c2e332832cbf04a6e",
+      "size": 1520374
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_coex/lib/esp32s3/libcoexist.a",
+      "sha256": "fc370f917302c0da9437063ba76113e9102bc8af4a6985aa9ba2d2c09231dfbd",
+      "size": 108708
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_phy/lib/esp32s3/libbtbb.a",
+      "sha256": "80d9976d6347be8b974e963d1a6b6a2f58bb4cff08cb5b0bbbb78e9841e8a018",
+      "size": 22244
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_phy/lib/esp32s3/libphy.a",
+      "sha256": "29dcc18a035801bd41486d5d59f3caeb62f8ed153533c488828bffef1abb99fd",
+      "size": 255594
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_wifi/lib/esp32s3/libcore.a",
+      "sha256": "d3bdd42ca50b0d2830f4aed93a9a1e78b320313ce15aea1ad62cda166fe75b0f",
+      "size": 4848
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_wifi/lib/esp32s3/libespnow.a",
+      "sha256": "c6bc917dbc5a99facf3b526ce0fc21dbfeb2e9d21c8c8f8eb05b2ab08cd9b717",
+      "size": 65300
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_wifi/lib/esp32s3/libmesh.a",
+      "sha256": "cedd89b76a60d4ad6169353c1ee1592a69e3e4db9552051572887f36dcde09e6",
+      "size": 995432
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_wifi/lib/esp32s3/libnet80211.a",
+      "sha256": "e7b51c63e0a74cd37c2575e3119bc93e49319ce4ad32e7e679a4de37ae2bbad8",
+      "size": 1402098
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_wifi/lib/esp32s3/libpp.a",
+      "sha256": "6b744caa293c3b0c2e07793cdca1e8c34f628f11f49b85d4411b23470eaa7835",
+      "size": 709230
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/esp_wifi/lib/esp32s3/libsmartconfig.a",
+      "sha256": "7d51e72cc04151774f8ec846a73cce1bda9cc2a2d0ea218ee70919dec8763075",
+      "size": 196506
+    },
+    {
+      "target": "app",
+      "path": "esp-idf/components/xtensa/esp32s3/libxt_hal.a",
+      "sha256": "4823e6c657199a6726f3163f15e1222edb85a8a33eeaafd2aad0cc06150cc4ec",
+      "size": 240506
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libc_speech_features.a",
+      "sha256": "e1f9f328659c9b8fb02b791e9b98c48288333e26851301ad6e66206400dc3ff8",
+      "size": 552488
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libdl_lib.a",
+      "sha256": "0299cea1f4fde129641069c9d180ca92b5657c9c780693dfe961f2b3d7111d8f",
+      "size": 3598482
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libesp_audio_front_end.a",
+      "sha256": "0db87473cab6775d79970140beeb5e00cd61088ec1a664f8801154c5a2a15c6f",
+      "size": 380872
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libesp_audio_processor.a",
+      "sha256": "f26be3e06817b2971f4d575e0542134acdeb4fb152ff44a18f3ed92b15eec1f8",
+      "size": 3745432
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libfst.a",
+      "sha256": "32951e3dbcde0a73b3061e99008d7bff13c82356981826e6978d3c7d946c044c",
+      "size": 461042
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libhufzip.a",
+      "sha256": "1aa2356377e5f31a754c38f2c214355db33d952d2063cb2a291255ba5691e677",
+      "size": 201962
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libmultinet.a",
+      "sha256": "ffacfa66abf4fcdea51174bccc805ba6d10353b7c34013c44a370c66aec8d407",
+      "size": 1440938
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libnsnet.a",
+      "sha256": "6a12fc3a229e1c517400558462631d6b63a7cb43e21dc1c08abb2116cebf36f4",
+      "size": 270210
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libvadnet.a",
+      "sha256": "0948670e958669f5bf35cec90fbd14389ad19a0b38a3a8668dde994a4c797183",
+      "size": 124396
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp-sr/lib/esp32s3/libwakenet.a",
+      "sha256": "c70dcaeeea2f04dc5aa3846096c3b91ee3f90785ef541b2051b4d9b6590787c4",
+      "size": 472006
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp_audio_codec/lib/esp32s3/libesp_audio_codec.a",
+      "sha256": "faf4c0d76030b58f22df8258ec1b9c436b7445a7d875de3b26a8c888f4d9657a",
+      "size": 4271470
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp_audio_effects/lib/esp32s3/libesp_audio_effects.a",
+      "sha256": "3758a4caaefef92b4c188fcfe5556817f1db3fd979be71e8b065e7f5c50ab088",
+      "size": 366844
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp_image_effects/lib/esp32s3/libesp_image_effects.a",
+      "sha256": "331814987bb904c9d3f54447d73028e697222d5d7cb7e871c40609cefebf1181",
+      "size": 324688
+    },
+    {
+      "target": "app",
+      "path": "firmware/managed_components/espressif__esp_new_jpeg/lib/esp32s3/libesp_new_jpeg.a",
+      "sha256": "4205b1258ce0ef9fd9946abfc7cd5f105b08316ea567e1136cec60b3e6330896",
+      "size": 1226168
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/78__esp-ml307/lib78__esp-ml307.a",
+      "sha256": "aa2024261be164fa411894f87360dc81289558f7248d180ef0893fcaf06abbf0",
+      "size": 9954476
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/78__esp-wifi-connect/lib78__esp-wifi-connect.a",
+      "sha256": "a553369784fa94db8aa56d0f6b596753d6528a267c9bbea21c3cc9fa021741fa",
+      "size": 2095242
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/78__uart-eth-modem/lib78__uart-eth-modem.a",
+      "sha256": "063956504ef43aa2cd6ea0c1a21fa7dce1f84b3c2dbe9c71f26ec768906cb966",
+      "size": 710166
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/78__uart-uhci/lib78__uart-uhci.a",
+      "sha256": "0d0dc185b294cee4e6d2e4c54d0082cc44c9e545742a3b3b16ff7f8e3c5e26b1",
+      "size": 243860
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/78__xiaozhi-fonts/lib78__xiaozhi-fonts.a",
+      "sha256": "f142f7407af29cba9128ee80a28cef39cd5a8bb366000f9496b8345289f913ca",
+      "size": 801200
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/app_update/libapp_update.a",
+      "sha256": "1ca9743f95522b12f5046a596ba2ad59d187b8c1c741f1d886d88fbe9c917c05",
+      "size": 135838
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/bootloader_support/libbootloader_support.a",
+      "sha256": "326abc2180cfb3199b5ff3b9d46e39ebd52637fb99f185379bccf612736d4ef9",
+      "size": 621818
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/bt/libbt.a",
+      "sha256": "ef0c16aa87e38e65755f8bb8d86fe0cb327b7ba116b532d08808a04b77d1a935",
+      "size": 5035630
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/console/libconsole.a",
+      "sha256": "b828ee05da4a0720b89c5fdc5fd66cc7f33aac91f8e7a16d553ebed10c563959",
+      "size": 764010
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/cxx/libcxx.a",
+      "sha256": "412e5f0d91f528289cc752f3189991f63a503c15254b1e948b754670f7a2c716",
+      "size": 53906
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/efuse/libefuse.a",
+      "sha256": "90bb7657d7f4a025193ea36cf0b817d41a66c04d33e2f0a8870afc32651401ef",
+      "size": 408568
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp-now/libesp-now.a",
+      "sha256": "9858ac6f9124676bbc07ef69c5f13cfd676e37ca612b810169f6cfa75d6b4f08",
+      "size": 1866560
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp-tls/libesp-tls.a",
+      "sha256": "4e7acd3b6b514c5dd8aa7cbbb63fb47d82045c885fb98f0e5e31a5ae97b33ade",
+      "size": 287404
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_adc/libesp_adc.a",
+      "sha256": "f11e83739d4f94cc9105b6788bb1e062abb82603a553ac4baccec6fc951d60f8",
+      "size": 497434
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_app_format/libesp_app_format.a",
+      "sha256": "b6cce9b1f7a6204aaff4ad5e7873599d24d46005cee63ddb7b6ec53cd77b50c9",
+      "size": 18972
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_coex/libesp_coex.a",
+      "sha256": "c5fe77e5ec9adf8404574acc6445649979b97876a6469d62afba2ac6f40e9f68",
+      "size": 56960
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_common/libesp_common.a",
+      "sha256": "b50353c6d3b34f1187902bf5b9d4e8fdb7568c464eb9bab2a8fc73918ee359b4",
+      "size": 21554
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_cam/libesp_driver_cam.a",
+      "sha256": "528980ba6ef2236e739d8df05fad5d4f01f79b16ba1f972cf7c2ea5d32313e78",
+      "size": 276050
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_gpio/libesp_driver_gpio.a",
+      "sha256": "9177d661f17e8362dc23bdfd7e6b4a16e9c5340242ec5351ba8b480341e1d9ed",
+      "size": 496332
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_i2c/libesp_driver_i2c.a",
+      "sha256": "aa121cea0162c5295a5f0f8c99a02b38e152d68a07307a0a5adbccd2f11279b4",
+      "size": 543820
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_i2s/libesp_driver_i2s.a",
+      "sha256": "2f75484a4b4ef388d673999029d358f99819eca98599fdfcb84f85e2f5bf7705",
+      "size": 626020
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_ledc/libesp_driver_ledc.a",
+      "sha256": "4dfdb59af2a68f9116fd51b622f2a8888bf5d315cd746078c02e2bee9b0ff386",
+      "size": 332178
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_rmt/libesp_driver_rmt.a",
+      "sha256": "0f4d669f48a321fbaabf10774f483ddc02d5a36eeabb11975eea37f816ea0e07",
+      "size": 677906
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_spi/libesp_driver_spi.a",
+      "sha256": "3c8565830c72ad391f173d263ad209a87fef3bfd7f9983e4f9e64415770c43af",
+      "size": 700432
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_uart/libesp_driver_uart.a",
+      "sha256": "e91aa4075d63c6dfd2ad8c3a4f1a3504f94584565789b03d88b98b182d142c50",
+      "size": 760172
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_driver_usb_serial_jtag/libesp_driver_usb_serial_jtag.a",
+      "sha256": "0074cd1422a84456ed71bcda4109a2e09eb12282f993c0386a88b8511d66f4b2",
+      "size": 261164
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_eth/libesp_eth.a",
+      "sha256": "0d6bf14e493c913865578a163b809feec277b456f162d83d545752bf18f2c0b2",
+      "size": 325962
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_event/libesp_event.a",
+      "sha256": "862295b1972bbac4ca05cfb999a2e7beb85fe054054660bd68bbb798fd00907b",
+      "size": 140620
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_http_client/libesp_http_client.a",
+      "sha256": "76959c3d559333f5c76834b3572e1f4e1f8cdf84bf89a7a5617b02d4acb96abb",
+      "size": 325798
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_http_server/libesp_http_server.a",
+      "sha256": "c7e98a5d4c95f2c071b68f749d7073d755cdb2323f7c0ccae7853ffb4ab278ad",
+      "size": 414934
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_https_ota/libesp_https_ota.a",
+      "sha256": "0e737e18fc6370f7d0daa8a14dfbd3205e7611abcf341e671b765879a2f929db",
+      "size": 116432
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_hw_support/libesp_hw_support.a",
+      "sha256": "c28a9c4926e2c8de9d5e8e0ba28c141d3bb36eec7ce77d8640c9cd848906f1b8",
+      "size": 2477674
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_lcd/libesp_lcd.a",
+      "sha256": "c8d32eed59f554b5e08ba869e18e5fa0730e3ff1fb6d71921abe50319833d3e7",
+      "size": 928702
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_mm/libesp_mm.a",
+      "sha256": "7d0dbac57d9d5ee4aa5ac15540d76379a532dd40790f540f2a4f4dcf3a6d191d",
+      "size": 195732
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_netif/libesp_netif.a",
+      "sha256": "eb8905f5362612db37f739532ee5e8fa0c740036d1aa96c736c7dd976b1acb34",
+      "size": 443146
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_partition/libesp_partition.a",
+      "sha256": "6f5b6ff6e14d559ed797e203775188e3c1ab3060686a1068cef08eb82f4ce91c",
+      "size": 107414
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_phy/libesp_phy.a",
+      "sha256": "b8061a5ee1e5b7588be84ef6a89267348909a81f70382355ea6b881d9447f1d4",
+      "size": 153504
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_pm/libesp_pm.a",
+      "sha256": "1ca891fd8db85c20573e010b12cc3b3baf99e309829db7945422a4c83eb0c9d3",
+      "size": 75414
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_psram/libesp_psram.a",
+      "sha256": "7ee5930baf77868bba2c3c7dbb757dec507250aa67d738f49875d4c6e1b0382e",
+      "size": 129780
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_ringbuf/libesp_ringbuf.a",
+      "sha256": "81e8ee65f536c0c9581c67ad57bbf972da14300bd17e55ad6c1d0cb3bfe3c3d3",
+      "size": 146306
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_rom/libesp_rom.a",
+      "sha256": "c8283db29f6f91caa27ffbf12c5e959429656b3ccaad1a15776d3fe22fae2b00",
+      "size": 96610
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_security/libesp_security.a",
+      "sha256": "d5381bf6c3bbdc276035305f4a2fdad70df2a64d187ef85c892dd9a4958b80f8",
+      "size": 138940
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_system/libesp_system.a",
+      "sha256": "bd3b84e9488dc89ed42120884eadaa4c4cb3ac0ca76fe9f369928ee89d079aee",
+      "size": 1226926
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_timer/libesp_timer.a",
+      "sha256": "5e4222aab45b0b303de88ab98db0de7c6272bbf741013f203f81db2067780f0f",
+      "size": 217358
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_vfs_console/libesp_vfs_console.a",
+      "sha256": "132c2b5e02d6acd6ec594601909e2fa6dc80e62cc96333327490eeeaf9f33ae4",
+      "size": 41920
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/esp_wifi/libesp_wifi.a",
+      "sha256": "9ecfdd64d02331b89704ac39297ebb4202b09d3a41cb0275b7f802a10d877200",
+      "size": 335910
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__adc_battery_estimation/libespressif__adc_battery_estimation.a",
+      "sha256": "be00dc70e453d7842e0be41c613a96a68a533872696f3fd37bb7fbf7b45cb7c8",
+      "size": 45914
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__button/libespressif__button.a",
+      "sha256": "7e78a45879214031109d210748a117f3f1f6d2e8f153f0e929970f6367b47d66",
+      "size": 204976
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__dl_fft/libespressif__dl_fft.a",
+      "sha256": "d8b9089a6dce58eb68decdcb47020e41a71175fa72f3515ec5063f28b813ee01",
+      "size": 266100
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp-dsp/libespressif__esp-dsp.a",
+      "sha256": "9068bef27588849f8e4178f4f813f9003a04857fd84bb7108e9007223a126f38",
+      "size": 1922808
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp-sr/libespressif__esp-sr.a",
+      "sha256": "bdd23428ada4bb4c506776fb304b6aa76b58fea1da08d0b7488105e3c21ee3d6",
+      "size": 172580
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp32-camera/libespressif__esp32-camera.a",
+      "sha256": "025b94c25f186f09b500f410ea0be6ed72dd13ca1659f07b87c80eb941ee57ed",
+      "size": 2097278
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp_cam_sensor/libespressif__esp_cam_sensor.a",
+      "sha256": "96625f1dced4126fea48cf5729995cd6c98eb31fb4130f9713eecf0a6d8ad07b",
+      "size": 421972
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp_codec_dev/libespressif__esp_codec_dev.a",
+      "sha256": "4e9407969a1ac5ac1134639267c77fa14cc0504ef20b9755310fe0a42f2461e8",
+      "size": 866020
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp_io_expander/libespressif__esp_io_expander.a",
+      "sha256": "ac06bdc0d7a16ad321a6fb0aa27062b7b3be73ea3871f44f35caa52dfb2d89d3",
+      "size": 143794
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp_lcd_ili9341/libespressif__esp_lcd_ili9341.a",
+      "sha256": "2d40f92cb6a4cee7620b97d5e2e6584320802632d804fa8d0917d6fcf2a2d01c",
+      "size": 62526
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp_lvgl_port/liblvgl_port_lib.a",
+      "sha256": "75050299d9fdcda333577d0ceabdfbd990ffbbf58d5d1e2d8393b8bc4f6ceb04",
+      "size": 239672
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp_sccb_intf/libespressif__esp_sccb_intf.a",
+      "sha256": "b4dc3a8bac80010d41a493c678774247a4105e6be8a2c7337d74cbc54733913e",
+      "size": 110370
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__esp_video/libespressif__esp_video.a",
+      "sha256": "b971005b4418d69859e92761eec3f0bad1b588f31638181fbba5c4925fddfe3d",
+      "size": 556148
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__iot_eth/libespressif__iot_eth.a",
+      "sha256": "5eb56778bafb089957f31ad58093e8b4821027d1fc72edf5122a6f235d06dd0f",
+      "size": 72096
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__iot_usbh_cdc/libespressif__iot_usbh_cdc.a",
+      "sha256": "346e8968b48fe3a1ee8733cd20a773959bbd0896f95e756293661b561c926aa1",
+      "size": 265934
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__iot_usbh_rndis/libespressif__iot_usbh_rndis.a",
+      "sha256": "f339cb95240b6b64277956c6c4afdebaa07e2c4f3507d3f8682238ac35cd7589",
+      "size": 120836
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__knob/libespressif__knob.a",
+      "sha256": "4b01f705d1f8c395ff97b2297db863ea0147022158e1ae12bb9b3f4fcc44b2c7",
+      "size": 77520
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__led_strip/libespressif__led_strip.a",
+      "sha256": "44886548c359e261cd92ed094a1735bb5929d80e7edc16afaef62c20a60d3161",
+      "size": 175272
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/espressif__mdns/libespressif__mdns.a",
+      "sha256": "3d287daf72789226e2df3a5cfd6fc0e3df22f5fa929021d90f101c2b8d1a3555",
+      "size": 1397396
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/freertos/libfreertos.a",
+      "sha256": "c0bbbacaf0e645d7b02d927e94bea3b8a20ea80da0bce292514009ed39fb774d",
+      "size": 971848
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/hal/libhal.a",
+      "sha256": "efcceaf5b5a35df34f8392236424ff1b85086e19b1168938d6a9462bdeee31d3",
+      "size": 2520306
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/heap/libheap.a",
+      "sha256": "bdb77b3c93c7f7919696b95d1f65e5723334ce540909e9ea6e379cb5efb25c03",
+      "size": 573558
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/http_parser/libhttp_parser.a",
+      "sha256": "ed911afa93ca380f44be26b2f028a1d3e38c49dc26d98f745fd9d8d7a1c06068",
+      "size": 154412
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/json/libjson.a",
+      "sha256": "0eed6e6f196b5b7f6a104fac426e21722051b59e4621636f13c3beeb07588784",
+      "size": 347760
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/log/liblog.a",
+      "sha256": "b8bce2796f35a0af165b3a760e4a677970ef497dce6fd8cd8b8bce2ab1cce2af",
+      "size": 155116
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/lvgl__lvgl/liblvgl__lvgl.a",
+      "sha256": "8add8c5a07a321a5295b5ad4ebd0a9f88684871ed047c1c378d2397bc733ca33",
+      "size": 11433684
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/lwip/liblwip.a",
+      "sha256": "874ad5e1bfa9afb63a2c115d278d6a158becf0681720ca70d56835b7089f7b6b",
+      "size": 3049874
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/main/libmain.a",
+      "sha256": "f3b7ac85300a39bd761b9267d87f44650ffe1bb10f1649df9a0f6ad85cfbe6e7",
+      "size": 110294824
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/mbedtls/libmbedtls.a",
+      "sha256": "bff65ba35be16c04eb0cfdda0195e2d23919e8a1b0be8caab9100f7cd4ea7338",
+      "size": 120200
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/mbedtls/mbedtls/library/libmbedcrypto.a",
+      "sha256": "48185061c3c2551694a6362884a678ac2489a9b925a42d982ea8eadcffd29c46",
+      "size": 4542754
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/mbedtls/mbedtls/library/libmbedtls.a",
+      "sha256": "1d826bf74d20517b9fcf3d3ad0e62af27a32e8d6d2cf6ed405d4f17649ef5c3b",
+      "size": 1321698
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/mbedtls/mbedtls/library/libmbedx509.a",
+      "sha256": "47c11d9bc4ea7572c9e8b5400401de9f41d06566c9f64b191a3fc660fabd6844",
+      "size": 672398
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/mooncake/libmooncake.a",
+      "sha256": "dbb4eeacd1b3237236dbd60b58ced79d4fa1069da4331be64f283a3003b4e8b8",
+      "size": 1141006
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/mooncake_log/libmooncake_log.a",
+      "sha256": "4a41074405174ebb44785af35ac8bc41c6b29ce749809e0b4ba10f22633912c5",
+      "size": 2147012
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/mqtt/libmqtt.a",
+      "sha256": "70715afa6c2f417ef0318f0ebd1e2c0a6897621a98ed44097dcfffc5fdff87c4",
+      "size": 362128
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/newlib/libnewlib.a",
+      "sha256": "e92bd8235c408148fa05982384d8d9bef7f6ceb2b68c3065de90b96575d8a104",
+      "size": 712732
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/nvs_flash/libnvs_flash.a",
+      "sha256": "73a5f07f56a640f1711540fe03215e1b5db013fe719d0dbd4d2633f46a5fdad9",
+      "size": 1836156
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/nvs_sec_provider/libnvs_sec_provider.a",
+      "sha256": "235ad676a4b36188d42b6a822ebb0947637bdce3468ae10d47bb6e413fe669bf",
+      "size": 33246
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/pthread/libpthread.a",
+      "sha256": "86b5b518c642f8cb9e308cd53bafcd737118bf4c3201e8d44a9b63004813275e",
+      "size": 221596
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/smooth_ui_toolkit/libsmooth_ui_toolkit.a",
+      "sha256": "2520ba39b979029295407f343de14f325b482f13d891b9794725b732a6868863",
+      "size": 2288350
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/soc/libsoc.a",
+      "sha256": "32e311eb101121e289106cf661f638d9718ade21c16cf2c8e0343fa0b6705f73",
+      "size": 204498
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/spi_flash/libspi_flash.a",
+      "sha256": "85ec47991aa8d1a76a8d46e8b824e00b1716dad126f22dccac79b865c789beb5",
+      "size": 891262
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/spiffs/libspiffs.a",
+      "sha256": "abdfd7f2781a4497265495417a6a8f4784661e7dc4f196707b11e6cb5247d6a7",
+      "size": 689578
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/stackchan_bridge_client/libstackchan_bridge_client.a",
+      "sha256": "9527b798536c0ae7c140ad788c3ef67a025992b92287d0956b32258b622506a6",
+      "size": 8061110
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/tcp_transport/libtcp_transport.a",
+      "sha256": "01a57aaa4c9c2a47d9540be4d14fe9f72e04e0a16e4b4fe7889962e894f9b48c",
+      "size": 345020
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/usb/libusb.a",
+      "sha256": "d8c67ee924046e3280986c62405460f26ad53b70439d2b85e7a2f6a604407c2e",
+      "size": 995968
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/vfs/libvfs.a",
+      "sha256": "7b714a9d9b25f248d22c7b51718ea5f4fe3a6984ffb901ad82263ac367f64125",
+      "size": 431986
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/wpa_supplicant/libwpa_supplicant.a",
+      "sha256": "a38b8ae2804a39c10a448ae30b22365322618c0f5c0a7d4e17946f71a9facf74",
+      "size": 5452692
+    },
+    {
+      "target": "app",
+      "path": "build/esp-idf/xtensa/libxtensa.a",
+      "sha256": "8bc94cbfbf4109f1f4d95bcf89400fc8b483c08dbd9440b11fdc8a85f7252441",
+      "size": 66922
+    },
+    {
+      "target": "bootloader",
+      "path": "toolchain/xtensa-esp-elf/xtensa-esp-elf/lib/esp32s3/libc_nano.a",
+      "sha256": "43c41e34fc14c5f81338996e00ccfdb1d8682b2b3d368ad37c06740beaf56a55",
+      "size": 7381472
+    },
+    {
+      "target": "bootloader",
+      "path": "toolchain/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/esp32s3/libgcc.a",
+      "sha256": "3d9e8f506bf9121ce7b2b2b61bea6f8b4c84da709fd9f9fbcfe7b489f6542a09",
+      "size": 691662
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/bootloader_support/libbootloader_support.a",
+      "sha256": "ba7b71785c910cf9f233608a2bc3a1669415517f361fb99a9706bb709df117d4",
+      "size": 823826
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/efuse/libefuse.a",
+      "sha256": "733010cd02064fbad89ef84c8c440cc7afa1c9af58cb5ae3332fe14520a93f8e",
+      "size": 422928
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/esp_bootloader_format/libesp_bootloader_format.a",
+      "sha256": "abe1e58f9014565c0ef45c5302c719e9e5bb77ffc5df70de72ea0cbdbe500370",
+      "size": 5108
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/esp_hw_support/libesp_hw_support.a",
+      "sha256": "5447e76fc4bdbf9fa30c2f0a7049f7962b52d7d9bfd6ab74eca95251acdccadc",
+      "size": 376382
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/esp_rom/libesp_rom.a",
+      "sha256": "612918e418925fa567cb7bc29ff80a6f3386ad1fd63b21b861f538a9dab13006",
+      "size": 111162
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/hal/libhal.a",
+      "sha256": "d80bff5dd0ece657d77a850ed8120eadb113baae133147b632e75634d860b68f",
+      "size": 228410
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/log/liblog.a",
+      "sha256": "ba2999e94774b8e153ad6f9a1273d19fca26e3897e60ce87e2a74b6b094fff35",
+      "size": 80220
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/main/libmain.a",
+      "sha256": "bdaa7d32e6fda5f7d92dfedb03f38b9d57dee1d87492630f6bb97ca7a8296d5f",
+      "size": 17336
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/soc/libsoc.a",
+      "sha256": "c7256600b135d958fea67a0a3f463131c38f157a8562fc077ffd3b24ca210cde",
+      "size": 205438
+    },
+    {
+      "target": "bootloader",
+      "path": "build/bootloader/esp-idf/spi_flash/libspi_flash.a",
+      "sha256": "fed7f5ba5145b970e9b5e0df55b6a3610a132fc68976c169275e855b29af13f9",
+      "size": 25366
+    }
+  ],
+  "hardware_tested": false,
+  "checked_on": "2026-09-07"
+}

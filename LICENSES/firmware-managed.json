@@ -1,0 +1,2757 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-09-07",
+  "lock_sha256": "676b3fdbf3cbcf0e600b34422e79e64a9bb2d4b29fa56da431829a37fe06bb87",
+  "scope": "All 60 locked managed components, cached source contents validated with idf-component-manager 2.5.0. Does not establish which files a final firmware links.",
+  "components": [
+    {
+      "name": "78/esp-ml307",
+      "version": "3.6.5",
+      "component_hash": "5231991281a2f48f0e34ec705c2982936264d8b14f6f9373e60b153fd4b62123",
+      "source": "https://components.espressif.com/components/78/esp-ml307/versions/3.6.5/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ],
+      "declaration": "Apache-2.0",
+      "repository": "git://github.com/78/esp-ml307.git",
+      "source_identifiers": {},
+      "native_files": []
+    },
+    {
+      "name": "78/esp-wifi-connect",
+      "version": "3.1.2",
+      "component_hash": "e64ce09a795dd3b4883e1f68be10b0dd11260331f021a5f0b1f3bfd9a25d413b",
+      "source": "https://components.espressif.com/components/78/esp-wifi-connect/versions/3.1.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE (upstream clarification)",
+          "text": "LICENSES/texts/35a84cad890590c2aa8421fa48db5d2fb7e5fc938f8f31ca00dc349eb5a3d5b7.txt",
+          "sha256": "35a84cad890590c2aa8421fa48db5d2fb7e5fc938f8f31ca00dc349eb5a3d5b7",
+          "source": "https://raw.githubusercontent.com/78/esp-wifi-connect/347682fa013b52f863052ad4b1a793ca3cabff17/LICENSE"
+        },
+        {
+          "original_path": "idf_component.yml (original license declaration)",
+          "text": "LICENSES/texts/3ec79a569fc080a1333b8587439c62dd2ba714f5244d6a13ebdffc0cd0949a80.txt",
+          "sha256": "3ec79a569fc080a1333b8587439c62dd2ba714f5244d6a13ebdffc0cd0949a80",
+          "source": "https://components.espressif.com/components/78/esp-wifi-connect/versions/3.1.2/readme"
+        }
+      ],
+      "declaration": "MIT",
+      "repository": "git://github.com/78/esp-wifi-connect.git",
+      "source_identifiers": {},
+      "native_files": [],
+      "review_status": "MIT declaration at pinned version; upstream subsequently supplied MIT text and Copyright (c) 2024 Terrence; retained as clarification without upgrading code"
+    },
+    {
+      "name": "78/esp_lcd_nv3023",
+      "version": "1.0.0",
+      "component_hash": "fa88abfc19a312eb5e6f2ffa187e0a9faf67e01e758bfb979d3f9d92561a494f",
+      "source": "https://components.espressif.com/components/78/esp_lcd_nv3023/versions/1.0.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/MakerM0/esp_lcd_nv3023.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_nv3023.c",
+            "include/esp_lcd_nv3023.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "78/uart-eth-modem",
+      "version": "0.3.4",
+      "component_hash": "7a33284e4ba22f420191be8021cd4fe3e49f5e50eea1db70370b217a18147d8e",
+      "source": "https://components.espressif.com/components/78/uart-eth-modem/versions/0.3.4/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ],
+      "declaration": "Apache-2.0",
+      "repository": "https://github.com/78/uart-eth-modem",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "include/uart_eth_modem.h",
+            "src/uart_eth_modem.cc"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "78/uart-uhci",
+      "version": "0.2.1",
+      "component_hash": "200eb10923cb750dddbee5504a36d7b5eaac611afbf52fb9066dc7130159f696",
+      "source": "https://components.espressif.com/components/78/uart-uhci/versions/0.2.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "Apache-2.0 standard text supplied for the declared license",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "source": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        },
+        {
+          "original_path": "idf_component.yml (original license declaration)",
+          "text": "LICENSES/texts/bdd38b3d45902afb5fe9bfbd6841b01208b4ef2a3cdb82db91b9f513632993c9.txt",
+          "sha256": "bdd38b3d45902afb5fe9bfbd6841b01208b4ef2a3cdb82db91b9f513632993c9",
+          "source": "https://components.espressif.com/components/78/uart-uhci/versions/0.2.1/readme"
+        }
+      ],
+      "declaration": "Apache-2.0",
+      "repository": "https://github.com/78/uart-uhci",
+      "source_identifiers": {},
+      "native_files": [],
+      "review_status": "Apache-2.0 confirmed in pinned manifest, README and registry; full standard text supplied; package has no separate NOTICE or copyright notice to retain"
+    },
+    {
+      "name": "78/xiaozhi-fonts",
+      "version": "1.6.0",
+      "component_hash": "19ee829a7439702e18084a313b7b86017d3b8d17a094684575edc76bb6d11023",
+      "source": "https://components.espressif.com/components/78/xiaozhi-fonts/versions/1.6.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "MIT standard permission and disclaimer supplied for the declared license",
+          "text": "LICENSES/texts/508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1.txt",
+          "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
+          "source": "https://opensource.org/license/mit"
+        },
+        {
+          "original_path": "idf_component.yml (original license declaration)",
+          "text": "LICENSES/texts/f1de9a05df382d532b2f419b4928c569c696f68566a91cae0b43d62bc6efbe4f.txt",
+          "sha256": "f1de9a05df382d532b2f419b4928c569c696f68566a91cae0b43d62bc6efbe4f",
+          "source": "https://components.espressif.com/components/78/xiaozhi-fonts/versions/1.6.0/readme"
+        }
+      ],
+      "declaration": "MIT",
+      "repository": "https://github.com/78/xiaozhi-fonts",
+      "source_identifiers": {},
+      "native_files": [],
+      "review_status": "MIT runtime helpers: pinned manifest and registry declaration retained with standard MIT text; no copyright holder or year fabricated. Glyph data replaced; Twemoji kept under CC-BY-4.0.",
+      "release_excluded_assets": [
+        "src/font_awesome_*",
+        "src/font_puhui_*",
+        "src/font_noto_*",
+        "cbin/*",
+        "ttf/*",
+        "gif/*"
+      ]
+    },
+    {
+      "name": "espressif/adc_battery_estimation",
+      "version": "0.2.1",
+      "component_hash": "b915167c87ed5a84b13d680bd011c2ed9a15121f1e247c6903141b9f138f3606",
+      "source": "https://components.espressif.com/components/espressif/adc_battery_estimation/versions/0.2.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "adc_battery_estimation.c",
+            "include/adc_battery_estimation.h",
+            "test_apps/main/adc_battery_estimation_test.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/adc_mic",
+      "version": "0.2.2",
+      "component_hash": "3bb576d530564cb8e805fc34309d485de393f634651f3d31579fe3037b581d4f",
+      "source": "https://components.espressif.com/components/espressif/adc_mic/versions/0.2.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 4,
+          "examples": [
+            "adc_mic.c",
+            "adc_mic.h",
+            "test_apps/main/adc_mic_test.c",
+            "test_apps/main/adc_mic_test_main.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/bmi270_sensor",
+      "version": "0.1.1",
+      "component_hash": "fac23a5ecd2effdac0fb0705988d853745b8ffb99a384f87a307b3b25d15d432",
+      "source": "https://components.espressif.com/components/espressif/bmi270_sensor/versions/0.1.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "BSD_LICENSE",
+          "text": "LICENSES/texts/98da67cd4ecd115148ad01aacbf58c954e80f94a38776f745376ec404793a7e4.txt",
+          "sha256": "98da67cd4ecd115148ad01aacbf58c954e80f94a38776f745376ec404793a7e4"
+        },
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "https://github.com/espressif/esp-iot-solution/",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 11,
+          "examples": [
+            "examples/any_motion/main/any_motion_main.c",
+            "examples/circle_gesture/main/circle_gesture_main.c",
+            "examples/multi_tap/main/multi_tap_main.c",
+            "examples/push_in_air/main/push_in_air_main.c",
+            "examples/push_on_table/main/push_on_table_main.c",
+            "examples/rolling/main/rolling_main.c",
+            "examples/rotation/main/rotation_main.c",
+            "examples/shake/main/shake_main.c"
+          ]
+        }
+      },
+      "native_files": [
+        {
+          "path": "5.3/esp32/libbmi270_sensor.a",
+          "sha256": "fd7cb505e5a2eb6a9961ddb22ac7087ba81b579bc3de8ab2b7f3b727b4c1a29a"
+        },
+        {
+          "path": "5.3/esp32c2/libbmi270_sensor.a",
+          "sha256": "056591125d6c77d6a5245311c806d0048e578bdd8f4c0203a257e2c6a01db194"
+        },
+        {
+          "path": "5.3/esp32c3/libbmi270_sensor.a",
+          "sha256": "cc975c47c65879d855eb1611f699d3186521806b9541a473c742da6607491bd9"
+        },
+        {
+          "path": "5.3/esp32c6/libbmi270_sensor.a",
+          "sha256": "72bfc6b6e7dd710aa803cd1a6ece7b0e1008b1ea3c225a493b75d61acfab1395"
+        },
+        {
+          "path": "5.3/esp32h2/libbmi270_sensor.a",
+          "sha256": "b4389910120c5fa0317f831350976374a8ac6819868fd846029b059cc78d8b6a"
+        },
+        {
+          "path": "5.3/esp32p4/libbmi270_sensor.a",
+          "sha256": "c53cf454f42a87812d76d91fab581201edb0159b5d2150d39f4382ddbe8ad275"
+        },
+        {
+          "path": "5.3/esp32s2/libbmi270_sensor.a",
+          "sha256": "b7c506448e6b87aa6099388bf4fcf3026ca2422bc886841023d6937f5e92f259"
+        },
+        {
+          "path": "5.3/esp32s3/libbmi270_sensor.a",
+          "sha256": "7408d93ef0d7f0e1b5e58bbe46cc568dc511d70ce5cd6dac808c2f2ef96b9a7d"
+        },
+        {
+          "path": "5.4/esp32/libbmi270_sensor.a",
+          "sha256": "c070fa999a88e1dc73e83fd1a8f3200ad2331d38a430ff0666978daaa90caa22"
+        },
+        {
+          "path": "5.4/esp32c2/libbmi270_sensor.a",
+          "sha256": "949a07d4c85c5736b7c2c629f82ee0cbd8ee9e8bd2ce8b10a57417ed1567cca7"
+        },
+        {
+          "path": "5.4/esp32c3/libbmi270_sensor.a",
+          "sha256": "e5e50637257bd1fcd4b42d19cdbd413a9547304a0c7c076810fd002888fd8a1d"
+        },
+        {
+          "path": "5.4/esp32c5/libbmi270_sensor.a",
+          "sha256": "8aeec9c23eb63a3c88cd14092ca9519ca8227796d7faf6f723787e34cfc4bd6f"
+        },
+        {
+          "path": "5.4/esp32c6/libbmi270_sensor.a",
+          "sha256": "e4faf04f19ec9718f6385cb87775b822f48a4d5a635fc72ab2dd968ec642c861"
+        },
+        {
+          "path": "5.4/esp32h2/libbmi270_sensor.a",
+          "sha256": "fc4f7eb55e9b5004b8947a0c37a70d2a2502e1a3cdd5ee9e76a9e514c1c34004"
+        },
+        {
+          "path": "5.4/esp32p4/libbmi270_sensor.a",
+          "sha256": "ad24c9f95ec85ff546fa5daddf4aa4e6dfa140cd2cf96f7f02b13db612cf2441"
+        },
+        {
+          "path": "5.4/esp32s2/libbmi270_sensor.a",
+          "sha256": "9d6b7dac6b816d0c0b0d0f9f81e9133889377782035b00e80e6edf43370ee711"
+        },
+        {
+          "path": "5.4/esp32s3/libbmi270_sensor.a",
+          "sha256": "0ecb46562de413faec3fddb2b0be5c2429dcd59b9da166821a397c6456b4ecdb"
+        },
+        {
+          "path": "5.5/esp32/libbmi270_sensor.a",
+          "sha256": "ca42ec490902f379c0ac59c90ffc023b4b091318e9b2670b51b6bb7c008039cd"
+        },
+        {
+          "path": "5.5/esp32c2/libbmi270_sensor.a",
+          "sha256": "27d82fe714c396e1c31223fc38a0cdc98aa59c7ede1e5a89fa581e10d42b2de0"
+        },
+        {
+          "path": "5.5/esp32c3/libbmi270_sensor.a",
+          "sha256": "ddab02713cd719e2f5f8b3c70f8fec512bb797bbc98970b41b062b17cf818861"
+        },
+        {
+          "path": "5.5/esp32c5/libbmi270_sensor.a",
+          "sha256": "1531d00ef926e056f6d3a166dac6903584e7965e2a968fccd64f3b40c41ff499"
+        },
+        {
+          "path": "5.5/esp32c6/libbmi270_sensor.a",
+          "sha256": "cfc43176b13861ad2cbb465f95153b07c7d864a331a7855a76a5f70b6280dce0"
+        },
+        {
+          "path": "5.5/esp32c61/libbmi270_sensor.a",
+          "sha256": "ebb75ce35d12883e1d1230c23e90f70bb00f342d9d518042551bc85a8ce2ab56"
+        },
+        {
+          "path": "5.5/esp32h2/libbmi270_sensor.a",
+          "sha256": "be057ebb0355d0abb1fe518db9b665da2c982c5f187d24287b40047349143639"
+        },
+        {
+          "path": "5.5/esp32p4/libbmi270_sensor.a",
+          "sha256": "2da1d9309ad286ad333ef105f9488519d8ac785122d08c05d4e9e7013ac3bb0e"
+        },
+        {
+          "path": "5.5/esp32s2/libbmi270_sensor.a",
+          "sha256": "66d3c22c8a5d251b6dba37806c5b06567db88433a4dd50c7cfaea5fe7079cd38"
+        },
+        {
+          "path": "5.5/esp32s3/libbmi270_sensor.a",
+          "sha256": "0c5b44ea3dc254c61b797f8a1a1188f62e080924d3dbcf1aaecc7af5bcd82bb5"
+        }
+      ]
+    },
+    {
+      "name": "espressif/button",
+      "version": "4.1.6",
+      "component_hash": "d0afa32f0e50d60bc0c6fc23f7eea98adc6b02cfe70b590bc52c23c506745287",
+      "source": "https://components.espressif.com/components/espressif/button/versions/4.1.6/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 16,
+          "examples": [
+            "button_adc.c",
+            "button_gpio.c",
+            "button_matrix.c",
+            "include/button_adc.h",
+            "include/button_gpio.h",
+            "include/button_matrix.h",
+            "include/button_types.h",
+            "include/iot_button.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/cmake_utilities",
+      "version": "0.5.3",
+      "component_hash": "351350613ceafba240b761b4ea991e0f231ac7a9f59a9ee901f751bddc0bb18f",
+      "source": "https://components.espressif.com/components/espressif/cmake_utilities/versions/0.5.3/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "https://github.com/espressif/esp-iot-solution/tree/master/tools/cmake_utilities",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 1,
+          "examples": [
+            "test_apps/main/test_cmake_utilities.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/dl_fft",
+      "version": "0.3.1",
+      "component_hash": "7dadbd644c0d7ba4733cc3726ec4cff6edf27b043725e1115861dec1609a3d28",
+      "source": "https://components.espressif.com/components/espressif/dl_fft/versions/0.3.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "repository_info.commit_sha/LICENSE",
+          "text": "LICENSES/texts/3513f1605ebcc227f7364956f6c30a303412597e232648cb3090e76697ca5aa3.txt",
+          "sha256": "3513f1605ebcc227f7364956f6c30a303412597e232648cb3090e76697ca5aa3",
+          "source": "https://raw.githubusercontent.com/espressif/esp-dl/48f53066553a3483d6c710998609aedff0ea20bc/LICENSE"
+        },
+        {
+          "original_path": "Apache-2.0 standard text for SPDX-marked source files",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "source": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        },
+        {
+          "original_path": "idf_component.yml (original license declaration)",
+          "text": "LICENSES/texts/2fa5bee9d2ede17e4724582ce74e654c2082416b060b7caf0f7d97df0eb0a596.txt",
+          "sha256": "2fa5bee9d2ede17e4724582ce74e654c2082416b060b7caf0f7d97df0eb0a596",
+          "source": "https://components.espressif.com/components/espressif/dl_fft/versions/0.3.1/readme"
+        }
+      ],
+      "declaration": "MIT",
+      "repository": "git://github.com/espressif/esp-dl.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 4,
+          "examples": [
+            "base/isa/esp32/dl_fft2r_fc32_ae32.S",
+            "base/isa/esp32/dl_fft4r_fc32_ae32.S",
+            "base/isa/esp32s3/dl_fft2r_fc32_aes3.S",
+            "base/isa/esp32s3/dl_fft4r_fc32_aes3.S"
+          ]
+        }
+      },
+      "native_files": [],
+      "notice_evidence": "LICENSE from the manifest-pinned upstream repository commit; absent from component archive",
+      "review_status": "MIT manifest and repository LICENSE; source headers also contain Apache-2.0; retain both applicable notices"
+    },
+    {
+      "name": "espressif/esp-dsp",
+      "version": "1.7.0",
+      "component_hash": "42dce32d46ac93dc11f60d368e29a830e9661c7345d794b8a45c343479cae636",
+      "source": "https://components.espressif.com/components/espressif/esp-dsp/versions/1.7.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-dsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 116,
+          "examples": [
+            "applications/azure_board_apps/apps/3d_graphics/main/3d_graphics_demo.cpp",
+            "applications/azure_board_apps/apps/kalman_filter/main/kalman_filter_demo.cpp",
+            "applications/azure_board_apps/graphics/3d_matrix/3d_matrix_data/cube_matrix.h",
+            "applications/azure_board_apps/graphics/3d_matrix/3d_matrix_data/esp_logo.c",
+            "applications/azure_board_apps/graphics/3d_matrix/3d_matrix_data/esp_logo.h",
+            "applications/azure_board_apps/graphics/3d_matrix/3d_matrix_data/esp_text.c",
+            "applications/azure_board_apps/graphics/3d_matrix/3d_matrix_src/graphics_support.cpp",
+            "applications/azure_board_apps/graphics/3d_matrix/3d_matrix_src/graphics_support.h"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 5,
+          "examples": [
+            "applications/lyrat_board_app/main/audio_amp_main.c",
+            "applications/spectrum_box_lite/main/main.c",
+            "external_examples/1fa4e38f/lyrat_board_app/main/audio_amp_main.c",
+            "external_examples/b00f000e/applications/lyrat_board_app/main/audio_amp_main.c",
+            "external_examples/b00f000e/applications/spectrum_box_lite/main/main.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp-sr",
+      "version": "2.3.1",
+      "component_hash": "46b1f70f8b561714b958d1c455213cca07162755d1b8df53498081199f15136f",
+      "source": "https://components.espressif.com/components/espressif/esp-sr/versions/2.3.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/7d916fb00bc0742c47cafb0d0144b67f826d76779730b1cb8796045ea6ba1b9a.txt",
+          "sha256": "7d916fb00bc0742c47cafb0d0144b67f826d76779730b1cb8796045ea6ba1b9a"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-sr.git",
+      "source_identifiers": {},
+      "native_files": [
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32/libesp_tts_chinese.a",
+          "sha256": "a11f2a1167bce7fed61c581b19bb7d05ff7eb3bc8260e28f49b1229b7881b5f0"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32/libvoice_set_xiaole.a",
+          "sha256": "dd85b655a6679d65c6ab12a5e65063fbaa30218021d7ada6858f77d699701164"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32c3/libesp_tts_chinese.a",
+          "sha256": "5a1125b4739162e454fbbe4321fab944d5339ffd92f79401ff5542cc8c0038ea"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32c3/libvoice_set_xiaole.a",
+          "sha256": "a841cd613cd4a81e9c45718679ebb3899778bec7fe75107de28914dedf530816"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32c5/libesp_tts_chinese.a",
+          "sha256": "371e0b0f7b88601b6b8183b5dd396db1cffb7fcd586516c84d9bae44798f1bca"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32c5/libvoice_set_xiaole.a",
+          "sha256": "f2da8e08799f146045bc1cfda861c3fdb6f941d457afe633278669bdffc8d72d"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32c6/libesp_tts_chinese.a",
+          "sha256": "9731b8bcd7a52a19d3f321077c952b16b0a9f81ac0d82523f369f5ac6c16ba99"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32c6/libvoice_set_xiaole.a",
+          "sha256": "d633ebdee1dee3fe8828c04f595850fc18445e8463ba64fdbed21391b048f6ed"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32p4/libesp_tts_chinese.a",
+          "sha256": "ec8a5137aebf70b6af63750ca70b16b7b46d26e37c357157d689b2b2cfca84de"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32p4/libvoice_set_xiaole.a",
+          "sha256": "46e1b3a881ee2e8c2d453b0451991b1f2a8b0d9d79cb1fd6a05b148ece1150ca"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32s2/libesp_tts_chinese.a",
+          "sha256": "594e31cf9c3e7b7fc94bf2a081d8bcbea38d4150e328461dfdaf6f38a3be1119"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32s2/libvoice_set_xiaole.a",
+          "sha256": "84b537cfe25bff519c0ac001a0ce1b5a8aefadd7ae3d4dff45edeef862f41d86"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32s3/libesp_tts_chinese.a",
+          "sha256": "7034c1075a464ae355eb4452d267e27831ecb519bf4629b85464be03796819f3"
+        },
+        {
+          "path": "esp-tts/esp_tts_chinese/esp32s3/libvoice_set_xiaole.a",
+          "sha256": "3cf241ca026f7497fec3ea961e83a7e7ccdfc7fa5440811be5e71ebc964fb08e"
+        },
+        {
+          "path": "lib/esp32/libc_speech_features.a",
+          "sha256": "ce02b793725fc7a89c8ea936b38c5816e64517932f25fcf7eca068ec2c9a4754"
+        },
+        {
+          "path": "lib/esp32/libcustomized_word_wn5.a",
+          "sha256": "c08ddfcf9d09204a7fdcba2fc62c6189bf512abe5180242330fd364e4358a1b0"
+        },
+        {
+          "path": "lib/esp32/libdl_lib.a",
+          "sha256": "79e215a685e11e0690247dd460f37563e837a534d9660810d4ac64d96e3e53d6"
+        },
+        {
+          "path": "lib/esp32/libesp_audio_front_end.a",
+          "sha256": "1dc444954dd1726ee68e9631deeda88dd79dfd0a41886baf6a8c77e33d786b22"
+        },
+        {
+          "path": "lib/esp32/libesp_audio_processor.a",
+          "sha256": "fdfcd64bc1499fbbc3f610ed2a0ee002dbb492aa7099d4134172ee9c33919996"
+        },
+        {
+          "path": "lib/esp32/libflite_g2p.a",
+          "sha256": "a2767d7857371cf6878ddf4c296c8779227de964e3f21630269ada5f400d89a5"
+        },
+        {
+          "path": "lib/esp32/libfst.a",
+          "sha256": "e32a7e94ca20ef9b606a84457bb6c80de36d6124b46d74c78298ce8fa133e7bb"
+        },
+        {
+          "path": "lib/esp32/libhilexin_wn5.a",
+          "sha256": "c994b6c88114ea0e758a32d8e1c001d0b0432a71832151bde248239aa946c3cb"
+        },
+        {
+          "path": "lib/esp32/libhilexin_wn5X2.a",
+          "sha256": "72563512617d617edb25e575e4a84d941ea70ee26253dd3b6d7212a5c020f164"
+        },
+        {
+          "path": "lib/esp32/libhilexin_wn5X3.a",
+          "sha256": "761241f41381a731a160df597529f2f54def76b17d570f4dea7981f8a377e57f"
+        },
+        {
+          "path": "lib/esp32/libhufzip.a",
+          "sha256": "685dc4ebfbe2f7926e19b6a48709e041d3fb9347f0623f9779454093fa8c26fa"
+        },
+        {
+          "path": "lib/esp32/libmultinet.a",
+          "sha256": "532ee0e3e1c789da0db5b0deda4150067be30188533c88549d5cb25eb92cce43"
+        },
+        {
+          "path": "lib/esp32/libmultinet2_ch.a",
+          "sha256": "05658f5b84333af7a507c1bfab7946f59933db4f50f7554364783e0b925a0479"
+        },
+        {
+          "path": "lib/esp32/libnihaoxiaoxin_wn5X3.a",
+          "sha256": "244e682cd4377a3795e291b4ad6af175f248d8673861b61b3219fa8887733a7c"
+        },
+        {
+          "path": "lib/esp32/libnihaoxiaozhi_wn5.a",
+          "sha256": "88e9fe3a7aacd7aac1b0dc45721342781a39a60541a5cc856c29932fc15c7b81"
+        },
+        {
+          "path": "lib/esp32/libnihaoxiaozhi_wn5X2.a",
+          "sha256": "c469112ffa834b25b160aebc1dbf15382f246501c600f0f3ad3fb2448633bcbe"
+        },
+        {
+          "path": "lib/esp32/libnihaoxiaozhi_wn5X3.a",
+          "sha256": "6ee732a486e4c234aa4381821f8c54dc08ca379ef97b39e5329e2a3629ace111"
+        },
+        {
+          "path": "lib/esp32/libnsnet.a",
+          "sha256": "140cd700e73f81606f110f0c5b447b6ef2739f9d97196ee7341246f5d5da82ba"
+        },
+        {
+          "path": "lib/esp32/libvadnet.a",
+          "sha256": "69c613be737c86fa35d16f1015d67d393474c2d91fc56036cb8f14e95d4ea427"
+        },
+        {
+          "path": "lib/esp32/libwakenet.a",
+          "sha256": "2565401f1dfd415bed16456850eb038db6c0a46bb39c1feb417bacd555f942bb"
+        },
+        {
+          "path": "lib/esp32/libwakeword_model.a",
+          "sha256": "10dd643ec39eae03458d3781fd1081a3d5d6286c7de120eb3c791c66a6d4f120"
+        },
+        {
+          "path": "lib/esp32c3/libc_speech_features.a",
+          "sha256": "bf701060323f601c85bfaf58b47a3d2d0676ee4f408e8c521ca52b75d938911b"
+        },
+        {
+          "path": "lib/esp32c3/libdl_lib.a",
+          "sha256": "fae525f9c4aa69eb5a70033e8bbcdcb61d1821cb0f81fc76229aad8d7aa660e7"
+        },
+        {
+          "path": "lib/esp32c3/libesp_audio_front_end.a",
+          "sha256": "58d38bd01ade048333770812fcc4c9d38239383c28ec1869afe426dd51220971"
+        },
+        {
+          "path": "lib/esp32c3/libesp_audio_processor.a",
+          "sha256": "d99894c42911d7e34c34a780b5a352f1fb11214644f6223fb74d61f99cb345e8"
+        },
+        {
+          "path": "lib/esp32c3/libflite_g2p.a",
+          "sha256": "c9041e4fd789458ca623fd6a950e593191c1f6130d19f8f5aec0639b5e8eb7c2"
+        },
+        {
+          "path": "lib/esp32c3/libfst.a",
+          "sha256": "09a320424b27823dc5ef8b0279cb0c501e2295728354a4f55824925f7653325b"
+        },
+        {
+          "path": "lib/esp32c3/libhufzip.a",
+          "sha256": "c2ded99e9122934d5027d6c5db4f067f95c46095adb5345c3ac484d9330d467b"
+        },
+        {
+          "path": "lib/esp32c3/libmultinet.a",
+          "sha256": "855340e20a07daee52a4d31db72751094e6e1a637626a8f7283b5b4dda726b37"
+        },
+        {
+          "path": "lib/esp32c3/libnsnet.a",
+          "sha256": "75382399535c84614cb6022eb8c87ca5c82105ddaa60e52d4e2ca573fa80bca7"
+        },
+        {
+          "path": "lib/esp32c3/libvadnet.a",
+          "sha256": "ddf23daa6c913ff816b69ad28877d34a41b384b44df11b230cd974eeaeee6bf1"
+        },
+        {
+          "path": "lib/esp32c3/libwakenet.a",
+          "sha256": "bbc31361a1c6004dee3220157b8d10084a7aff394628cc17074eb1008a92d6ef"
+        },
+        {
+          "path": "lib/esp32c5/libc_speech_features.a",
+          "sha256": "8f66f5167d0726d8b4bcdec9fdd750f167a4beb9d490ff743358890b6938686d"
+        },
+        {
+          "path": "lib/esp32c5/libdl_lib.a",
+          "sha256": "13d827f5d666c134badc5eb4aef877047d309c88b266eb125431fd11b13613d4"
+        },
+        {
+          "path": "lib/esp32c5/libesp_audio_front_end.a",
+          "sha256": "fda8bdd0b62171794245249a503c5e2e28eb10af3ba7c1d1efe3b3d709e3aff3"
+        },
+        {
+          "path": "lib/esp32c5/libesp_audio_processor.a",
+          "sha256": "6384b5792d2f8de44fc2f2836f37fd3a3c0ac4ecacf528d833c63c813318957c"
+        },
+        {
+          "path": "lib/esp32c5/libflite_g2p.a",
+          "sha256": "32ece0bb16289c8af28ef7955f59d623cd307c7e107de29426805f18f2c70d30"
+        },
+        {
+          "path": "lib/esp32c5/libfst.a",
+          "sha256": "25dbe3cee068efdc14897a9f048180fe0460eac91ec7e651ccc0526aad41263b"
+        },
+        {
+          "path": "lib/esp32c5/libhufzip.a",
+          "sha256": "dc159722ea7f2a004ced2e6147a1a0ecc544569d0c240e3d86f72b89a6cbe466"
+        },
+        {
+          "path": "lib/esp32c5/libmultinet.a",
+          "sha256": "677f965f312efdcde9b8565a66668b3fbd2b59acbd59300cbaba24d32a6b1fe7"
+        },
+        {
+          "path": "lib/esp32c5/libnsnet.a",
+          "sha256": "b606ae76132cc7dbc892dc7d9c95f3d0df713e367abe4d7f510a7745492e7245"
+        },
+        {
+          "path": "lib/esp32c5/libvadnet.a",
+          "sha256": "42a1d593c61b0552aa79cc5a74b246371b2ad3ae6b73e3ac8bbfadbd9f2ac2df"
+        },
+        {
+          "path": "lib/esp32c5/libwakenet.a",
+          "sha256": "08eca0e5b93e0fd0ec5b06eea3ab6ec46ddf1ac41f090b1014001d57e6f7ab0e"
+        },
+        {
+          "path": "lib/esp32c6/libc_speech_features.a",
+          "sha256": "b82a56549519479b2fd14f41405a0b16b7c516f4c712400b520fa5761ab99c63"
+        },
+        {
+          "path": "lib/esp32c6/libdl_lib.a",
+          "sha256": "560441cc7b87b4b6486c354bcf49c259785e319860740efc4bacae8312ef5249"
+        },
+        {
+          "path": "lib/esp32c6/libesp_audio_front_end.a",
+          "sha256": "b97740b763ab2ce87d898009e7ba96a83d0318e345a7d65a21489b3764326bbf"
+        },
+        {
+          "path": "lib/esp32c6/libesp_audio_processor.a",
+          "sha256": "920f8620771fa37a3a1cd7d94d10ee54459d561d2fac8c2216401880a5438030"
+        },
+        {
+          "path": "lib/esp32c6/libflite_g2p.a",
+          "sha256": "32ece0bb16289c8af28ef7955f59d623cd307c7e107de29426805f18f2c70d30"
+        },
+        {
+          "path": "lib/esp32c6/libfst.a",
+          "sha256": "67d1b1abc8f2ecc1f98e1cbf83fa8b22fde047d2c9329f47bf9621c3d440b41f"
+        },
+        {
+          "path": "lib/esp32c6/libhufzip.a",
+          "sha256": "8b4f10beed7b80a555efa0f9ee7aa52c2317678f1584f20baa55afa375b31ec0"
+        },
+        {
+          "path": "lib/esp32c6/libmultinet.a",
+          "sha256": "62a495c8600806447f933001188efd93466165c2c9bfc7ff13dd0e00a3b3ec6e"
+        },
+        {
+          "path": "lib/esp32c6/libnsnet.a",
+          "sha256": "b606ae76132cc7dbc892dc7d9c95f3d0df713e367abe4d7f510a7745492e7245"
+        },
+        {
+          "path": "lib/esp32c6/libvadnet.a",
+          "sha256": "31280a1f032b595fe4bb1ac93c788e139c4011c8817111a7fc733c36315ae682"
+        },
+        {
+          "path": "lib/esp32c6/libwakenet.a",
+          "sha256": "650288b147e51543b4cfb8da1999029115a0ca3d2b190243255e6f73e999b05d"
+        },
+        {
+          "path": "lib/esp32p4/libc_speech_features.a",
+          "sha256": "c748d24b83c0450ec592c1eabaa5229f0e02836ed8f2dc18567c40166c1cc934"
+        },
+        {
+          "path": "lib/esp32p4/libdl_lib.a",
+          "sha256": "7b57fcabbe74b788ce095ecca846d23666cf2e5fb72dc347ebf4d134ac344f78"
+        },
+        {
+          "path": "lib/esp32p4/libesp_audio_front_end.a",
+          "sha256": "120744adf69c453002e86bba9bf066be57dac81aa2b045c19ef6872b87bd37b2"
+        },
+        {
+          "path": "lib/esp32p4/libesp_audio_processor.a",
+          "sha256": "d0659e11d05916ea93e71603a0649ecb3a12ea6cae3bc5dfd3a4a0f74dd7bef0"
+        },
+        {
+          "path": "lib/esp32p4/libflite_g2p.a",
+          "sha256": "4bf923e37c13a2fdd7c0f83daf8ec86351eb4d47141fe011bb1af2eb4e2f2f02"
+        },
+        {
+          "path": "lib/esp32p4/libfst.a",
+          "sha256": "2c6bb6557e1af35e106ed600387738cf13e5ded8c69dece7efd789dc2a980b89"
+        },
+        {
+          "path": "lib/esp32p4/libhufzip.a",
+          "sha256": "338bf53bfa5acb7ce778ea0d78e225a770c5d542cecaf3ba82eb6518c65dc555"
+        },
+        {
+          "path": "lib/esp32p4/libmultinet.a",
+          "sha256": "1852f961440f83739956f6039c9bca43344bef0ffed058c6680fe3c8f3d785a1"
+        },
+        {
+          "path": "lib/esp32p4/libnsnet.a",
+          "sha256": "a10b71b2921bd4a40a3175df1114ffd0fff3a7e7ca5f0b1c660a32188e7a60cd"
+        },
+        {
+          "path": "lib/esp32p4/libvadnet.a",
+          "sha256": "2ac9a2a66dd2a9e9083275a123e20ebdc07b7b4168c3798586b0bfa929d508ed"
+        },
+        {
+          "path": "lib/esp32p4/libwakenet.a",
+          "sha256": "01b0fedba57c866ab8acb30764e0ddc099345f5afd02a390e104b6b13de8ab35"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libc_speech_features.a",
+          "sha256": "6fff57e87a13fbd95c27b65137e21711d2e397edbab3bd79e34e5155f23d7585"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libdl_lib.a",
+          "sha256": "ad87de22642bde6f66862d45e3ef43eda665b97e359d01479ed1f2a44fc74359"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libesp_audio_front_end.a",
+          "sha256": "85a8629418e0511ec9ea6e3fe2adc212ba1883609e5a80cae65e55f24bd28044"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libesp_audio_processor.a",
+          "sha256": "82c4d8557d72340691601f17c40a362acc7918979b5de0d34193866184e7ff1b"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libflite_g2p.a",
+          "sha256": "175b2944abc6d597657872d09bb5a17b9a1c3320e0d9632cf3d881bae21ae54d"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libfst.a",
+          "sha256": "c30bfb6c290f03ebe904604e44421c79cc24b9f07fa1f58a46ba605ef5cf9aeb"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libhufzip.a",
+          "sha256": "827e073441e3bdea1e1785c10046740a59f6732709af89f1ea5ec488e20f31c7"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libmultinet.a",
+          "sha256": "b375bbab4ec5036129ec02fc420620bb7fb3c475a741a24e296b2bb86da22cbf"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libnsnet.a",
+          "sha256": "5ae48764f57e6c888064a97d1276629d18c0c4d4c2d6ac613d131e985c5e3b8d"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libvadnet.a",
+          "sha256": "b74c749c912c5fee98bef647a5d1de1ea731f22848e1bb51e1c6e6c6c23e7154"
+        },
+        {
+          "path": "lib/esp32p4_eco5/libwakenet.a",
+          "sha256": "35086e2aece31bd10b33d1d53dee082ba6af6ac279c0d106462b02f4d08b56f4"
+        },
+        {
+          "path": "lib/esp32s2/libc_speech_features.a",
+          "sha256": "68d85bd9a3f929567768342e3100a85f799a2c390cfc856d26dc9d607c996b3e"
+        },
+        {
+          "path": "lib/esp32s2/libdl_lib.a",
+          "sha256": "e6182bd6d178a84fcc09a5d48a51c51908da57d7d9496505c8e55439f9c3f308"
+        },
+        {
+          "path": "lib/esp32s2/libesp_audio_front_end.a",
+          "sha256": "b0bf780b10e194c7c2f9ff8a03e5941b77983601f078aa4bf53d07f411363195"
+        },
+        {
+          "path": "lib/esp32s2/libesp_audio_processor.a",
+          "sha256": "27ecdb58ff6bd50cf5e28986fa74fa73fb90d46e7f46a332135994a511101634"
+        },
+        {
+          "path": "lib/esp32s2/libflite_g2p.a",
+          "sha256": "ea4dd0074ec5854633b9e0e77d082a9677c6b9aaa49cb69eefbc18857919abf1"
+        },
+        {
+          "path": "lib/esp32s2/libfst.a",
+          "sha256": "e0afcd6c7167a9db2c3da1780c1c87d31fe0c2e369871ce853e5438ebd7addbc"
+        },
+        {
+          "path": "lib/esp32s2/libhufzip.a",
+          "sha256": "9fe3461306c0622180a2e7e0544ae913b8e0766754550ac03b80ecf458c7ba3a"
+        },
+        {
+          "path": "lib/esp32s2/libmultinet.a",
+          "sha256": "caf1a43b16812559e917288d85b21b55ee8380f415e87277401cad739d8adaa5"
+        },
+        {
+          "path": "lib/esp32s2/libnsnet.a",
+          "sha256": "14883f6f9cb834c48f5e72c26e9f9592734903312ed32e1c285bd18bfb1677c4"
+        },
+        {
+          "path": "lib/esp32s2/libvadnet.a",
+          "sha256": "f3c804f6e19709275aebdaed2dc0262ea8a0b300cf80f7662e955b715067137f"
+        },
+        {
+          "path": "lib/esp32s2/libwakenet.a",
+          "sha256": "29ae4a6738ebfc6ca40e89fdb1655166dd1122e1b52848dffb6ff29b06492ee9"
+        },
+        {
+          "path": "lib/esp32s3/libc_speech_features.a",
+          "sha256": "e1f9f328659c9b8fb02b791e9b98c48288333e26851301ad6e66206400dc3ff8"
+        },
+        {
+          "path": "lib/esp32s3/libdl_lib.a",
+          "sha256": "0299cea1f4fde129641069c9d180ca92b5657c9c780693dfe961f2b3d7111d8f"
+        },
+        {
+          "path": "lib/esp32s3/libesp_audio_front_end.a",
+          "sha256": "0db87473cab6775d79970140beeb5e00cd61088ec1a664f8801154c5a2a15c6f"
+        },
+        {
+          "path": "lib/esp32s3/libesp_audio_processor.a",
+          "sha256": "f26be3e06817b2971f4d575e0542134acdeb4fb152ff44a18f3ed92b15eec1f8"
+        },
+        {
+          "path": "lib/esp32s3/libflite_g2p.a",
+          "sha256": "90c6490bb8c170886bfd475cf5cad9fc3cf61f55920e09805ccc5a525550b291"
+        },
+        {
+          "path": "lib/esp32s3/libfst.a",
+          "sha256": "32951e3dbcde0a73b3061e99008d7bff13c82356981826e6978d3c7d946c044c"
+        },
+        {
+          "path": "lib/esp32s3/libhufzip.a",
+          "sha256": "1aa2356377e5f31a754c38f2c214355db33d952d2063cb2a291255ba5691e677"
+        },
+        {
+          "path": "lib/esp32s3/libmultinet.a",
+          "sha256": "ffacfa66abf4fcdea51174bccc805ba6d10353b7c34013c44a370c66aec8d407"
+        },
+        {
+          "path": "lib/esp32s3/libnsnet.a",
+          "sha256": "6a12fc3a229e1c517400558462631d6b63a7cb43e21dc1c08abb2116cebf36f4"
+        },
+        {
+          "path": "lib/esp32s3/libvadnet.a",
+          "sha256": "0948670e958669f5bf35cec90fbd14389ad19a0b38a3a8668dde994a4c797183"
+        },
+        {
+          "path": "lib/esp32s3/libwakenet.a",
+          "sha256": "c70dcaeeea2f04dc5aa3846096c3b91ee3f90785ef541b2051b4d9b6590787c4"
+        }
+      ],
+      "review_status": "Espressif-products-only license; not standard MIT"
+    },
+    {
+      "name": "espressif/esp32-camera",
+      "version": "2.1.5",
+      "component_hash": "ac4228c825b891378bc0806869170d4ebc5d45ba8ebc519b4f8886a56ad2d123",
+      "source": "https://components.espressif.com/components/espressif/esp32-camera/versions/2.1.5/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp32-camera.git",
+      "source_identifiers": {},
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_audio_codec",
+      "version": "2.4.1",
+      "component_hash": "af4663830bc73eca58febcc34a976d003465e78ed57458aa00a14b231e392ca1",
+      "source": "https://components.espressif.com/components/espressif/esp_audio_codec/versions/2.4.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/f9af95d73bd683a810ed8dc655b2af91258852934ba8e687ddcfaaf54ff2d755.txt",
+          "sha256": "f9af95d73bd683a810ed8dc655b2af91258852934ba8e687ddcfaaf54ff2d755"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-adf-libs.git",
+      "source_identifiers": {
+        "LicenseRef-Espressif-Modified-MIT": {
+          "file_count": 26,
+          "examples": [
+            "include/decoder/esp_audio_dec.h",
+            "include/decoder/esp_audio_dec_default.h",
+            "include/decoder/impl/esp_lc3_dec.h",
+            "include/decoder/impl/esp_sbc_dec.h",
+            "include/encoder/esp_audio_enc_default.h",
+            "include/encoder/impl/esp_aac_enc.h",
+            "include/encoder/impl/esp_lc3_enc.h",
+            "include/encoder/impl/esp_opus_enc.h"
+          ]
+        }
+      },
+      "native_files": [
+        {
+          "path": "lib/esp32/libesp_audio_codec.a",
+          "sha256": "d0879f55ad9e51a02490b4f250b6386aaf519c95c5f491b2d7e893cbf53370b5"
+        },
+        {
+          "path": "lib/esp32/libesp_audio_simple_dec.a",
+          "sha256": "33deeb1026306c0eb52732a12801b64042bff71bc39b76eed6cfb1aef6b10d1a"
+        },
+        {
+          "path": "lib/esp32c2/libesp_audio_codec.a",
+          "sha256": "f07c41a27c7e8a45bc98e864d62692530b78abab2891360f41bdab7ca6607c11"
+        },
+        {
+          "path": "lib/esp32c2/libesp_audio_simple_dec.a",
+          "sha256": "f3cd65e0c691c2f88f998df4ba4a2d0df42eeac251a33abce96a0b7c214610fe"
+        },
+        {
+          "path": "lib/esp32c3/libesp_audio_codec.a",
+          "sha256": "a9de46f9e8202a6bbe507b593c58ae835e5dce7eb009ec9c9c0cde6dacd82828"
+        },
+        {
+          "path": "lib/esp32c3/libesp_audio_simple_dec.a",
+          "sha256": "5df11302163dac8a3ad74f7297f0cfb5391a3b109770f4db7698a38e702c8d7c"
+        },
+        {
+          "path": "lib/esp32c5/libesp_audio_codec.a",
+          "sha256": "73935eb43213c9cc70b2f237a3246d42e0ee9a276c9a20b2efde63e4803037f5"
+        },
+        {
+          "path": "lib/esp32c5/libesp_audio_simple_dec.a",
+          "sha256": "6ebfc7c47c7552d43abb2c8941d3a968ab9c53d7e4731722cc527300f018723a"
+        },
+        {
+          "path": "lib/esp32c6/libesp_audio_codec.a",
+          "sha256": "f8902128e8684abf2c9ac2a22934b59241a0fc7c8bd877889e74c0db8a32b2ea"
+        },
+        {
+          "path": "lib/esp32c6/libesp_audio_simple_dec.a",
+          "sha256": "255931477fb36eab287be0e0dff286f5fd78217bfe47fa0111a1d2f3673d0196"
+        },
+        {
+          "path": "lib/esp32h4/libesp_audio_codec.a",
+          "sha256": "f5fdbcc43df49ec738d706aeeca2811c82fc38b073b066efb204e49851d1ead2"
+        },
+        {
+          "path": "lib/esp32h4/libesp_audio_simple_dec.a",
+          "sha256": "80af1f7ae8d8a425abbc8cea4e5d607018f16dff2c48d34137ed501562cba623"
+        },
+        {
+          "path": "lib/esp32p4/libesp_audio_codec.a",
+          "sha256": "92b1f2bd77d4dfdc13e9fba7995083e1c7cf6f0010c38e6dcffb6626c06873cc"
+        },
+        {
+          "path": "lib/esp32p4/libesp_audio_simple_dec.a",
+          "sha256": "e5cdf6eda1e1157823fcbd58f33654d254e35e82c19959814d0d0ad23d118716"
+        },
+        {
+          "path": "lib/esp32s2/libesp_audio_codec.a",
+          "sha256": "0b904344e6688856e447344178363c4bbae7caab64f2db1492af9e60c57441d9"
+        },
+        {
+          "path": "lib/esp32s2/libesp_audio_simple_dec.a",
+          "sha256": "9eafe62bab433b398b085503e4e56677e6049e0f15c7c4df97657e5f20a7bb2f"
+        },
+        {
+          "path": "lib/esp32s3/libesp_audio_codec.a",
+          "sha256": "faf4c0d76030b58f22df8258ec1b9c436b7445a7d875de3b26a8c888f4d9657a"
+        },
+        {
+          "path": "lib/esp32s3/libesp_audio_simple_dec.a",
+          "sha256": "9de3c7b9af7a9d2e9b10a66ddad7ef3d6bd5e9a8473b1707d494558647be8e3c"
+        }
+      ],
+      "review_status": "Espressif-products-only license; not standard MIT"
+    },
+    {
+      "name": "espressif/esp_audio_effects",
+      "version": "1.2.1",
+      "component_hash": "8fa2bf7356a3c7fb9a9c7d2185aba474fa033b0506886c70752f67c42cd81b3f",
+      "source": "https://components.espressif.com/components/espressif/esp_audio_effects/versions/1.2.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/f9af95d73bd683a810ed8dc655b2af91258852934ba8e687ddcfaaf54ff2d755.txt",
+          "sha256": "f9af95d73bd683a810ed8dc655b2af91258852934ba8e687ddcfaaf54ff2d755"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-adf-libs.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 1,
+          "examples": [
+            "example/esp_audio_effects_demo/main/esp_audio_effects_demo.c"
+          ]
+        },
+        "LicenseRef-Espressif-Modified-MIT": {
+          "file_count": 18,
+          "examples": [
+            "include/esp_ae_drc.h",
+            "include/esp_ae_mbc.h",
+            "include/esp_ae_mixer.h",
+            "test_app/main/ae_common.c",
+            "test_app/main/ae_common.h",
+            "test_app/main/test_alc.c",
+            "test_app/main/test_bit_cvt.c",
+            "test_app/main/test_ch_cvt.c"
+          ]
+        }
+      },
+      "native_files": [
+        {
+          "path": "lib/esp32/libesp_audio_effects.a",
+          "sha256": "18f650cf452b5bf320c0ddf50d759030e03fdc458f6f95123a9bb441a888fb21"
+        },
+        {
+          "path": "lib/esp32c2/libesp_audio_effects.a",
+          "sha256": "3d174c9445157a3d91b1b93574d7459c8c024d530e084d7e93e43b9563d5b535"
+        },
+        {
+          "path": "lib/esp32c3/libesp_audio_effects.a",
+          "sha256": "7259e84934e3d3e521aadd49dcd25071b2b9aca361bb47f01c7de7bfda32a4f7"
+        },
+        {
+          "path": "lib/esp32c5/libesp_audio_effects.a",
+          "sha256": "691ec5da76584fdfeb076c9c4e2c3966c98b3281bf7ba73abbdf9688a2c34d87"
+        },
+        {
+          "path": "lib/esp32c6/libesp_audio_effects.a",
+          "sha256": "d07abe608fb15be59e54fd6a0e0ab5b4027e1aefb2b9cbd26788c2967b63c0d5"
+        },
+        {
+          "path": "lib/esp32h4/libesp_audio_effects.a",
+          "sha256": "3bac5eae6dc9151418f9076d9c2575f80b6ff1041d6fa80ef11911700de03e24"
+        },
+        {
+          "path": "lib/esp32p4/libesp_audio_effects.a",
+          "sha256": "b402280b974b4d60ec9c68e233004f77b39cc332efe93c015e9eb6413e6e7275"
+        },
+        {
+          "path": "lib/esp32s2/libesp_audio_effects.a",
+          "sha256": "b4516be31a6c4480baa30500450a0379786c3da8b1edd0ab1e565824f66c071f"
+        },
+        {
+          "path": "lib/esp32s3/libesp_audio_effects.a",
+          "sha256": "3758a4caaefef92b4c188fcfe5556817f1db3fd979be71e8b065e7f5c50ab088"
+        }
+      ],
+      "review_status": "Espressif-products-only license; not standard MIT"
+    },
+    {
+      "name": "espressif/esp_cam_sensor",
+      "version": "1.5.2",
+      "component_hash": "35c1648ea87aac81da7a085d35f61b6d5ad88574bd0c5fdc4ab75efdef4ee6c1",
+      "source": "https://components.espressif.com/components/espressif/esp_cam_sensor/versions/1.5.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-video-components.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 106,
+          "examples": [
+            "include/esp_cam_ctlr_spi.h",
+            "include/esp_cam_motor.h",
+            "include/esp_cam_motor_detect.h",
+            "include/esp_cam_motor_types.h",
+            "include/esp_cam_sensor.h",
+            "include/esp_cam_sensor_detect.h",
+            "include/esp_cam_sensor_types.h",
+            "include/esp_cam_sensor_xclk.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_codec_dev",
+      "version": "1.5.4",
+      "component_hash": "0d9e9bc288156eb55f79338d312e1ebf8c9dfbd5e7d13ef0f20ccb031b4e15cf",
+      "source": "https://components.espressif.com/components/espressif/esp_codec_dev/versions/1.5.4/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "original_path": "device/zl38063/LICENSE.txt",
+          "text": "LICENSES/texts/d8023d14377b7e734064165e0ddf5961d0bfc1ab037bc63ad682cf295369964d.txt",
+          "sha256": "d8023d14377b7e734064165e0ddf5961d0bfc1ab037bc63ad682cf295369964d"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-adf.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 61,
+          "examples": [
+            "audio_codec_sw_vol.c",
+            "audio_codec_sw_vol.h",
+            "device/aw88298/aw88298.c",
+            "device/aw88298/aw88298_reg.h",
+            "device/cjc8910/cjc8910.c",
+            "device/cjc8910/cjc8910_reg.h",
+            "device/es7210/es7210.c",
+            "device/es7210/es7210_reg.h"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 1,
+          "examples": [
+            "test_apps/codec_dev_test/main/test_app_main.c"
+          ]
+        }
+      },
+      "native_files": [
+        {
+          "path": "device/zl38063/firmware/libfirmware.a",
+          "sha256": "032ef57d40aad4e365b270658cb8dd7bc819202b43ec8793bed29df1b93981ca"
+        }
+      ]
+    },
+    {
+      "name": "espressif/esp_image_effects",
+      "version": "1.0.1",
+      "component_hash": "a35037db02862d3cef6f72c25f422ae62da6e6c88219ce03c9ea24e0315ceaaa",
+      "source": "https://components.espressif.com/components/espressif/esp_image_effects/versions/1.0.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/18f5b91101b93b6140ae0cc23bd420d0c6f9279b7266b72e60e7c380a44e1222.txt",
+          "sha256": "18f5b91101b93b6140ae0cc23bd420d0c6f9279b7266b72e60e7c380a44e1222"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-adf-libs.git",
+      "source_identifiers": {},
+      "native_files": [
+        {
+          "path": "lib/esp32/libesp_image_effects.a",
+          "sha256": "6881e3d147179748bf277cf3e7ca6920a359d39ec0dddbe0ce94ec10340a8120"
+        },
+        {
+          "path": "lib/esp32c2/libesp_image_effects.a",
+          "sha256": "984da9081ca4a8a93ff980ffa9d1e7a43b3243076b996720c3c6658eacba3485"
+        },
+        {
+          "path": "lib/esp32c3/libesp_image_effects.a",
+          "sha256": "35c7c40aaebdeeac3c2632bb1c79f9f1b411d5b80d8d7111ea16edec32860589"
+        },
+        {
+          "path": "lib/esp32c5/libesp_image_effects.a",
+          "sha256": "02689b747e178b418261757529e78cf25c630e796a7272fa81c98cf89495e305"
+        },
+        {
+          "path": "lib/esp32c6/libesp_image_effects.a",
+          "sha256": "225d4b272738e247ee9fd4d0d37d992a2ace8a8970ba41705e9c1a797c77e74d"
+        },
+        {
+          "path": "lib/esp32h4/libesp_image_effects.a",
+          "sha256": "52a47e90c8e5279e4f628f5c9bffd00462851a39be628137a5c97ba7ff045733"
+        },
+        {
+          "path": "lib/esp32p4/libesp_image_effects.a",
+          "sha256": "ff5c0143b4de2f8d2740cd9d4117e0dd1c9b56fa633d0ff71f75f3788dbaae72"
+        },
+        {
+          "path": "lib/esp32s2/libesp_image_effects.a",
+          "sha256": "2dfc7ccb01da5223ef9f41e6e7a0149bb8568382b0892cefc2f631c160293d76"
+        },
+        {
+          "path": "lib/esp32s3/libesp_image_effects.a",
+          "sha256": "331814987bb904c9d3f54447d73028e697222d5d7cb7e871c40609cefebf1181"
+        }
+      ],
+      "review_status": "Espressif-products-only license; not standard MIT"
+    },
+    {
+      "name": "espressif/esp_io_expander",
+      "version": "1.2.1",
+      "component_hash": "7b7f91270172e46ca4597e3874f48d8412e280e8c295559f5922ec38656e3e5f",
+      "source": "https://components.espressif.com/components/espressif/esp_io_expander/versions/1.2.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 6,
+          "examples": [
+            "esp_io_expander.c",
+            "esp_io_expander_gpio_wrapper.c",
+            "esp_io_expander_gpio_wrapper_weak.c",
+            "include/esp_io_expander.h",
+            "include/esp_io_expander_gpio_wrapper.h",
+            "priv_include/esp_io_expander_gpio_wrapper_priv.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_io_expander_tca9554",
+      "version": "2.0.0",
+      "component_hash": "8a9e3a7dbef589a54f814ff22e9121da86bce19d0e1ccffa53f5df6bb346a140",
+      "source": "https://components.espressif.com/components/espressif/esp_io_expander_tca9554/versions/2.0.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_io_expander_tca9554.c",
+            "include/esp_io_expander_tca9554.h",
+            "test_apps/main/test_app_tca9554.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_io_expander_tca95xx_16bit",
+      "version": "2.0.2",
+      "component_hash": "a9608ba5753ae2a72e79fccd376fc4283343c0306d23505fbf8a46fafdbde2a2",
+      "source": "https://components.espressif.com/components/espressif/esp_io_expander_tca95xx_16bit/versions/2.0.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_io_expander_tca95xx_16bit.c",
+            "include/esp_io_expander_tca95xx_16bit.h",
+            "test_apps/main/test_app_tca95xx_16bit.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_jpeg",
+      "version": "1.3.1",
+      "component_hash": "defb83669293cbf86d0fa86b475ba5517aceed04ed70db435388c151ab37b5d7",
+      "source": "https://components.espressif.com/components/espressif/esp_jpeg/versions/1.3.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/idf-extra-components.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 4,
+          "examples": [
+            "include/jpeg_decoder.h",
+            "jpeg_decoder.c",
+            "jpeg_default_huffman_table.c",
+            "test_apps/main/test_tjpgd_main.c"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 5,
+          "examples": [
+            "examples/get_started/main/decode_image.c",
+            "examples/get_started/main/decode_image.h",
+            "examples/get_started/main/lcd_tjpgd_example_main.c",
+            "examples/get_started/main/pretty_effect.c",
+            "examples/get_started/main/pretty_effect.h"
+          ]
+        },
+        "Unlicense OR CC0-1.0": {
+          "file_count": 1,
+          "examples": [
+            "test_apps/main/tjpgd_test.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_axs15231b",
+      "version": "1.0.1~1",
+      "component_hash": "e614bd75827e95800e39df1ba9474166060ab26c3807d06df9cc312a27021cda",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_axs15231b/versions/1.0.1~1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_lcd_axs15231b.c",
+            "include/esp_lcd_axs15231b.h",
+            "test_apps/main/test_esp_lcd_axs15231b.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_co5300",
+      "version": "2.0.3",
+      "component_hash": "7004162c496b65a5e0ee7c92800c33c12b373ea70d07199318a182cb16c741b7",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_co5300/versions/2.0.3/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 8,
+          "examples": [
+            "esp_lcd_co5300.c",
+            "esp_lcd_co5300_mipi.c",
+            "esp_lcd_co5300_spi.c",
+            "include/esp_lcd_co5300.h",
+            "priv_include/esp_lcd_co5300_interface.h",
+            "test_apps/main/test_app_main.c",
+            "test_apps/main/test_esp_lcd_co5300_mipi.c",
+            "test_apps/main/test_esp_lcd_co5300_spi.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_gc9a01",
+      "version": "2.0.1",
+      "component_hash": "09ddc8f5c9d718a659ffa30a4040e1ae75077e68492c38aec8c2beaaa7b3a9bc",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_gc9a01/versions/2.0.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_gc9a01.c",
+            "include/esp_lcd_gc9a01.h"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 1,
+          "examples": [
+            "test_apps/main/test_esp_lcd_gc9a01.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_ili9341",
+      "version": "1.2.0",
+      "component_hash": "31f1b793aa2110dd2ae071c21ccbff0a4eb20d9a4ee40b6294c0dc0ad9552c4e",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_ili9341/versions/1.2.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "https://github.com/espressif/esp-bsp/tree/master/components/lcd/esp_lcd_ili9341",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_ili9341.c",
+            "include/esp_lcd_ili9341.h"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 1,
+          "examples": [
+            "test_apps/main/test_esp_lcd_ili9341.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_panel_io_additions",
+      "version": "1.0.1",
+      "component_hash": "213d5c4a3c322a48c9f993d6bc2372206d34af95db34e87a3e02601bdcad7ce8",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_panel_io_additions/versions/1.0.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "https://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_lcd_panel_io_3wire_spi.c",
+            "include/esp_lcd_panel_io_additions.h",
+            "test_apps/main/test_esp_lcd_panel_io_additions.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_spd2010",
+      "version": "1.0.2",
+      "component_hash": "8637c97feeb8d83ba637599f6bf4ef30e83595486930e7df17ffa24f3fef1242",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_spd2010/versions/1.0.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_lcd_spd2010.c",
+            "include/esp_lcd_spd2010.h",
+            "test_apps/main/test_esp_lcd_spd2010.c"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 1,
+          "examples": [
+            "examples/qspi_with_ram/main/example_qspi_with_ram.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_st7701",
+      "version": "1.1.5",
+      "component_hash": "0b11e8733e51e12da83003b9d475777eaf47bfbdce01379879bd2504d14f4f83",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_st7701/versions/1.1.5/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 8,
+          "examples": [
+            "esp_lcd_st7701.c",
+            "esp_lcd_st7701_mipi.c",
+            "esp_lcd_st7701_rgb.c",
+            "include/esp_lcd_st7701.h",
+            "priv_include/esp_lcd_st7701_interface.h",
+            "test_apps/main/test_app_main.c",
+            "test_apps/main/test_esp_lcd_st7701_mipi.c",
+            "test_apps/main/test_esp_lcd_st7701_rgb.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_st77916",
+      "version": "1.0.1",
+      "component_hash": "5fa0f8b1274576d4484e2b8d9358e2a5d09c721511bef0dce6a55b4206b5f0e9",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_st77916/versions/1.0.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_lcd_st77916.c",
+            "include/esp_lcd_st77916.h",
+            "test_apps/main/test_esp_lcd_st77916.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_st7796",
+      "version": "1.3.5",
+      "component_hash": "c37b10363125eb3b4757d509392ffca963c27262b61939fdb49a7b18eeef975c",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_st7796/versions/1.3.5/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 8,
+          "examples": [
+            "esp_lcd_st7796.c",
+            "esp_lcd_st7796_general.c",
+            "esp_lcd_st7796_mipi.c",
+            "include/esp_lcd_st7796.h",
+            "priv_include/esp_lcd_st7796_interface.h",
+            "test_apps/main/test_app_main.c",
+            "test_apps/main/test_esp_lcd_st7796_general.c",
+            "test_apps/main/test_esp_lcd_st7796_mipi.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_touch",
+      "version": "1.2.1",
+      "component_hash": "3f85a7d95af876f1a6ecca8eb90a81614890d0f03a038390804e5a77e2caf862",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_touch/versions/1.2.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_touch.c",
+            "include/esp_lcd_touch.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_touch_cst816s",
+      "version": "1.1.1",
+      "component_hash": "6b11c489952c121396d4eaf5804b45e3f1f8dcd2c548dc6f2cbedf68622b013d",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_touch_cst816s/versions/1.1.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_touch_cst816s.c",
+            "include/esp_lcd_touch_cst816s.h"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 1,
+          "examples": [
+            "test_apps/main/test_esp_lcd_touch_cst816s.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_touch_ft5x06",
+      "version": "1.0.7",
+      "component_hash": "abaec05f46a793549b60afdda9eff86e3c8e87782c8c169007911232388d2858",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_touch_ft5x06/versions/1.0.7/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_touch_ft5x06.c",
+            "include/esp_lcd_touch_ft5x06.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_touch_gt1151",
+      "version": "1.1.0",
+      "component_hash": "acd0fb87e8b58dc90cebda8438ee31c068975c15c040a62723843ca0420d38b6",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_touch_gt1151/versions/1.1.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_touch_gt1151.c",
+            "include/esp_lcd_touch_gt1151.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_touch_gt911",
+      "version": "1.2.0~1",
+      "component_hash": "be02e243d18b9a661bc13b0d22c0a5cfa3f708cf04d6eb059772276c8c8a4d76",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_touch_gt911/versions/1.2.0~1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_touch_gt911.c",
+            "include/esp_lcd_touch_gt911.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lcd_touch_st7123",
+      "version": "1.0.1",
+      "component_hash": "717080a55368a5ca3e3704081a75ddab3e0b8884e335e73b7094beb8ae55f195",
+      "source": "https://components.espressif.com/components/espressif/esp_lcd_touch_st7123/versions/1.0.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_lcd_touch_st7123.c",
+            "include/esp_lcd_touch_st7123.h",
+            "test_apps/main/test_esp_lcd_touch_st7123.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_lvgl_port",
+      "version": "2.7.2",
+      "component_hash": "b6360960f47b6776462e7092861b3ea66477ffb762a01baa0aecbb3d74cd50f4",
+      "source": "https://components.espressif.com/components/espressif/esp_lvgl_port/versions/2.7.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-bsp.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 62,
+          "examples": [
+            "examples/rgb_lcd/main/main.c",
+            "examples/touchscreen/main/main.c",
+            "images/lvgl8/img_cursor.c",
+            "images/lvgl9/img_cursor.c",
+            "include/esp_lvgl_port.h",
+            "include/esp_lvgl_port_button.h",
+            "include/esp_lvgl_port_compatibility.h",
+            "include/esp_lvgl_port_disp.h"
+          ]
+        },
+        "CC0-1.0": {
+          "file_count": 3,
+          "examples": [
+            "examples/i2c_oled/main/i2c_oled_example_main.c",
+            "examples/i2c_oled/main/lvgl_demo_ui.c",
+            "test_apps/lvgl_port/main/test.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_mmap_assets",
+      "version": "1.4.0",
+      "component_hash": "91d785326b03db15e2f7f1314d8c976d38f21aa5759b570dcbbc89bcf247fd27",
+      "source": "https://components.espressif.com/components/espressif/esp_mmap_assets/versions/1.4.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 5,
+          "examples": [
+            "esp_mmap_assets.c",
+            "include/esp_mmap_assets.h",
+            "test_apps/main/mmap_generate_assets_build.h",
+            "test_apps/main/test_esp_mmap_assets.c",
+            "test_apps/mmap_generate_factory.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_new_jpeg",
+      "version": "0.6.1",
+      "component_hash": "e6af208a875abd0ecfc0213d3751a11b504b463ebde6930f24096047925fa5c1",
+      "source": "https://components.espressif.com/components/espressif/esp_new_jpeg/versions/0.6.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/0bf7f2018fffa1caff5ecbf10d79707b218eea4e26b8c705d744de4556552815.txt",
+          "sha256": "0bf7f2018fffa1caff5ecbf10d79707b218eea4e26b8c705d744de4556552815"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-adf-libs.git",
+      "source_identifiers": {},
+      "native_files": [
+        {
+          "path": "lib/esp32/libesp_new_jpeg.a",
+          "sha256": "f4bc7fc9f35843c2fcf1a69b5429ec8ff733f2039b7684de1ab320779b78a6e9"
+        },
+        {
+          "path": "lib/esp32c2/libesp_new_jpeg.a",
+          "sha256": "63b23c846972bb3b46f2c585437201a8fac34c91b3c44ca745fcccebde86a2ca"
+        },
+        {
+          "path": "lib/esp32c3/libesp_new_jpeg.a",
+          "sha256": "63b23c846972bb3b46f2c585437201a8fac34c91b3c44ca745fcccebde86a2ca"
+        },
+        {
+          "path": "lib/esp32c5/libesp_new_jpeg.a",
+          "sha256": "5759ce8ef72f438030aa306beaaa5a26aab342d7dc54a95b16321c8b3165569f"
+        },
+        {
+          "path": "lib/esp32c6/libesp_new_jpeg.a",
+          "sha256": "46ad38f6cbcbc31a20d30b180dc292cfe4558f8dbb5f7136f361f40e8888e773"
+        },
+        {
+          "path": "lib/esp32p4/libesp_new_jpeg.a",
+          "sha256": "37fff93bd3971f1237373cd95349513832cce4bf4c780e941bdaa3427b3b459b"
+        },
+        {
+          "path": "lib/esp32s2/libesp_new_jpeg.a",
+          "sha256": "d5eeb352c3576b4cb93b1a14c6d6581217e22418fbd259167d97d2f9235ec000"
+        },
+        {
+          "path": "lib/esp32s3/libesp_new_jpeg.a",
+          "sha256": "4205b1258ce0ef9fd9946abfc7cd5f105b08316ea567e1136cec60b3e6330896"
+        }
+      ],
+      "review_status": "Espressif-products-only license; not standard MIT"
+    },
+    {
+      "name": "espressif/esp_sccb_intf",
+      "version": "0.0.8",
+      "component_hash": "c071b189e49f40940722aea01a5489f873385cc39cd5b14012341135b85d1a9d",
+      "source": "https://components.espressif.com/components/espressif/esp_sccb_intf/versions/0.0.8/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": "Apache-2.0",
+      "repository": "git://github.com/espressif/esp-video-components.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 9,
+          "examples": [
+            "include/esp_sccb_intf.h",
+            "include/esp_sccb_types.h",
+            "interface/esp_sccb_io_interface.h",
+            "sccb_i2c/include/esp_sccb_i2c.h",
+            "sccb_i2c/src/sccb_i2c.c",
+            "sccb_i2c/src/sccb_i2c_internal.h",
+            "src/sccb.c",
+            "test_apps/dummy/main/test_app_main.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/esp_video",
+      "version": "1.3.1",
+      "component_hash": "fbad1178f39cb5a81ed808c460c851b911a9858db833e2e667ada988022c0660",
+      "source": "https://components.espressif.com/components/espressif/esp_video/versions/1.3.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/48833e4f8afc4f34b1181cf5ccafa6fb5f56dad2491225d2f3561acd4362d8bb.txt",
+          "sha256": "48833e4f8afc4f34b1181cf5ccafa6fb5f56dad2491225d2f3561acd4362d8bb"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-video-components.git",
+      "source_identifiers": {
+        "((GPL-2.0+ WITH Linux-syscall-note) OR BSD-3-Clause)": {
+          "file_count": 3,
+          "examples": [
+            "include/linux/v4l2-common.h",
+            "include/linux/v4l2-controls.h",
+            "include/linux/videodev2.h"
+          ]
+        },
+        "Apache-2.0": {
+          "file_count": 1,
+          "examples": [
+            "test_apps/posix/main/test_apps_posix_main.c"
+          ]
+        },
+        "ESPRESSIF MIT": {
+          "file_count": 101,
+          "examples": [
+            "examples/capture_stream/components/example_video_common/example_encoder.c",
+            "examples/capture_stream/components/example_video_common/example_init_video.c",
+            "examples/capture_stream/components/example_video_common/include/boards/customized/example_video_common_board.h",
+            "examples/capture_stream/components/example_video_common/include/boards/esp32-p4-eye/example_video_common_board.h",
+            "examples/capture_stream/components/example_video_common/include/boards/esp32-p4-function-ev-board-v1.4/example_video_common_board.h",
+            "examples/capture_stream/components/example_video_common/include/boards/esp32-p4-function-ev-board-v1.5/example_video_common_board.h",
+            "examples/capture_stream/components/example_video_common/include/boards/esp32-s3-eye/example_video_common_board.h",
+            "examples/capture_stream/components/example_video_common/include/example_video_common.h"
+          ]
+        }
+      },
+      "native_files": [],
+      "review_status": "Espressif-products-only license; not standard MIT"
+    },
+    {
+      "name": "espressif/i2c_bus",
+      "version": "1.5.1",
+      "component_hash": "804ec068d163570fd367b279a310ca383484630d2310c586b50def0bcf21de13",
+      "source": "https://components.espressif.com/components/espressif/i2c_bus/versions/1.5.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 6,
+          "examples": [
+            "i2c_bus.c",
+            "i2c_bus_soft.c",
+            "i2c_bus_v2.c",
+            "include/i2c_bus.h",
+            "private_include/i2c_bus_soft.h",
+            "test_apps/main/test_i2c_bus.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/iot_eth",
+      "version": "0.1.0",
+      "component_hash": "ffcea72f079264b6905e428a406cb6d2512dfede10d100c49d3486dd78dc1873",
+      "source": "https://components.espressif.com/components/espressif/iot_eth/versions/0.1.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 9,
+          "examples": [
+            "examples/usb_rndis_4g_module/components/app_wifi/app_wifi.c",
+            "examples/usb_rndis_4g_module/components/app_wifi/include/app_wifi.h",
+            "examples/usb_rndis_4g_module/main/usb_rndis_4g_module.c",
+            "include/iot_eth.h",
+            "include/iot_eth_netif_glue.h",
+            "include/iot_eth_types.h",
+            "interface/iot_eth_interface.h",
+            "iot_eth.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/iot_usbh_cdc",
+      "version": "3.0.0",
+      "component_hash": "6b30e8eeef1a3320a3bc0c27980c62826ed134b681be6f424366f3d78c291814",
+      "source": "https://components.espressif.com/components/espressif/iot_usbh_cdc/versions/3.0.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 9,
+          "examples": [
+            "include/iot_usbh_cdc.h",
+            "include/iot_usbh_cdc_type.h",
+            "include/usbh_helper.h",
+            "iot_usbh_cdc.c",
+            "iot_usbh_descriptor.c",
+            "private_include/iot_usbh_descriptor.h",
+            "test_apps/main/test_usbh_cdc.c",
+            "test_apps/main/test_usbh_helper.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/iot_usbh_rndis",
+      "version": "0.3.1",
+      "component_hash": "0d91d9c79980fe0d2b59ecae9341d91852b7eb3356cc0e708f76425a3604ff5b",
+      "source": "https://components.espressif.com/components/espressif/iot_usbh_rndis/versions/0.3.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 6,
+          "examples": [
+            "include/iot_usbh_rndis.h",
+            "iot_usbh_rndis.c",
+            "iot_usbh_rndis_descriptor.c",
+            "priv_include/iot_usbh_rndis_descriptor.h",
+            "priv_include/usbh_rndis_protocol.h",
+            "test_apps/main/test_usbh_rndis.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/knob",
+      "version": "1.0.2",
+      "component_hash": "138ed090b4c9090a0a678f695b9d1884b368130c729b7333ed35bd7f4e8da80e",
+      "source": "https://components.espressif.com/components/espressif/knob/versions/1.0.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-iot-solution.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 5,
+          "examples": [
+            "include/iot_knob.h",
+            "include/knob_gpio.h",
+            "iot_knob.c",
+            "knob_gpio.c",
+            "test_apps/main/knob_test.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/led_strip",
+      "version": "3.0.3",
+      "component_hash": "28621486f77229aaf81c71f5e15d6fbf36c2949cf11094e07090593e659e7639",
+      "source": "https://components.espressif.com/components/espressif/led_strip/versions/3.0.3/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/idf-extra-components.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 10,
+          "examples": [
+            "include/led_strip.h",
+            "include/led_strip_rmt.h",
+            "include/led_strip_spi.h",
+            "include/led_strip_types.h",
+            "interface/led_strip_interface.h",
+            "src/led_strip_api.c",
+            "src/led_strip_rmt_dev.c",
+            "src/led_strip_rmt_encoder.c"
+          ]
+        },
+        "Unlicense OR CC0-1.0": {
+          "file_count": 2,
+          "examples": [
+            "examples/led_strip_rmt_ws2812/main/led_strip_rmt_ws2812_main.c",
+            "examples/led_strip_spi_ws2812/main/led_strip_spi_ws2812_main.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/mdns",
+      "version": "1.11.3",
+      "component_hash": "e81ca7a7f53ea34e78274df054da692c272e1315572876b237b1748e267c013b",
+      "source": "https://components.espressif.com/components/espressif/mdns/versions/1.11.3/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-protocols.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 36,
+          "examples": [
+            "include/mdns.h",
+            "include/mdns_console.h",
+            "mdns_browser.c",
+            "mdns_console.c",
+            "mdns_debug.c",
+            "mdns_mem_caps.c",
+            "mdns_netif.c",
+            "mdns_networking_lwip.c"
+          ]
+        },
+        "Unlicense OR CC0-1.0": {
+          "file_count": 14,
+          "examples": [
+            "examples/query_advertise/main/mdns_example_main.c",
+            "tests/host_test/main/main.c",
+            "tests/host_unit_test/main.c",
+            "tests/host_unit_test/stubs/esp_assert.h",
+            "tests/host_unit_test/stubs/esp_idf.c",
+            "tests/host_unit_test/stubs/mdns_engine.c",
+            "tests/host_unit_test/stubs/sdkconfig.h",
+            "tests/host_unit_test/unity/create_test_packet.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif/usb_host_uvc",
+      "version": "2.3.1",
+      "component_hash": "b0cb9a3a2eaa09dc6e5cc3e47e04d0a73e47c2d3dcfb3afce959224a1fe5fb5e",
+      "source": "https://components.espressif.com/components/espressif/usb_host_uvc/versions/2.3.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif/esp-usb.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 55,
+          "examples": [
+            "examples/basic_uvc_stream/main/basic_uvc_stream.c",
+            "examples/camera_display/main/camera_display.c",
+            "examples/camera_display/main/display.h",
+            "examples/camera_display/main/ra8875_init.c",
+            "examples/camera_display/main/yuy2.c",
+            "host_test/main/opening/test_opening.cpp",
+            "host_test/main/parsing/descriptors/anker_powerconf_c200.hpp",
+            "host_test/main/parsing/descriptors/canyon_cne_cwc2.hpp"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "espressif2022/image_player",
+      "version": "1.1.1",
+      "component_hash": "0e42ed1c9665debd15f2f3e7e56519100e75e446410962226cb5e5402da3fa43",
+      "source": "https://components.espressif.com/components/espressif2022/image_player/versions/1.1.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd.txt",
+          "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/espressif2022/image_player.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 9,
+          "examples": [
+            "anim_dec.c",
+            "anim_vfs.c",
+            "example/main/mmap_generate_assets.h",
+            "external_examples/b83eb86d/example/main/mmap_generate_assets.h",
+            "include_priv/anim_dec.h",
+            "include_priv/anim_dec.h",
+            "include_priv/anim_vfs.h",
+            "test_apps/main/mmap_generate_test_4bit.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "lvgl/lvgl",
+      "version": "9.4.0",
+      "component_hash": "17e68bfd21f0edf4c3ee838e2273da840bf3930e5dbc3bfa6c1190c3aed41f9f",
+      "source": "https://components.espressif.com/components/lvgl/lvgl/versions/9.4.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "COPYRIGHTS.md",
+          "text": "LICENSES/texts/9cc46bf553cb698b3447c8cce2d0fc9bbe9cee8870a7f70043b9e1a039d5c24b.txt",
+          "sha256": "9cc46bf553cb698b3447c8cce2d0fc9bbe9cee8870a7f70043b9e1a039d5c24b"
+        },
+        {
+          "original_path": "LICENCE.txt",
+          "text": "LICENSES/texts/27a80bd36832ab42d35ad60c08b2b230a807a9bc0d58e94ec1531543dc49cbe8.txt",
+          "sha256": "27a80bd36832ab42d35ad60c08b2b230a807a9bc0d58e94ec1531543dc49cbe8"
+        },
+        {
+          "original_path": "docs/src/details/xml/editor/license.rst",
+          "text": "LICENSES/texts/89139e1465d1950bcf0710676de3e4344a4d1361a8e3fcf7441f91244b74fe1f.txt",
+          "sha256": "89139e1465d1950bcf0710676de3e4344a4d1361a8e3fcf7441f91244b74fe1f"
+        },
+        {
+          "original_path": "docs/src/details/xml/xml/license.rst",
+          "text": "LICENSES/texts/b97009a52d7c7d61ed1053326331e4daf976449064f352be820715b834f08ac6.txt",
+          "sha256": "b97009a52d7c7d61ed1053326331e4daf976449064f352be820715b834f08ac6"
+        },
+        {
+          "original_path": "docs/src/intro/introduction/license.rst",
+          "text": "LICENSES/texts/75c5bbce99ab35522e48ef29d5be352f35c428a385cfed69231ae0ac865fecca.txt",
+          "sha256": "75c5bbce99ab35522e48ef29d5be352f35c428a385cfed69231ae0ac865fecca"
+        },
+        {
+          "original_path": "examples/libs/freetype/OFL.txt",
+          "text": "LICENSES/texts/3200a0abfc0ceba649de8ee433cfe5a7cb8c441cdf32b9e1a4a070e38621cef2.txt",
+          "sha256": "3200a0abfc0ceba649de8ee433cfe5a7cb8c441cdf32b9e1a4a070e38621cef2"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/DejaVuSans/LICENSE",
+          "text": "LICENSES/texts/d75938dec098f06f0ac3c00853065d94f020be1c3c62ef1dc2975ba15b4d9b0e.txt",
+          "sha256": "d75938dec098f06f0ac3c00853065d94f020be1c3c62ef1dc2975ba15b4d9b0e"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/FontAwesome/LICENSE.txt",
+          "text": "LICENSES/texts/9b914eae88817d63b576eab5aafde7068c7a1abae125d7cdfb034f1da43a9afc.txt",
+          "sha256": "9b914eae88817d63b576eab5aafde7068c7a1abae125d7cdfb034f1da43a9afc"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/FontAwesome5/LICENSE.txt",
+          "text": "LICENSES/texts/de784a808496d49f5f80dd9d1d6e9a51cff712cfbc339e7c25155631ae3cdb5d.txt",
+          "sha256": "de784a808496d49f5f80dd9d1d6e9a51cff712cfbc339e7c25155631ae3cdb5d"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/Lato/OFL.txt",
+          "text": "LICENSES/texts/a8e9b45e643f6939f3cc19b27c9c1d4c562db65e8931516e77f12194293da689.txt",
+          "sha256": "a8e9b45e643f6939f3cc19b27c9c1d4c562db65e8931516e77f12194293da689"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/Montserrat/OFL.txt",
+          "text": "LICENSES/texts/41f82bb4d24b304f30f7136bc47abdd083782e4265c984160f5649d1e78ea49c.txt",
+          "sha256": "41f82bb4d24b304f30f7136bc47abdd083782e4265c984160f5649d1e78ea49c"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/NotoColorEmoji/OFL.txt",
+          "text": "LICENSES/texts/9d242e02bf26e61e6baccea03ab3de47c81202a18f07e3e190c17cbf0e9f8bd7.txt",
+          "sha256": "9d242e02bf26e61e6baccea03ab3de47c81202a18f07e3e190c17cbf0e9f8bd7"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/NotoSansSC/OFL.txt",
+          "text": "LICENSES/texts/fb97f1ad83b5aa2ef1e9f7e65bc705b5aa391ee62560fedcaf70f49319ca2079.txt",
+          "sha256": "fb97f1ad83b5aa2ef1e9f7e65bc705b5aa391ee62560fedcaf70f49319ca2079"
+        },
+        {
+          "original_path": "scripts/built_in_font/font_license/SourceHanSansSC/LICENSE.txt",
+          "text": "LICENSES/texts/f55c2d43dd905011515f5e46ba78d180027e314ef8ccaaf53a9e88fe316767cd.txt",
+          "sha256": "f55c2d43dd905011515f5e46ba78d180027e314ef8ccaaf53a9e88fe316767cd"
+        },
+        {
+          "original_path": "src/libs/FT800-FT813/LICENSE",
+          "text": "LICENSES/texts/862e06968462faf8ff2066fffaf7c4522aa48ddafd11fe9c578248aa4b013729.txt",
+          "sha256": "862e06968462faf8ff2066fffaf7c4522aa48ddafd11fe9c578248aa4b013729"
+        },
+        {
+          "original_path": "src/libs/barcode/LICENSE.txt",
+          "text": "LICENSES/texts/bc9492ba4839f81fed80aa4b966e7078b18fc7f0d81cf47aa3c04a86047099f1.txt",
+          "sha256": "bc9492ba4839f81fed80aa4b966e7078b18fc7f0d81cf47aa3c04a86047099f1"
+        },
+        {
+          "original_path": "src/libs/expat/LICENSE.txt",
+          "text": "LICENSES/texts/31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87.txt",
+          "sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87"
+        },
+        {
+          "original_path": "src/libs/freetype/LiberationSans-LICENSE.txt",
+          "text": "LICENSES/texts/93fed46019c38bbe566b479d22148e2e8a1e85ada614accb0211c37b2c61c19b.txt",
+          "sha256": "93fed46019c38bbe566b479d22148e2e8a1e85ada614accb0211c37b2c61c19b"
+        },
+        {
+          "original_path": "src/libs/freetype/freetype-LICENSE.txt",
+          "text": "LICENSES/texts/21878c9be611eecf3f936301e277f77719c14316a5132c0877c4d0dc54e5470c.txt",
+          "sha256": "21878c9be611eecf3f936301e277f77719c14316a5132c0877c4d0dc54e5470c"
+        },
+        {
+          "original_path": "src/libs/frogfs/LICENSE.txt",
+          "text": "LICENSES/texts/af175b9d96ee93c21a036152e1b905b0b95304d4ae8c2c921c7609100ba8df7e.txt",
+          "sha256": "af175b9d96ee93c21a036152e1b905b0b95304d4ae8c2c921c7609100ba8df7e"
+        },
+        {
+          "original_path": "src/libs/gif/AnimatedGIF/LICENSE",
+          "text": "LICENSES/texts/63fefff6dd199d109389e0f413579387e9ca9cfdeeae961ecdbcb120d08432e0.txt",
+          "sha256": "63fefff6dd199d109389e0f413579387e9ca9cfdeeae961ecdbcb120d08432e0"
+        },
+        {
+          "original_path": "src/libs/lodepng/LICENSE.txt",
+          "text": "LICENSES/texts/f43c59ae0979ea7c08b24a56cfe7816f3c82141d13f5866a2040f66b02589771.txt",
+          "sha256": "f43c59ae0979ea7c08b24a56cfe7816f3c82141d13f5866a2040f66b02589771"
+        },
+        {
+          "original_path": "src/libs/lz4/LICENSE.txt",
+          "text": "LICENSES/texts/8b58c446121a109ccf32edc094bba3010a3d85e4ee3702950db55e4d3e87736c.txt",
+          "sha256": "8b58c446121a109ccf32edc094bba3010a3d85e4ee3702950db55e4d3e87736c"
+        },
+        {
+          "original_path": "src/libs/qrcode/LICENSE.txt",
+          "text": "LICENSES/texts/4d3b92a5e730466508ed46e8632140dfb96221bacfa18c95355cee161e7a22c8.txt",
+          "sha256": "4d3b92a5e730466508ed46e8632140dfb96221bacfa18c95355cee161e7a22c8"
+        },
+        {
+          "original_path": "src/libs/thorvg/LICENSE.txt",
+          "text": "LICENSES/texts/861eb0197d1b43e3c904c433b605cf38be3c4bc447bb9752dfad74c704e36af7.txt",
+          "sha256": "861eb0197d1b43e3c904c433b605cf38be3c4bc447bb9752dfad74c704e36af7"
+        },
+        {
+          "original_path": "src/libs/tiny_ttf/LICENSE.txt",
+          "text": "LICENSES/texts/f214b427f12e19d68f65e2e30a3c9a1f59ee4a09d4c684931971a8f3bfdd7a1f.txt",
+          "sha256": "f214b427f12e19d68f65e2e30a3c9a1f59ee4a09d4c684931971a8f3bfdd7a1f"
+        },
+        {
+          "original_path": "src/libs/tjpgd/LICENSE.txt",
+          "text": "LICENSES/texts/e85563f195d82708ca334e85c63d0352c980ccc66dca2052e9fd05f7823df51c.txt",
+          "sha256": "e85563f195d82708ca334e85c63d0352c980ccc66dca2052e9fd05f7823df51c"
+        },
+        {
+          "original_path": "src/libs/vg_lite_driver/LICENSE.txt",
+          "text": "LICENSES/texts/928c166e5324bd40709174aae078010aa8206ce056aa199fb98126b062ecbd64.txt",
+          "sha256": "928c166e5324bd40709174aae078010aa8206ce056aa199fb98126b062ecbd64"
+        },
+        {
+          "original_path": "src/stdlib/builtin/LICENSE_SPRINTF.txt",
+          "text": "LICENSES/texts/ec49d3c5a052dba6392f3e5e6d51134d102624c19afab6b3dd9ff8921d85403d.txt",
+          "sha256": "ec49d3c5a052dba6392f3e5e6d51134d102624c19afab6b3dd9ff8921d85403d"
+        },
+        {
+          "original_path": "src/stdlib/builtin/LICENSE_TLSF.txt",
+          "text": "LICENSES/texts/2b32f144050a1236599765ed1ca2c88d5b99e8e3364eadbb547ab0fbc4b01220.txt",
+          "sha256": "2b32f144050a1236599765ed1ca2c88d5b99e8e3364eadbb547ab0fbc4b01220"
+        },
+        {
+          "original_path": "tests/src/test_files/fonts/noto/OFL.txt",
+          "text": "LICENSES/texts/1778d919f28e548adab94a9dc3cf05549124e53d204c2f4c8164617734dc1a3a.txt",
+          "sha256": "1778d919f28e548adab94a9dc3cf05549124e53d204c2f4c8164617734dc1a3a"
+        },
+        {
+          "original_path": "tests/src/test_libs/rnd_unicodes/rnd_unicodes/LICENSE",
+          "text": "LICENSES/texts/ad4feab161c3e1f5b12ec323eb5c69688523b32f643684236af765c8931fecd1.txt",
+          "sha256": "ad4feab161c3e1f5b12ec323eb5c69688523b32f643684236af765c8931fecd1"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/lvgl/lvgl.git",
+      "source_identifiers": {
+        "(WTFPL OR CC0-1.0) AND Apache-2.0": {
+          "file_count": 4,
+          "examples": [
+            "src/drivers/opengles/glad/include/glad/egl.h",
+            "src/drivers/opengles/glad/include/glad/gles2.h",
+            "src/drivers/opengles/glad/src/egl.c",
+            "src/drivers/opengles/glad/src/gles2.c"
+          ]
+        },
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "src/drivers/opengles/glad/include/EGL/eglplatform.h",
+            "src/osal/lv_cmsis_rtos2.c",
+            "src/osal/lv_cmsis_rtos2.h"
+          ]
+        },
+        "MIT": {
+          "file_count": 27,
+          "examples": [
+            "env_support/rt-thread/lv_rt_thread_conf.h",
+            "env_support/rt-thread/lv_rt_thread_port.c",
+            "env_support/rt-thread/squareline/lv_ui_entry.c",
+            "env_support/rt-thread/squareline/ui/lvgl/lvgl.h",
+            "src/draw/nxp/g2d/lv_draw_buf_g2d.c",
+            "src/draw/nxp/g2d/lv_draw_g2d.c",
+            "src/draw/nxp/g2d/lv_draw_g2d.h",
+            "src/draw/nxp/g2d/lv_draw_g2d_fill.c"
+          ]
+        }
+      },
+      "native_files": [
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_NemaPVG/gcc/libnemagfx-float-abi-hard-wc16.a",
+          "sha256": "86034ff464640e3667f5305eadf07d1fcba8c669ea42f5539291603eda440d2e"
+        },
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_NemaPVG/gcc/libnemagfx-float-abi-hard.a",
+          "sha256": "bdd8e86264299197292c7bf0bb21c39568487266a7bb9a80e671f44b6322171c"
+        },
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_NemaPVG/gcc/libnemagfx-wc16.a",
+          "sha256": "6bf1431bbe9882d34b2950237d9db3bbd75366121273e2829b2e3e30ee1597b0"
+        },
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_NemaPVG/gcc/libnemagfx.a",
+          "sha256": "c70750614061d07a0afa4ed3a09f6b53f32171978f71788e2d0ec7599a9f18b8"
+        },
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_revC/gcc/libnemagfx-float-abi-hard-wc16.a",
+          "sha256": "7071d7fbfc8006cc75c7915a582ce0f36ca3de26b657f73479c566425c31381c"
+        },
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_revC/gcc/libnemagfx-float-abi-hard.a",
+          "sha256": "124dbe8bd5373d61cf659ffea80bea6eeafd69f5617ab9f41f59e6d44c30435c"
+        },
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_revC/gcc/libnemagfx-wc16.a",
+          "sha256": "d121c986e9cd74cdb181ff672495ccd8bba51abfbb426589b7429c13f1fbfd48"
+        },
+        {
+          "path": "libs/nema_gfx/lib/core/cortex_m33_revC/gcc/libnemagfx.a",
+          "sha256": "c86657ce7b252cf139c5c016297e43e791c52e29b8312b4d36e42e74caabb77f"
+        }
+      ]
+    },
+    {
+      "name": "tny-robotics/sh1106-esp-idf",
+      "version": "1.0.0",
+      "component_hash": "7be190d7c58cd635adf8b74b3a841f8245f2f82f36d135a64d8e53cfab39124d",
+      "source": "https://components.espressif.com/components/tny-robotics/sh1106-esp-idf/versions/1.0.0/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/f1bb2941143d51a83144bddb837f1ba9fc7f2ed6d219f7ef65e05916f32f3a79.txt",
+          "sha256": "f1bb2941143d51a83144bddb837f1ba9fc7f2ed6d219f7ef65e05916f32f3a79"
+        }
+      ],
+      "declaration": null,
+      "repository": "https://github.com/TNY-Robotics/sh1106-esp-idf.git",
+      "source_identifiers": {
+        "MIT": {
+          "file_count": 3,
+          "examples": [
+            "esp_lcd_panel_sh1106.c",
+            "examples/sh1106_lcd_example/main/sh1106_lcd_example.c",
+            "include/esp_lcd_panel_sh1106.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "txp666/otto-emoji-gif-component",
+      "version": "1.1.1",
+      "component_hash": "8da812ae44707af319a20e164e8b544199fe401436167c206e684594e0a38c5d",
+      "source": "https://components.espressif.com/components/txp666/otto-emoji-gif-component/versions/1.1.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/bd806361232a065ead834a53a04b34ba51eacb257ccdb21a6506f0e8738930d8.txt",
+          "sha256": "bd806361232a065ead834a53a04b34ba51eacb257ccdb21a6506f0e8738930d8"
+        }
+      ],
+      "declaration": "MIT",
+      "repository": "git://github.com/txp666/otto-emoji-gif-component.git",
+      "source_identifiers": {},
+      "native_files": []
+    },
+    {
+      "name": "waveshare/custom_io_expander_ch32v003",
+      "version": "1.0.1",
+      "component_hash": "fefced27c762ed97a3523c9d90d66050deea7eeb7e9eae6328e4ab1a71125d26",
+      "source": "https://components.espressif.com/components/waveshare/custom_io_expander_ch32v003/versions/1.0.1/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/waveshareteam/Waveshare-ESP32-components.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "custom_io_expander_ch32v003.c",
+            "include/custom_io_expander_ch32v003.h",
+            "test_apps/main/test_app_ch32v003.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "waveshare/esp_lcd_sh8601",
+      "version": "1.0.2",
+      "component_hash": "1a2829e9db4e0515bad6ce83368f199dec60519fbba40251d6c8249f5d070ae1",
+      "source": "https://components.espressif.com/components/waveshare/esp_lcd_sh8601/versions/1.0.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/waveshareteam/Waveshare-ESP32-components.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 3,
+          "examples": [
+            "esp_lcd_sh8601.c",
+            "include/esp_lcd_sh8601.h",
+            "test_apps/main/test_esp_lcd_sh8601.c"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "waveshare/esp_lcd_touch_cst9217",
+      "version": "1.0.4",
+      "component_hash": "27a00845832b7987cacf4c4125cbed5415d940987583065b01870ac080930856",
+      "source": "https://components.espressif.com/components/waveshare/esp_lcd_touch_cst9217/versions/1.0.4/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "git://github.com/waveshareteam/Waveshare-ESP32-components.git",
+      "source_identifiers": {
+        "Apache-2.0": {
+          "file_count": 2,
+          "examples": [
+            "esp_lcd_touch_cst9217.c",
+            "include/esp_lcd_touch_cst9217.h"
+          ]
+        }
+      },
+      "native_files": []
+    },
+    {
+      "name": "wvirgil123/sscma_client",
+      "version": "1.0.2",
+      "component_hash": "bf7d4a1f157303f4850d0b9b465c733ce38e8689ff40ac4743a44520524c41d5",
+      "source": "https://components.espressif.com/components/wvirgil123/sscma_client/versions/1.0.2/license",
+      "hash_verified": true,
+      "notices": [
+        {
+          "original_path": "license.txt",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "declaration": null,
+      "repository": "https://github.com/Seeed-Studio/SenseCAP-Watcher/tree/main/components/sscma_client",
+      "source_identifiers": {},
+      "native_files": []
+    }
+  ]
+}

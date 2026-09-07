@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stackchan-hermes.local/schemas/control.schema.json",
+  "title": "StackChan protocol v1 Bridge control message",
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/envelope"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "hello_ack",
+            "audio.input.start",
+            "audio.input.end",
+            "audio.output.start",
+            "audio.output.end",
+            "command_result",
+            "error"
+          ]
+        },
+        "payload": {
+          "type": "object",
+          "maxProperties": 32
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": { "const": "hello_ack" }
+        },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/helloAckPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "audio.input.start",
+              "audio.input.end",
+              "audio.output.start",
+              "audio.output.end"
+            ]
+          }
+        },
+        "required": ["type"]
+      },
+      "then": {
+        "required": ["turn_id", "stream_id"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "audio.input.start" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/audioInputStartPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "audio.input.end" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/audioInputEndPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "audio.output.start" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/audioOutputStartPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "audio.output.end" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/audioOutputEndPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "command_result" } },
+        "required": ["type"]
+      },
+      "then": {
+        "required": ["request_id"],
+        "properties": {
+          "payload": { "$ref": "#/$defs/commandResultPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "error" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/$defs/errorPayload" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "helloAckPayload": {
+      "type": "object",
+      "required": [
+        "connection_id",
+        "selected_protocol_version",
+        "heartbeat_interval_ms",
+        "max_command_timeout_ms",
+        "server_version"
+      ],
+      "properties": {
+        "connection_id": {
+          "$ref": "common.schema.json#/$defs/uuid"
+        },
+        "selected_protocol_version": {
+          "const": 1
+        },
+        "heartbeat_interval_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 60000
+        },
+        "max_command_timeout_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 30000
+        },
+        "server_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "audioFormat": {
+      "type": "object",
+      "required": ["codec", "sample_rate", "channels", "frame_ms"],
+      "properties": {
+        "codec": { "const": "opus" },
+        "sample_rate": { "const": 16000 },
+        "channels": { "const": 1 },
+        "frame_ms": { "enum": [20, 40, 60] }
+      }
+    },
+    "audioInputStartPayload": {
+      "allOf": [
+        { "$ref": "#/$defs/audioFormat" },
+        {
+          "type": "object",
+          "required": ["trigger"],
+          "properties": {
+            "trigger": {
+              "enum": ["touch", "button", "wakeword", "control_api", "simulator"]
+            }
+          }
+        }
+      ]
+    },
+    "audioInputEndPayload": {
+      "type": "object",
+      "required": ["reason"],
+      "properties": {
+        "reason": {
+          "enum": ["silence", "max_duration", "user_cancel", "device_error", "disconnect"]
+        }
+      }
+    },
+    "audioOutputStartPayload": {
+      "allOf": [
+        { "$ref": "#/$defs/audioFormat" },
+        {
+          "type": "object",
+          "required": ["expected_duration_ms"],
+          "properties": {
+            "expected_duration_ms": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 120000
+            }
+          }
+        }
+      ]
+    },
+    "audioOutputEndPayload": {
+      "type": "object",
+      "required": ["reason"],
+      "properties": {
+        "reason": {
+          "enum": [
+            "completed",
+            "cancelled",
+            "barge_in",
+            "tts_error",
+            "device_error",
+            "disconnect"
+          ]
+        }
+      }
+    },
+    "errorCode": {
+      "enum": [
+        "UNSUPPORTED_VERSION",
+        "UNAUTHORIZED",
+        "UNKNOWN_DEVICE",
+        "INVALID_MESSAGE",
+        "INVALID_ARGUMENT",
+        "INVALID_STATE",
+        "COMMAND_TIMEOUT",
+        "DEVICE_BUSY",
+        "AUDIO_DECODE_ERROR",
+        "AUDIO_ENCODE_ERROR",
+        "CAPTURE_FAILED",
+        "INTERNAL_ERROR"
+      ]
+    },
+    "errorPayload": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "$ref": "#/$defs/errorCode" },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "commandResultPayload": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["ok", "result"],
+          "properties": {
+            "ok": { "const": true },
+            "result": {
+              "type": "object",
+              "maxProperties": 32
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["ok", "error"],
+          "properties": {
+            "ok": { "const": false },
+            "error": { "$ref": "#/$defs/errorPayload" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

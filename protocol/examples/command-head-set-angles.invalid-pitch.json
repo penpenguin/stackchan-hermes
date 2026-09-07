@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "type": "command",
+  "message_id": "b74d56ae-9e0d-453f-81d6-29c74361c8a4",
+  "request_id": "a75dff8d-b78a-4f14-9d33-848a817301da",
+  "sent_at_ms": 0,
+  "payload": {
+    "name": "head.set_angles",
+    "args": {
+      "yaw": 15,
+      "pitch": 91,
+      "speed": 30
+    }
+  }
+}

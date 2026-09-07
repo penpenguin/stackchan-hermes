@@ -1,0 +1,25 @@
+[Unit]
+Description=StackChan Hermes Bridge
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/stackchan-hermes
+Environment=STACKCHAN_CAPTURES__DIRECTORY=%h/.local/share/stackchan-hermes/captures
+Environment=STACKCHAN_AUDIO__DEBUG_DIRECTORY=%h/.local/state/stackchan-hermes/debug-audio
+EnvironmentFile=%h/.config/stackchan-hermes/bridge.env
+ExecStart=/usr/bin/env uv run stackchan-bridge serve --config %h/.config/stackchan-hermes/config.toml
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.local/share/stackchan-hermes %h/.local/state/stackchan-hermes
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host:
+    name: Host quality gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install native audio prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg libopus0
+
+      - name: Install uv and Python
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.6"
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Sync locked dependencies
+        run: uv sync --locked
+
+      - name: Fetch locked Firmware dependencies
+        working-directory: firmware
+        run: python3 ./fetch_repos.py
+
+      - name: Run local host gate
+        run: ./scripts/verify-host.sh
+
+  firmware:
+    name: Firmware quality gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    container: espressif/idf:v5.5.4
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Fetch locked Git dependencies
+        working-directory: firmware
+        run: python3 ./fetch_repos.py
+
+      - name: Resolve locked ESP-IDF components
+        working-directory: firmware
+        run: /opt/esp/entrypoint.sh idf.py reconfigure
+
+      - name: Run local Firmware gate
+        run: |
+          test -s firmware/UPSTREAM.md
+          /opt/esp/entrypoint.sh ./scripts/verify-firmware.sh

@@ -1,0 +1,63 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.egg-info/
+.cache/
+
+# Logs, scratch files and editor leftovers
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+*.swo
+*~
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+config.toml
+*.pem
+*.key
+*.token
+
+# Runtime data and private media
+.local/
+/captures/
+/recordings/
+/debug-reports/
+*.wav
+*.opus
+*.jpg
+*.jpeg
+
+# ESP-IDF generated and machine-local files
+firmware/build/
+firmware/managed_components/
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/sdkconfig.defaults.local
+firmware/*.bin
+firmware/*.elf
+firmware/*.map
+firmware/backups/
+
+# Simulator output
+simulator/output/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

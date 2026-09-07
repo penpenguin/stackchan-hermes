@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "type": "audio.output.end",
+  "message_id": "fb5b298e-f28e-4e02-a7cc-41b415ce54d2",
+  "turn_id": "e5070f04-20ff-4feb-9fd1-26cc4ccaf4c7",
+  "stream_id": "82728a0b-0ca9-46f3-bdad-c0e17b302791",
+  "sent_at_ms": 3800,
+  "payload": {
+    "reason": "completed"
+  }
+}

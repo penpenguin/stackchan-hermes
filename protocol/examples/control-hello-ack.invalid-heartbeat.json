@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "type": "hello_ack",
+  "message_id": "519a16ce-3a07-4ab6-9767-f39bcc096cb8",
+  "sent_at_ms": 0,
+  "payload": {
+    "connection_id": "79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc",
+    "selected_protocol_version": 1,
+    "heartbeat_interval_ms": 999,
+    "max_command_timeout_ms": 5000,
+    "server_version": "0.1.0"
+  }
+}

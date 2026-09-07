@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "type": "event",
+  "message_id": "d7c54bc1-ec6b-48a7-a2d0-c2f01edb5dfb",
+  "device_id": "stackchan-001",
+  "sent_at_ms": 0,
+  "payload": {
+    "name": "touch.tap",
+    "data": {
+      "x": 320,
+      "y": 120
+    }
+  }
+}

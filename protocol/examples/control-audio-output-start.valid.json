@@ -1,0 +1,15 @@
+{
+  "v": 1,
+  "type": "audio.output.start",
+  "message_id": "ce299f62-cf3a-4f2f-93f3-eaf7b2f3edc7",
+  "turn_id": "e5070f04-20ff-4feb-9fd1-26cc4ccaf4c7",
+  "stream_id": "82728a0b-0ca9-46f3-bdad-c0e17b302791",
+  "sent_at_ms": 2000,
+  "payload": {
+    "codec": "opus",
+    "sample_rate": 16000,
+    "channels": 1,
+    "frame_ms": 60,
+    "expected_duration_ms": 1800
+  }
+}

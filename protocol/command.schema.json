@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stackchan-hermes.local/schemas/command.schema.json",
+  "title": "StackChan protocol v1 command",
+  "allOf": [
+    {
+      "$ref": "common.schema.json#/$defs/envelope"
+    },
+    {
+      "type": "object",
+      "required": ["request_id"],
+      "properties": {
+        "type": { "const": "command" },
+        "payload": { "$ref": "#/$defs/commandPayload" }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "payload": {
+            "properties": { "name": { "const": "speech.cancel" } },
+            "required": ["name"]
+          }
+        },
+        "required": ["payload"]
+      },
+      "then": {
+        "required": ["turn_id"]
+      }
+    }
+  ],
+  "$defs": {
+    "commandPayload": {
+      "type": "object",
+      "required": ["name", "args"],
+      "properties": {
+        "name": {
+          "enum": [
+            "device.get_status",
+            "device.get_info",
+            "audio.set_volume",
+            "display.set_brightness",
+            "display.show_text",
+            "avatar.set_expression",
+            "avatar.set_blink",
+            "head.get_angles",
+            "head.set_angles",
+            "head.home",
+            "led.set",
+            "led.set_all",
+            "led.clear",
+            "camera.capture",
+            "speech.cancel"
+          ]
+        },
+        "args": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "device.get_status",
+                  "device.get_info",
+                  "head.get_angles",
+                  "led.clear",
+                  "speech.cancel"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/emptyArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "audio.set_volume" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/setVolumeArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "display.set_brightness" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/setBrightnessArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "display.show_text" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/showTextArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "avatar.set_expression" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/setExpressionArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "avatar.set_blink" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/setBlinkArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "head.set_angles" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/setHeadAnglesArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "head.home" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/homeHeadArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "led.set" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/setLedArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "led.set_all" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/setAllLedsArgs" } }
+          }
+        },
+        {
+          "if": { "properties": { "name": { "const": "camera.capture" } } },
+          "then": {
+            "properties": { "args": { "$ref": "#/$defs/captureArgs" } }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "emptyArgs": {
+      "type": "object",
+      "maxProperties": 0,
+      "additionalProperties": false
+    },
+    "setVolumeArgs": {
+      "type": "object",
+      "required": ["volume"],
+      "properties": {
+        "volume": { "type": "integer", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false
+    },
+    "setBrightnessArgs": {
+      "type": "object",
+      "required": ["brightness"],
+      "properties": {
+        "brightness": { "type": "integer", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false
+    },
+    "showTextArgs": {
+      "type": "object",
+      "required": ["text", "duration_ms", "priority"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "duration_ms": { "type": "integer", "minimum": 100, "maximum": 30000 },
+        "priority": { "type": "integer", "minimum": 0, "maximum": 10 }
+      },
+      "additionalProperties": false
+    },
+    "setExpressionArgs": {
+      "type": "object",
+      "required": ["expression"],
+      "properties": {
+        "expression": {
+          "enum": ["idle", "happy", "thinking", "sad", "surprised", "embarrassed"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "setBlinkArgs": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "setHeadAnglesArgs": {
+      "type": "object",
+      "required": ["yaw", "pitch"],
+      "properties": {
+        "yaw": { "type": "number", "minimum": -90, "maximum": 90 },
+        "pitch": { "type": "number", "minimum": -90, "maximum": 90 },
+        "speed": { "type": "integer", "minimum": 1, "maximum": 100 }
+      },
+      "additionalProperties": false
+    },
+    "homeHeadArgs": {
+      "type": "object",
+      "properties": {
+        "speed": { "type": "integer", "minimum": 1, "maximum": 100 }
+      },
+      "additionalProperties": false
+    },
+    "setLedArgs": {
+      "type": "object",
+      "required": ["index", "r", "g", "b"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "r": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "g": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "b": { "type": "integer", "minimum": 0, "maximum": 255 }
+      },
+      "additionalProperties": false
+    },
+    "setAllLedsArgs": {
+      "type": "object",
+      "required": ["r", "g", "b"],
+      "properties": {
+        "r": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "g": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "b": { "type": "integer", "minimum": 0, "maximum": 255 }
+      },
+      "additionalProperties": false
+    },
+    "captureArgs": {
+      "type": "object",
+      "required": ["capture_id", "quality"],
+      "properties": {
+        "capture_id": { "$ref": "common.schema.json#/$defs/uuid" },
+        "quality": { "type": "integer", "minimum": 10, "maximum": 95 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

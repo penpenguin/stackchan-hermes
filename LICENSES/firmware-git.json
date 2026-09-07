@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-09-07",
+  "repositories": [
+    {
+      "name": "Forairaaaaa/mooncake",
+      "version": "v2.3.3",
+      "commit": "572a7e488641f1c3f22e85d65c27f095ecf27d12",
+      "declaration": "MIT",
+      "source": "https://github.com/Forairaaaaa/mooncake/tree/572a7e488641f1c3f22e85d65c27f095ecf27d12",
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/4633fd988ed98812f2ca0b2a42e2bfd5a02e5364a4af6bc65191e05b92e5a0b4.txt",
+          "sha256": "4633fd988ed98812f2ca0b2a42e2bfd5a02e5364a4af6bc65191e05b92e5a0b4",
+          "source": "https://raw.githubusercontent.com/Forairaaaaa/mooncake/572a7e488641f1c3f22e85d65c27f095ecf27d12/LICENSE"
+        }
+      ],
+      "git_tree_sha": "572a7e488641f1c3f22e85d65c27f095ecf27d12"
+    },
+    {
+      "name": "Forairaaaaa/mooncake_log",
+      "version": "v1.5.0",
+      "commit": "554d55cd8c6e551b911b99cad274a46929f05bae",
+      "declaration": "MIT",
+      "source": "https://github.com/Forairaaaaa/mooncake_log/tree/554d55cd8c6e551b911b99cad274a46929f05bae",
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/30515f6ce6f59a3f0986e3103e487a8b5ca298a5c0a113a0d5a88d837f421ba2.txt",
+          "sha256": "30515f6ce6f59a3f0986e3103e487a8b5ca298a5c0a113a0d5a88d837f421ba2",
+          "source": "https://raw.githubusercontent.com/Forairaaaaa/mooncake_log/554d55cd8c6e551b911b99cad274a46929f05bae/LICENSE"
+        }
+      ],
+      "git_tree_sha": "554d55cd8c6e551b911b99cad274a46929f05bae"
+    },
+    {
+      "name": "Forairaaaaa/smooth_ui_toolkit",
+      "version": "v2.12.0",
+      "commit": "2a18ff5d3fd6b402339d0f4f3c2834f574e3cb05",
+      "declaration": "MIT",
+      "source": "https://github.com/Forairaaaaa/smooth_ui_toolkit/tree/2a18ff5d3fd6b402339d0f4f3c2834f574e3cb05",
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/f9db7ea7026e1ec808bab58868bc949d62a081c1727b17f842e907a3757c5476.txt",
+          "sha256": "f9db7ea7026e1ec808bab58868bc949d62a081c1727b17f842e907a3757c5476",
+          "source": "https://raw.githubusercontent.com/Forairaaaaa/smooth_ui_toolkit/2a18ff5d3fd6b402339d0f4f3c2834f574e3cb05/LICENSE"
+        }
+      ],
+      "git_tree_sha": "2a18ff5d3fd6b402339d0f4f3c2834f574e3cb05"
+    },
+    {
+      "name": "78/xiaozhi-esp32",
+      "version": "v2.2.4",
+      "commit": "e77dedb1309153bb63fed285772962c920c97dd4",
+      "declaration": "MIT",
+      "source": "https://github.com/78/xiaozhi-esp32/tree/e77dedb1309153bb63fed285772962c920c97dd4",
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/0a5a839033bfe18fe75d32b50d9d028912cf876f69ef59c2791aeb2971335d05.txt",
+          "sha256": "0a5a839033bfe18fe75d32b50d9d028912cf876f69ef59c2791aeb2971335d05",
+          "source": "https://raw.githubusercontent.com/78/xiaozhi-esp32/e77dedb1309153bb63fed285772962c920c97dd4/LICENSE"
+        },
+        {
+          "original_path": "main/display/lvgl_display/gif/LICENSE.txt",
+          "text": "LICENSES/texts/910f11cb457d2b125544615a038af00ad73b59516e51af42cecf084543beccbc.txt",
+          "sha256": "910f11cb457d2b125544615a038af00ad73b59516e51af42cecf084543beccbc",
+          "source": "https://raw.githubusercontent.com/78/xiaozhi-esp32/e77dedb1309153bb63fed285772962c920c97dd4/main/display/lvgl_display/gif/LICENSE.txt"
+        }
+      ],
+      "git_tree_sha": "e77dedb1309153bb63fed285772962c920c97dd4"
+    },
+    {
+      "name": "bblanchon/ArduinoJson",
+      "version": "v7.4.2",
+      "commit": "733bc4ee82630c88c0a619a883cd3a206efae977",
+      "declaration": "MIT",
+      "source": "https://github.com/bblanchon/ArduinoJson/tree/733bc4ee82630c88c0a619a883cd3a206efae977",
+      "notices": [
+        {
+          "original_path": "LICENSE.txt",
+          "text": "LICENSES/texts/ebba0906d6c8b3daa8a1b59acb2d3a416485dd77fc10f6dd4c9ed2cbe467ee2d.txt",
+          "sha256": "ebba0906d6c8b3daa8a1b59acb2d3a416485dd77fc10f6dd4c9ed2cbe467ee2d",
+          "source": "https://raw.githubusercontent.com/bblanchon/ArduinoJson/733bc4ee82630c88c0a619a883cd3a206efae977/LICENSE.txt"
+        }
+      ],
+      "git_tree_sha": "733bc4ee82630c88c0a619a883cd3a206efae977"
+    },
+    {
+      "name": "espressif/esp-now",
+      "version": "c33383de97f3ed2fc52117f5ef04f71990432e5d",
+      "commit": "c33383de97f3ed2fc52117f5ef04f71990432e5d",
+      "declaration": "Apache-2.0",
+      "source": "https://github.com/espressif/esp-now/tree/c33383de97f3ed2fc52117f5ef04f71990432e5d",
+      "notices": [
+        {
+          "original_path": "LICENSE",
+          "text": "LICENSES/texts/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "source": "https://raw.githubusercontent.com/espressif/esp-now/c33383de97f3ed2fc52117f5ef04f71990432e5d/LICENSE"
+        }
+      ],
+      "git_tree_sha": "c33383de97f3ed2fc52117f5ef04f71990432e5d"
+    }
+  ]
+}

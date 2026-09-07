@@ -1,0 +1,99 @@
+{
+  "examples": [
+    {
+      "path": "hello.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/hello.schema.json",
+      "valid": true
+    },
+    {
+      "path": "command-head-set-angles.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/command.schema.json",
+      "valid": true
+    },
+    {
+      "path": "event-touch-tap.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-hello-ack.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-audio-input-start.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-audio-input-end.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-audio-output-start.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-audio-output-end.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-command-result-success.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-command-result-error.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-error.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "hello.invalid-version.json",
+      "schema": "https://stackchan-hermes.local/schemas/hello.schema.json",
+      "valid": false
+    },
+    {
+      "path": "hello.invalid-control-character.json",
+      "schema": "https://stackchan-hermes.local/schemas/hello.schema.json",
+      "valid": false
+    },
+    {
+      "path": "hello.invalid-sent-at-overflow.json",
+      "schema": "https://stackchan-hermes.local/schemas/hello.schema.json",
+      "valid": false
+    },
+    {
+      "path": "control-hello-ack.invalid-heartbeat.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": false
+    },
+    {
+      "path": "control-audio-input-start.invalid-missing-stream-id.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": false
+    },
+    {
+      "path": "command-head-set-angles.invalid-pitch.json",
+      "schema": "https://stackchan-hermes.local/schemas/command.schema.json",
+      "valid": false
+    },
+    {
+      "path": "control-command-result.invalid-mixed-outcome.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": false
+    },
+    {
+      "path": "event-touch-tap.invalid-coordinate.json",
+      "schema": "https://stackchan-hermes.local/schemas/event.schema.json",
+      "valid": false
+    }
+  ]
+}

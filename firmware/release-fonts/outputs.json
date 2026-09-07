@@ -1,0 +1,38 @@
+[
+  {
+    "path": "release-fonts/src/font_awesome_20_4.c",
+    "sha256": "c3489f62ce3355dd8cfa91ae6818187c52ea695d7a236d65d5c184ca67f85ec5",
+    "size": 121347,
+    "license": "Apache-2.0"
+  },
+  {
+    "path": "release-fonts/src/font_awesome_30_4.c",
+    "sha256": "55236e0c8a5d5a8e15a81a491397f441ba9cb1dd2dcffdf4209e2f36400a2980",
+    "size": 239330,
+    "license": "Apache-2.0"
+  },
+  {
+    "path": "release-fonts/src/font_awesome_30_1.c",
+    "sha256": "01a31747aaa703e42d0a135d86d1a1c96b52c3e5e6d9dc8119d6527fcf6972cf",
+    "size": 69876,
+    "license": "Apache-2.0"
+  },
+  {
+    "path": "release-fonts/src/font_stackchan_basic_20_4.c",
+    "sha256": "943f3d93ef3d6a9669e60393752ffaac71ebd1a2e0523a390bcc40d91b2372bc",
+    "size": 110936,
+    "license": "OFL-1.1"
+  },
+  {
+    "path": "release-fonts/cbin/font_stackchan_common_20_4.bin",
+    "sha256": "77a86d7d6a0dc8c2d7930ff2d12f068a71cbc070d938cea7f87ab1cfe9593134",
+    "size": 1841812,
+    "license": "OFL-1.1"
+  },
+  {
+    "path": "main/assets/fonts/MontserratSemiBold26.c",
+    "sha256": "b72462aee6ef2cb83100fa97a6fdf0aa94c44a16804b7843a3c51535837538c4",
+    "size": 51977,
+    "license": "OFL-1.1"
+  }
+]

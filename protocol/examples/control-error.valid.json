@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "type": "error",
+  "message_id": "78def06b-b426-4a4f-855e-cf9fce8f1179",
+  "request_id": "a75dff8d-b78a-4f14-9d33-848a817301da",
+  "sent_at_ms": 100,
+  "payload": {
+    "code": "INVALID_STATE",
+    "message": "現在の状態では実行できません",
+    "detail": "binary frame received without an open input stream"
+  }
+}

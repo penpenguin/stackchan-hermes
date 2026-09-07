@@ -1,0 +1,118 @@
+[device_gateway]
+host = "0.0.0.0"
+port = 8765
+websocket_path = "/v1/device/ws"
+capture_upload_path = "/v1/device/captures/{capture_id}"
+handshake_timeout_ms = 5000
+heartbeat_interval_ms = 15000
+max_connections = 8
+max_json_bytes = 16384
+max_audio_packet_bytes = 1275
+
+[control_api]
+host = "127.0.0.1"
+port = 8766
+
+[hermes]
+base_url = "http://127.0.0.1:8642"
+api_key_env = "HERMES_API_KEY" # pragma: allowlist secret
+profile = "default"
+model = ""
+responses_path = "/v1/responses"
+health_path = "/health"
+capabilities_path = "/v1/capabilities"
+session_key_prefix = "agent:default:stackchan"
+timeout_seconds = 120
+allow_chat_completions_fallback = false
+
+[audio]
+codec = "opus"
+sample_rate = 16000
+channels = 1
+frame_ms = 60
+max_recording_ms = 15000
+tts_preroll_ms = 500
+tts_postroll_ms = 100
+tts_gain = 0.65
+# WARNING: microphone audio is private; enable only for short-lived local diagnostics.
+debug_save_enabled = false
+debug_directory = ".local/debug-audio"
+debug_ttl_seconds = 3600
+
+[vad]
+adapter = "rms"
+start_speech_ms = 60
+end_silence_ms = 650
+minimum_speech_ms = 240
+preroll_ms = 360
+start_threshold = 1000
+end_threshold = 500
+initial_noise_floor = 50
+noise_floor_alpha = 0.05
+noise_start_ratio = 3.0
+noise_end_ratio = 1.8
+
+[stt]
+adapter = "mock"
+language = "ja"
+timeout_seconds = 60
+api_key_env = "STACKCHAN_STT_API_KEY" # pragma: allowlist secret
+model_name = "small"
+device = "auto"
+compute_type = "default"
+# For adapter = "http", set endpoint to an HTTPS URL or loopback HTTP URL.
+# endpoint = "http://127.0.0.1:8080/v1/audio/transcriptions"
+
+[tts]
+adapter = "mock"
+timeout_seconds = 30
+api_key_env = "STACKCHAN_TTS_API_KEY" # pragma: allowlist secret
+speaker = 1
+# For adapter = "http", set a WAV endpoint; for "voicevox", set its base URL.
+# endpoint = "http://127.0.0.1:50021"
+# For adapter = "openai", set the complete speech URL, model, and registered voice ID.
+# endpoint = "http://127.0.0.1:8088/v1/audio/speech"
+# model = "irodori-tts"
+# voice = "sample"
+# speed = 1.0 # 0.25 through 4.0; defaults to 1.0.
+# For Irodori cold starts, increase timeout_seconds above (e.g. 120; maximum 300).
+max_segments = 2
+segment_max_characters = 80
+response_max_characters = 160
+failure_policy = "abort"
+
+[captures]
+directory = ".local/captures"
+ttl_seconds = 600
+max_bytes = 2097152
+timeout_seconds = 10
+persist = false
+
+[observability]
+log_level = "INFO"
+json_logs = false
+privacy_debug_transcripts = false
+metrics_enabled = true
+
+[security]
+allowed_devices = ["sim-001"]
+device_token_env = "STACKCHAN_DEVICE_TOKEN"
+authentication_rate_per_second = 5
+authentication_rate_burst = 10
+max_concurrent_authentications = 4
+request_rate_per_second = 100
+request_rate_burst = 200
+audio_packet_rate_per_second = 60
+audio_packet_rate_burst = 100
+capture_rate_per_minute = 6
+capture_rate_burst = 2
+command_timeout_ms = 5000
+
+[automation]
+expression_enabled = true
+led_enabled = true
+
+[mdns]
+enabled = true
+service_name = "stackchan-bridge"
+# hostname = "bridge-host"

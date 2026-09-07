@@ -1,0 +1,29 @@
+{
+  "v": 1,
+  "type": "hello",
+  "message_id": "d5dd9e57-e4f7-4f07-9dc4-b939d0b6a947",
+  "sent_at_ms": 9223372036854775808,
+  "payload": {
+    "device_id": "stackchan-001",
+    "device_name": "StackChan",
+    "firmware_version": "0.1.0",
+    "hardware_model": "M5STACK-K151",
+    "protocol_versions": [1],
+    "capabilities": {
+      "microphone": true,
+      "speaker": true,
+      "camera": true,
+      "touch": true,
+      "head": false,
+      "display": true,
+      "avatar": true,
+      "led_count": 12
+    },
+    "audio": {
+      "codec": "opus",
+      "sample_rate": 16000,
+      "channels": 1,
+      "frame_ms": 60
+    }
+  }
+}
