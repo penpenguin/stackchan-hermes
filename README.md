@@ -150,6 +150,11 @@ voice = "sample"
 speed = 1.0
 timeout_seconds = 120
 api_key_env = "STACKCHAN_TTS_API_KEY" # pragma: allowlist secret
+
+# Optional: shared by every utterance.
+[tts.irodori]
+caption = "明るく親しみやすい声。穏やかに話す。"
+seed = 1234
 ```
 
 `endpoint` は `/v1/audio/speech` を含む完全な URL を指定します。HTTPS または
@@ -160,7 +165,13 @@ loopback HTTP が利用でき、Bridge はパスを自動追加しません。`m
 Irodori 側で認証を有効にしている場合は、同じキーを `.env` の `STACKCHAN_TTS_API_KEY` に
 設定します。キー未設定時は認証ヘッダーを送りません。Bridge は標準項目を JSON で送り、
 `response_format = "wav"` を指定して受け取った音声を既存の再生形式に変換します。
-caption・seed などの Irodori 固有項目と SSE は、このアダプターの対象外です。
+`[tts.irodori]` は任意です。`caption` は文字列、`seed` は整数で、片方だけでも指定できます。
+指定した項目だけを JSON の `irodori.caption` / `irodori.seed` として送り、両方を省略すると
+`irodori` 自体を送りません。`seed = 0` も有効です。設定は全発話・分割された各セグメントに
+共通で適用され、会話内容に応じた自動変更は行いません。caption の効果はサーバー側のモデルの
+対応状況に依存します。その他の Irodori 固有項目と SSE は、このアダプターの対象外です。
+環境変数で上書きする場合は `STACKCHAN_TTS__IRODORI__CAPTION` と
+`STACKCHAN_TTS__IRODORI__SEED`（例: `0`）を使います。
 
 ### 5. `.env` を読み込んで Bridge を起動する
 

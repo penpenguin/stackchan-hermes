@@ -81,6 +81,12 @@ segment_max_characters = 80
 response_max_characters = 160
 failure_policy = "abort"
 
+# Optional for adapter = "openai": specify either or both for every utterance.
+# Omitted options are not sent. Keep this table after all other [tts] settings.
+# [tts.irodori]
+# caption = "明るく親しみやすい声。穏やかに話す。"
+# seed = 1234 # Integer; 0 is also valid.
+
 [captures]
 directory = ".local/captures"
 ttl_seconds = 600

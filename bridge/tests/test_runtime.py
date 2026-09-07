@@ -368,7 +368,13 @@ async def test_runtime_readiness_does_not_run_stt_or_tts_inference(
     assert provider_requests == []
 
 
-async def test_runtime_synthesizes_with_openai_tts_and_closes_its_client(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "irodori",
+    [None, {}, {"caption": "穏やかに話す。"}, {"seed": 0}, {"caption": "明るい声。", "seed": 1234}],
+)
+async def test_runtime_synthesizes_with_openai_tts_and_closes_its_client(
+    tmp_path: Path, irodori: dict[str, str | int] | None
+) -> None:
     api_key = "runtime-irodori-key"  # pragma: allowlist secret
     environment = {
         "STACKCHAN_DEVICE_TOKEN": "runtime-device-token",  # pragma: allowlist secret
@@ -388,6 +394,7 @@ async def test_runtime_synthesizes_with_openai_tts_and_closes_its_client(tmp_pat
                 "voice": "sample",
                 "speed": 1.25,
                 "timeout_seconds": 120,
+                **({"irodori": irodori} if irodori is not None else {}),
             },
         },
     )
@@ -395,7 +402,10 @@ async def test_runtime_synthesizes_with_openai_tts_and_closes_its_client(tmp_pat
     async def handle(request: httpx.Request) -> httpx.Response:
         assert str(request.url) == settings.tts.endpoint
         assert request.headers["authorization"] == f"Bearer {api_key}"
-        assert json.loads(await request.aread()) == {
+        payload = json.loads(await request.aread())
+        if irodori:
+            assert payload.pop("irodori") == irodori
+        assert payload == {
             "model": "irodori-tts",
             "voice": "sample",
             "speed": 1.25,

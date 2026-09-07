@@ -101,20 +101,30 @@ class OpenAICompatibleTtsAdapter:
     gain: float = 0.65
     leading_silence_ms: int = 0
     trailing_silence_ms: int = 0
+    irodori_caption: str | None = None
+    irodori_seed: int | None = None
 
     async def synthesize(self, text: str) -> TtsResult:
         if not text.strip():
             raise ValueError("TTS text cannot be empty")
+        payload: dict[str, JsonValue] = {
+            "model": self.model,
+            "input": text,
+            "voice": self.voice,
+            "speed": self.speed,
+            "response_format": "wav",
+        }
+        irodori: dict[str, JsonValue] = {}
+        if self.irodori_caption is not None:
+            irodori["caption"] = self.irodori_caption
+        if self.irodori_seed is not None:
+            irodori["seed"] = self.irodori_seed
+        if irodori:
+            payload["irodori"] = irodori
         return await _synthesize_http_wav(
             self.client,
             endpoint=self.endpoint,
-            payload={
-                "model": self.model,
-                "input": text,
-                "voice": self.voice,
-                "speed": self.speed,
-                "response_format": "wav",
-            },
+            payload=payload,
             provider="openai",
             api_key=self.api_key,
             gain=self.gain,

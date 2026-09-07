@@ -164,6 +164,13 @@ class SttSettings(BaseModel):
         return self
 
 
+class IrodoriTtsSettings(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    caption: str | None = None
+    seed: int | None = None
+
+
 class TtsSettings(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -176,6 +183,7 @@ class TtsSettings(BaseModel):
     model: str | None = None
     voice: str | None = None
     speed: float = Field(default=1.0, ge=0.25, le=4.0)
+    irodori: IrodoriTtsSettings = Field(default_factory=IrodoriTtsSettings)
     max_segments: int = Field(default=2, ge=1, le=10)
     segment_max_characters: int = Field(default=80, ge=1, le=500)
     response_max_characters: int = Field(default=160, ge=1, le=2_000)
