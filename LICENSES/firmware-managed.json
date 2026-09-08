@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "checked_on": "2026-09-07",
+  "checked_on": "2026-09-08",
   "lock_sha256": "676b3fdbf3cbcf0e600b34422e79e64a9bb2d4b29fa56da431829a37fe06bb87",
   "scope": "All 60 locked managed components, cached source contents validated with idf-component-manager 2.5.0. Does not establish which files a final firmware links.",
   "components": [
@@ -20,7 +20,14 @@
       "declaration": "Apache-2.0",
       "repository": "git://github.com/78/esp-ml307.git",
       "source_identifiers": {},
-      "native_files": []
+      "native_files": [],
+      "local_changes": {
+        "source": "src/esp/esp_network.cc",
+        "source_sha256": "c6aada5d37c8a3ce8efb24b5777e8f9355510a9adf305d22a8cfb53e9e2bba3a",
+        "derivative": "firmware/components/stackchan_bridge_client/esp_network.cpp",
+        "derivative_sha256": "425487a286c80cd888b8926e5b1f7ac72135a1868f64cb2dcb39fe82dce50ad9",
+        "description": "Bridge-only factory: remove MQTT/UDP construction; compile only shared HTTP, TCP, TLS and reviewed WebSocket implementation. Cellular modem and MQTT senders are excluded. Apache-2.0 notice retained."
+      }
     },
     {
       "name": "78/esp-wifi-connect",
@@ -46,7 +53,12 @@
       "repository": "git://github.com/78/esp-wifi-connect.git",
       "source_identifiers": {},
       "native_files": [],
-      "review_status": "MIT declaration at pinned version; upstream subsequently supplied MIT text and Copyright (c) 2024 Terrence; retained as clarification without upgrading code"
+      "review_status": "MIT declaration at pinned version; upstream subsequently supplied MIT text and Copyright (c) 2024 Terrence; retained as clarification without upgrading code",
+      "local_changes": {
+        "patch": "firmware/patches/esp-wifi-connect.patch",
+        "manifest": "firmware/patches/esp-wifi-connect.json",
+        "description": "Remove OTA URL from the local provisioning page and NVS read/write handlers. Apply only to verified build-directory copies; managed source remains unchanged."
+      }
     },
     {
       "name": "78/esp_lcd_nv3023",

@@ -12,6 +12,9 @@
 #include <hal/hal.h>
 #include <hal/stackchan_bridge_provisioning.h>
 #include <hal/stackchan_bridge_service.h>
+#include <hal/board/hal_bridge.h>
+#include <apps/common/common.h>
+#include <assets/assets.h>
 
 using namespace mooncake;
 using namespace smooth_ui_toolkit;
@@ -35,47 +38,29 @@ extern "C" void app_main(void)
     }
 #endif
 
-    const bool skip_mooncake =
-        GetHAL().getXiaozhiConfig().startAiAgentOnBoot && GetHAL().getWarmRebootTarget() < 0;
+    GetMooncake().installApp(std::make_unique<AppLauncher>());
+    GetMooncake().installApp(std::make_unique<AppAvatar>());
+    GetMooncake().installApp(std::make_unique<AppEspnowControl>());
+    GetMooncake().installApp(std::make_unique<AppDance>());
+    GetMooncake().installApp(std::make_unique<AppSetup>());
 
-    if (!skip_mooncake) {
-        // Install apps
-        GetMooncake().installApp(std::make_unique<AppLauncher>());
-        GetMooncake().installApp(std::make_unique<AppAiAgent>());
-        GetMooncake().installApp(std::make_unique<AppAvatar>());
-        GetMooncake().installApp(std::make_unique<AppEspnowControl>());
-        GetMooncake().installApp(std::make_unique<AppAppCenter>());
-        GetMooncake().installApp(std::make_unique<AppEzdata>());
-        GetMooncake().installApp(std::make_unique<AppDance>());
-        GetMooncake().installApp(std::make_unique<AppSetup>());
-
-        if (!view::initialize_toast_manager()) {
-            mclog::error("Toast manager did not start");
-        }
-
-#if CONFIG_STACKCHAN_HERMES_BRIDGE_CLIENT
-        if (!stackchan::hermes::startStackchanHermesBridgeClient()) {
-            mclog::error("StackChan Hermes Bridge client did not start");
-        }
-#endif
-
-        // Main loop
-        while (1) {
-            GetHAL().feedTheDog();
-            GetHAL().updateHeapStatusLog();
-
-            GetMooncake().update();
-
-            if (GetHAL().isXiaozhiStartRequested()) {
-                break;
-            }
-        }
-
-        // Uninstall all apps and destroy mooncake
-        GetMooncake().uninstallAllApps();
-        DestroyMooncake();
+    if (!view::initialize_toast_manager()) {
+        mclog::error("Toast manager did not start");
     }
-
-    // Start xiaozhi, never returns
-    GetHAL().startXiaozhi();
+    tools::on_reminder_triggered().connect([](int, std::string_view message) {
+        view::pop_a_toast(std::string(message), view::ToastType::Info);
+        hal_bridge::app_play_sound(OGG_NEW_NOTIFICATION);
+    });
+#if CONFIG_STACKCHAN_HERMES_BRIDGE_CLIENT
+    if (!stackchan::hermes::startStackchanHermesBridgeClient()) {
+        mclog::error("StackChan Hermes Bridge client did not start");
+    }
+#endif
+    while (true) {
+        GetHAL().feedTheDog();
+        GetHAL().updateHeapStatusLog();
+        hal_bridge::update_local_tasks();
+        tools::update_reminders();
+        GetMooncake().update();
+    }
 }

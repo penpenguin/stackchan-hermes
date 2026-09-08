@@ -1,0 +1,419 @@
+--- a/wifi_configuration_ap.cc
++++ b/wifi_configuration_ap.cc
+@@ -177,15 +177,7 @@
+     nvs_handle_t nvs;
+     esp_err_t err = nvs_open("wifi", NVS_READONLY, &nvs);
+     if (err == ESP_OK) {
+-        // 读取OTA URL
+-        char ota_url[256] = {0};
+-        size_t ota_url_size = sizeof(ota_url);
+-        err = nvs_get_str(nvs, "ota_url", ota_url, &ota_url_size);
+-        if (err == ESP_OK) {
+-            ota_url_ = ota_url;
+-        }
+-
+-        // 读取WiFi功率
++        // Read local Wi-Fi power settings.
+         err = nvs_get_i8(nvs, "max_tx_power", &max_tx_power_);
+         if (err == ESP_OK) {
+             ESP_LOGI(TAG, "WiFi max tx power from NVS: %d", max_tx_power_);
+@@ -520,9 +512,6 @@
+             }
+ 
+             // 添加配置项到JSON
+-            if (!this_->ota_url_.empty()) {
+-                cJSON_AddStringToObject(json, "ota_url", this_->ota_url_.c_str());
+-            }
+             cJSON_AddNumberToObject(json, "max_tx_power", this_->max_tx_power_);
+             cJSON_AddBoolToObject(json, "remember_bssid", this_->remember_bssid_);
+             cJSON_AddBoolToObject(json, "sleep_mode", this_->sleep_mode_);
+@@ -595,17 +584,7 @@
+                 return ESP_FAIL;
+             }
+ 
+-            // 保存OTA URL
+-            cJSON *ota_url = cJSON_GetObjectItem(json, "ota_url");
+-            if (cJSON_IsString(ota_url) && ota_url->valuestring) {
+-                this_->ota_url_ = ota_url->valuestring;
+-                err = nvs_set_str(nvs, "ota_url", this_->ota_url_.c_str());
+-                if (err != ESP_OK) {
+-                    ESP_LOGE(TAG, "Failed to save OTA URL: %d", err);
+-                }
+-            }
+-
+-            // 保存WiFi功率
++            // Save local Wi-Fi power settings.
+             cJSON *max_tx_power = cJSON_GetObjectItem(json, "max_tx_power");
+             if (cJSON_IsNumber(max_tx_power)) {
+                 this_->max_tx_power_ = max_tx_power->valueint;
+@@ -656,8 +635,8 @@
+             httpd_resp_set_hdr(req, "Connection", "close");
+             httpd_resp_send(req, "{\"success\":true}", HTTPD_RESP_USE_STRLEN);
+ 
+-            ESP_LOGI(TAG, "Saved settings: ota_url=%s, max_tx_power=%d, remember_bssid=%d, sleep_mode=%d",
+-                this_->ota_url_.c_str(), this_->max_tx_power_, this_->remember_bssid_, this_->sleep_mode_);
++            ESP_LOGI(TAG, "Saved settings: max_tx_power=%d, remember_bssid=%d, sleep_mode=%d",
++                this_->max_tx_power_, this_->remember_bssid_, this_->sleep_mode_);
+             return ESP_OK;
+         },
+         .user_ctx = this
+--- a/include/wifi_configuration_ap.h
++++ b/include/wifi_configuration_ap.h
+@@ -67,7 +67,6 @@
+     std::vector<wifi_ap_record_t> ap_records_;
+ 
+     // 高级配置项
+-    std::string ota_url_;
+     int8_t max_tx_power_;
+     bool remember_bssid_;
+     bool sleep_mode_;
+--- a/assets/wifi_configuration.html
++++ b/assets/wifi_configuration.html
+@@ -269,15 +269,6 @@
+                 <h3 data-lang="advanced_tab">Advanced</h3>
+                 <p class="error" style="color: red; text-align: center;" id="advanced_error"></p>
+                 
+-                <!-- OTA URL -->
+-                <p>
+-                    <label for="ota_url" data-lang="ota_url">Custom OTA URL:</label>
+-                    <div style="display: flex; align-items: center; gap: 10px;">
+-                        <input type="text" id="ota_url" name="ota_url" style="flex: 1;">
+-                        <button type="button" onclick="clearOtaUrl()" style="padding: 5px 10px; border: 1px solid #ccc; border-radius: 3px; background-color: #f0f0f0; cursor: pointer;">❌</button>
+-                    </div>
+-                </p>
+-
+                 <!-- Max TX Power -->
+                 <p style="display: flex; align-items: center; gap: 10px;">
+                     <label for="max_tx_power" data-lang="max_tx_power" style="white-space: nowrap;">Wi-Fi Max TX Power:</label>
+@@ -340,7 +331,6 @@
+                 scanning: 'جارٍ المسح...',
+                 wifi_tab: 'تكوين Wi-Fi',
+                 advanced_tab: 'خيارات متقدمة',
+-                ota_url: 'عنوان OTA مخصص:',
+                 max_tx_power: 'أقصى قوة إرسال Wi-Fi:',
+                 remember_bssid: 'تذكر BSSID عند الاتصال بـ Wi-Fi',
+                 sleep_mode: 'تمكين وضع السكون',
+@@ -358,7 +348,6 @@
+                 scanning: 'Сканиране...',
+                 wifi_tab: 'Конфигурация на Wi-Fi',
+                 advanced_tab: 'Разширени',
+-                ota_url: 'Персонализиран OTA URL:',
+                 max_tx_power: 'Макс. мощност на предаване Wi-Fi:',
+                 remember_bssid: 'Запомни BSSID при свързване към Wi-Fi',
+                 sleep_mode: 'Активиране на режим на заспиване',
+@@ -376,7 +365,6 @@
+                 scanning: 'Escanejant...',
+                 wifi_tab: 'Configuració Wi-Fi',
+                 advanced_tab: 'Avançat',
+-                ota_url: 'URL OTA personalitzat:',
+                 max_tx_power: 'Potència màxima TX Wi-Fi:',
+                 remember_bssid: 'Recordar BSSID en connectar a Wi-Fi',
+                 sleep_mode: 'Activar mode de suspensió',
+@@ -394,7 +382,6 @@
+                 scanning: 'Skenování...',
+                 wifi_tab: 'Konfigurace Wi-Fi',
+                 advanced_tab: 'Pokročilé',
+-                ota_url: 'Vlastní OTA URL:',
+                 max_tx_power: 'Max. vysílací výkon Wi-Fi:',
+                 remember_bssid: 'Pamatovat si BSSID při připojení k Wi-Fi',
+                 sleep_mode: 'Povolit režim spánku',
+@@ -412,7 +399,6 @@
+                 scanning: 'Scanner...',
+                 wifi_tab: 'Wi-Fi-konfiguration',
+                 advanced_tab: 'Avanceret',
+-                ota_url: 'Brugerdefineret OTA URL:',
+                 max_tx_power: 'Wi-Fi maks. TX-effekt:',
+                 remember_bssid: 'Husk BSSID ved forbindelse til Wi-Fi',
+                 sleep_mode: 'Aktiver dvaletilstand',
+@@ -430,7 +416,6 @@
+                 scanning: 'Scanne...',
+                 wifi_tab: 'Wi-Fi-Konfiguration',
+                 advanced_tab: 'Erweitert',
+-                ota_url: 'Benutzerdefinierte OTA-URL:',
+                 max_tx_power: 'Wi-Fi Max. Sendeleistung:',
+                 remember_bssid: 'BSSID beim Verbinden mit Wi-Fi merken',
+                 sleep_mode: 'Schlafmodus aktivieren',
+@@ -448,7 +433,6 @@
+                 scanning: 'Σάρωση...',
+                 wifi_tab: 'Διαμόρφωση Wi-Fi',
+                 advanced_tab: 'Για προχωρημένους',
+-                ota_url: 'Προσαρμοσμένη διεύθυνση OTA:',
+                 max_tx_power: 'Μέγιστη ισχύς μετάδοσης Wi-Fi:',
+                 remember_bssid: 'Απομνημόνευση BSSID κατά τη σύνδεση σε Wi-Fi',
+                 sleep_mode: 'Ενεργοποίηση λειτουργίας αναστολής',
+@@ -466,7 +450,6 @@
+                 scanning: 'Scanning...',
+                 wifi_tab: 'Wi-Fi Config',
+                 advanced_tab: 'Advanced',
+-                ota_url: 'Custom OTA URL:',
+                 max_tx_power: 'Wi-Fi Max TX Power:',
+                 remember_bssid: 'Remember BSSID when connecting to Wi-Fi',
+                 sleep_mode: 'Enable Sleep Mode',
+@@ -484,7 +467,6 @@
+                 scanning: 'Escaneando...',
+                 wifi_tab: 'Configuración Wi-Fi',
+                 advanced_tab: 'Avanzado',
+-                ota_url: 'URL OTA personalizada:',
+                 max_tx_power: 'Potencia máxima TX Wi-Fi:',
+                 remember_bssid: 'Recordar BSSID al conectarse a Wi-Fi',
+                 sleep_mode: 'Activar modo de suspensión',
+@@ -502,7 +484,6 @@
+                 scanning: 'در حال اسکن...',
+                 wifi_tab: 'پیکربندی Wi-Fi',
+                 advanced_tab: 'پیشرفته',
+-                ota_url: 'آدرس OTA سفارشی:',
+                 max_tx_power: 'حداکثر قدرت انتقال Wi-Fi:',
+                 remember_bssid: 'به خاطر سپردن BSSID هنگام اتصال به Wi-Fi',
+                 sleep_mode: 'فعال کردن حالت خواب',
+@@ -520,7 +501,6 @@
+                 scanning: 'Etsitään...',
+                 wifi_tab: 'Wi-Fi-määritys',
+                 advanced_tab: 'Lisäasetukset',
+-                ota_url: 'Mukautettu OTA-osoite:',
+                 max_tx_power: 'Wi-Fi maks. lähetysteho:',
+                 remember_bssid: 'Muista BSSID yhdistettäessä Wi-Fi-verkkoon',
+                 sleep_mode: 'Ota lepotila käyttöön',
+@@ -538,7 +518,6 @@
+                 scanning: 'Nag-scan...',
+                 wifi_tab: 'Pagsasaayos ng Wi-Fi',
+                 advanced_tab: 'Advanced',
+-                ota_url: 'Custom OTA URL:',
+                 max_tx_power: 'Wi-Fi Max TX Power:',
+                 remember_bssid: 'Tandaan ang BSSID kapag kumokonekta sa Wi-Fi',
+                 sleep_mode: 'I-enable ang Sleep Mode',
+@@ -556,7 +535,6 @@
+                 scanning: 'Analyse en cours...',
+                 wifi_tab: 'Configuration Wi-Fi',
+                 advanced_tab: 'Avancé',
+-                ota_url: 'URL OTA personnalisée:',
+                 max_tx_power: 'Puissance TX maximale Wi-Fi:',
+                 remember_bssid: 'Mémoriser le BSSID lors de la connexion au Wi-Fi',
+                 sleep_mode: 'Activer le mode veille',
+@@ -574,7 +552,6 @@
+                 scanning: 'סורק...',
+                 wifi_tab: 'הגדרות Wi-Fi',
+                 advanced_tab: 'מתקדם',
+-                ota_url: 'כתובת OTA מותאמת אישית:',
+                 max_tx_power: 'הספק שידור מקסימלי Wi-Fi:',
+                 remember_bssid: 'זכור BSSID בעת התחברות ל-Wi-Fi',
+                 sleep_mode: 'הפעל מצב שינה',
+@@ -592,7 +569,6 @@
+                 scanning: 'स्कैन कर रहा है...',
+                 wifi_tab: 'Wi-Fi कॉन्फ़िगरेशन',
+                 advanced_tab: 'उन्नत',
+-                ota_url: 'कस्टम OTA URL:',
+                 max_tx_power: 'Wi-Fi अधिकतम TX पावर:',
+                 remember_bssid: 'Wi-Fi से कनेक्ट करते समय BSSID याद रखें',
+                 sleep_mode: 'स्लीप मोड सक्षम करें',
+@@ -610,7 +586,6 @@
+                 scanning: 'Skeniranje...',
+                 wifi_tab: 'Konfiguracija Wi-Fi',
+                 advanced_tab: 'Napredno',
+-                ota_url: 'Prilagođeni OTA URL:',
+                 max_tx_power: 'Wi-Fi maksimalna TX snaga:',
+                 remember_bssid: 'Zapamti BSSID pri povezivanju na Wi-Fi',
+                 sleep_mode: 'Omogući način spavanja',
+@@ -628,7 +603,6 @@
+                 scanning: 'Keresés...',
+                 wifi_tab: 'Wi-Fi konfiguráció',
+                 advanced_tab: 'Speciális',
+-                ota_url: 'Egyéni OTA URL:',
+                 max_tx_power: 'Wi-Fi max. adási teljesítmény:',
+                 remember_bssid: 'BSSID megjegyzése Wi-Fi csatlakozáskor',
+                 sleep_mode: 'Alvó mód engedélyezése',
+@@ -646,7 +620,6 @@
+                 scanning: 'Memindai...',
+                 wifi_tab: 'Konfigurasi Wi-Fi',
+                 advanced_tab: 'Lanjutan',
+-                ota_url: 'URL OTA Kustom:',
+                 max_tx_power: 'Daya Pancar Maks Wi-Fi:',
+                 remember_bssid: 'Ingat BSSID saat menghubungkan ke Wi-Fi',
+                 sleep_mode: 'Aktifkan Mode Tidur',
+@@ -664,7 +637,6 @@
+                 scanning: 'Scansione in corso...',
+                 wifi_tab: 'Configurazione Wi-Fi',
+                 advanced_tab: 'Avanzate',
+-                ota_url: 'URL OTA personalizzato:',
+                 max_tx_power: 'Potenza TX massima Wi-Fi:',
+                 remember_bssid: 'Ricorda BSSID durante la connessione al Wi-Fi',
+                 sleep_mode: 'Abilita modalità sospensione',
+@@ -682,7 +654,6 @@
+                 scanning: 'スキャン中...',
+                 wifi_tab: 'Wi-Fi設定',
+                 advanced_tab: '詳細設定',
+-                ota_url: 'カスタムOTA URL:',
+                 max_tx_power: 'Wi-Fi最大送信電力:',
+                 remember_bssid: 'Wi-Fi接続時にBSSIDを記憶する',
+                 sleep_mode: 'スリープモードを有効にする',
+@@ -700,7 +671,6 @@
+                 scanning: '스캔 중...',
+                 wifi_tab: 'Wi-Fi 구성',
+                 advanced_tab: '고급',
+-                ota_url: '사용자 정의 OTA URL:',
+                 max_tx_power: 'Wi-Fi 최대 송신 전력:',
+                 remember_bssid: 'Wi-Fi 연결 시 BSSID 기억',
+                 sleep_mode: '절전 모드 활성화',
+@@ -718,7 +688,6 @@
+                 scanning: 'Mengimbas...',
+                 wifi_tab: 'Konfigurasi Wi-Fi',
+                 advanced_tab: 'Lanjutan',
+-                ota_url: 'URL OTA Tersuai:',
+                 max_tx_power: 'Kuasa TX Maksimum Wi-Fi:',
+                 remember_bssid: 'Ingat BSSID semasa menyambung ke Wi-Fi',
+                 sleep_mode: 'Dayakan Mod Tidur',
+@@ -736,7 +705,6 @@
+                 scanning: 'Skanner...',
+                 wifi_tab: 'Wi-Fi-konfigurasjon',
+                 advanced_tab: 'Avansert',
+-                ota_url: 'Egendefinert OTA-URL:',
+                 max_tx_power: 'Wi-Fi maks. sendeeffekt:',
+                 remember_bssid: 'Husk BSSID ved tilkobling til Wi-Fi',
+                 sleep_mode: 'Aktiver hvilemodus',
+@@ -754,7 +722,6 @@
+                 scanning: 'Scannen...',
+                 wifi_tab: 'Wi-Fi-configuratie',
+                 advanced_tab: 'Geavanceerd',
+-                ota_url: 'Aangepaste OTA-URL:',
+                 max_tx_power: 'Wi-Fi max. zendvermogen:',
+                 remember_bssid: 'BSSID onthouden bij verbinden met Wi-Fi',
+                 sleep_mode: 'Slaapmodus inschakelen',
+@@ -772,7 +739,6 @@
+                 scanning: 'Skanowanie...',
+                 wifi_tab: 'Konfiguracja Wi-Fi',
+                 advanced_tab: 'Zaawansowane',
+-                ota_url: 'Niestandardowy adres URL OTA:',
+                 max_tx_power: 'Maksymalna moc nadawania Wi-Fi:',
+                 remember_bssid: 'Zapamiętaj BSSID podczas łączenia z Wi-Fi',
+                 sleep_mode: 'Włącz tryb uśpienia',
+@@ -790,7 +756,6 @@
+                 scanning: 'A procurar...',
+                 wifi_tab: 'Configuração Wi-Fi',
+                 advanced_tab: 'Avançado',
+-                ota_url: 'URL OTA personalizado:',
+                 max_tx_power: 'Potência TX máxima Wi-Fi:',
+                 remember_bssid: 'Lembrar BSSID ao ligar ao Wi-Fi',
+                 sleep_mode: 'Ativar modo de suspensão',
+@@ -808,7 +773,6 @@
+                 scanning: 'Se scanează...',
+                 wifi_tab: 'Configurare Wi-Fi',
+                 advanced_tab: 'Avansat',
+-                ota_url: 'URL OTA personalizat:',
+                 max_tx_power: 'Putere maximă TX Wi-Fi:',
+                 remember_bssid: 'Reține BSSID la conectarea la Wi-Fi',
+                 sleep_mode: 'Activează modul de repaus',
+@@ -826,7 +790,6 @@
+                 scanning: 'Сканирование...',
+                 wifi_tab: 'Настройка Wi-Fi',
+                 advanced_tab: 'Дополнительно',
+-                ota_url: 'Пользовательский URL OTA:',
+                 max_tx_power: 'Макс. мощность передачи Wi-Fi:',
+                 remember_bssid: 'Запомнить BSSID при подключении к Wi-Fi',
+                 sleep_mode: 'Включить режим сна',
+@@ -844,7 +807,6 @@
+                 scanning: 'Skenovanie...',
+                 wifi_tab: 'Konfigurácia Wi-Fi',
+                 advanced_tab: 'Pokročilé',
+-                ota_url: 'Vlastná URL OTA:',
+                 max_tx_power: 'Max. vysielací výkon Wi-Fi:',
+                 remember_bssid: 'Zapamätať si BSSID pri pripojení k Wi-Fi',
+                 sleep_mode: 'Povoliť režim spánku',
+@@ -862,7 +824,6 @@
+                 scanning: 'Iskanje...',
+                 wifi_tab: 'Konfiguracija Wi-Fi',
+                 advanced_tab: 'Napredno',
+-                ota_url: 'Prilagojen URL OTA:',
+                 max_tx_power: 'Wi-Fi maks. oddajna moč:',
+                 remember_bssid: 'Zapomni si BSSID ob povezovanju na Wi-Fi',
+                 sleep_mode: 'Omogoči način spanja',
+@@ -880,7 +841,6 @@
+                 scanning: 'Скенирање...',
+                 wifi_tab: 'Конфигурација Wi-Fi',
+                 advanced_tab: 'Напредно',
+-                ota_url: 'Прилагођени OTA URL:',
+                 max_tx_power: 'Wi-Fi максимална снага преноса:',
+                 remember_bssid: 'Запамти BSSID приликом повезивања на Wi-Fi',
+                 sleep_mode: 'Омогући режим спавања',
+@@ -898,7 +858,6 @@
+                 scanning: 'Söker...',
+                 wifi_tab: 'Wi-Fi-konfiguration',
+                 advanced_tab: 'Avancerat',
+-                ota_url: 'Anpassad OTA-URL:',
+                 max_tx_power: 'Wi-Fi max. sändningseffekt:',
+                 remember_bssid: 'Kom ihåg BSSID vid anslutning till Wi-Fi',
+                 sleep_mode: 'Aktivera viloläge',
+@@ -916,7 +875,6 @@
+                 scanning: 'กำลังสแกน...',
+                 wifi_tab: 'การกำหนดค่า Wi-Fi',
+                 advanced_tab: 'ขั้นสูง',
+-                ota_url: 'URL OTA กำหนดเอง:',
+                 max_tx_power: 'กำลังส่งสูงสุด Wi-Fi:',
+                 remember_bssid: 'จำ BSSID เมื่อเชื่อมต่อกับ Wi-Fi',
+                 sleep_mode: 'เปิดใช้งานโหมดสลีป',
+@@ -934,7 +892,6 @@
+                 scanning: 'Taranıyor...',
+                 wifi_tab: 'Wi-Fi Yapılandırması',
+                 advanced_tab: 'Gelişmiş',
+-                ota_url: 'Özel OTA URL:',
+                 max_tx_power: 'Wi-Fi Maks. İletim Gücü:',
+                 remember_bssid: 'Wi-Fi\'ye bağlanırken BSSID\'yi hatırla',
+                 sleep_mode: 'Uyku Modunu Etkinleştir',
+@@ -952,7 +909,6 @@
+                 scanning: 'Сканування...',
+                 wifi_tab: 'Налаштування Wi-Fi',
+                 advanced_tab: 'Додатково',
+-                ota_url: 'Користувацька URL-адреса OTA:',
+                 max_tx_power: 'Макс. потужність передачі Wi-Fi:',
+                 remember_bssid: 'Запам\'ятати BSSID при підключенні до Wi-Fi',
+                 sleep_mode: 'Увімкнути режим сну',
+@@ -970,7 +926,6 @@
+                 scanning: 'Đang quét...',
+                 wifi_tab: 'Cấu hình Wi-Fi',
+                 advanced_tab: 'Tùy chọn nâng cao',
+-                ota_url: 'Địa chỉ OTA tùy chỉnh:',
+                 max_tx_power: 'Công suất phát Wi-Fi tối đa:',
+                 remember_bssid: 'Ghi nhớ BSSID khi kết nối với Wi-Fi',
+                 sleep_mode: 'Bật chế độ ngủ',
+@@ -988,7 +943,6 @@
+                 scanning: '扫描中...',
+                 wifi_tab: 'Wi-Fi 配置',
+                 advanced_tab: '高级选项',
+-                ota_url: '自定义 OTA 地址:',
+                 max_tx_power: 'Wi-Fi 最大发射功率:',
+                 remember_bssid: '连接 Wi-Fi 时记住 BSSID',
+                 sleep_mode: '启用睡眠模式',
+@@ -1006,7 +960,6 @@
+                 scanning: '掃描中...',
+                 wifi_tab: 'Wi-Fi 設定',
+                 advanced_tab: '進階選項',
+-                ota_url: '自定義 OTA 位址:',
+                 max_tx_power: 'Wi-Fi 最大發射功率:',
+                 remember_bssid: '連接 Wi-Fi 時記住 BSSID',
+                 sleep_mode: '啟用睡眠模式',
+@@ -1332,7 +1285,6 @@
+             advancedError.textContent = '';
+ 
+             const config = {
+-                ota_url: document.getElementById('ota_url').value,
+                 max_tx_power: parseInt(document.getElementById('max_tx_power').value),
+                 remember_bssid: document.getElementById('remember_bssid').checked,
+                 sleep_mode: document.getElementById('sleep_mode').checked
+@@ -1403,9 +1355,6 @@
+                 const response = await fetch('/advanced/config');
+                 const data = await response.json();
+                 
+-                if (data.ota_url) {
+-                    document.getElementById('ota_url').value = data.ota_url;
+-                }
+                 if (data.max_tx_power) {
+                     document.getElementById('max_tx_power').value = data.max_tx_power;
+                 }
+@@ -1423,9 +1372,6 @@
+         /**
+          * Clear OTA URL input field
+          */
+-        function clearOtaUrl() {
+-            document.getElementById('ota_url').value = '';
+-        }
+ 
+         // ========== Initialization ==========
+         

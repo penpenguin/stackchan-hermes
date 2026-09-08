@@ -207,6 +207,32 @@ void testWifiConnectedConfiguresAuthenticatedConnection()
     );
 }
 
+void testMissingOrUnavailableBridgeNeverSelectsAnotherService()
+{
+    FakeWebSocketTransport missingTransport;
+    auto missing = validConfig();
+    missing.bridgeUrl.clear();
+    BridgeClient unconfigured(missingTransport, std::move(missing));
+    expect(unconfigured.initialize() == ClientError::InvalidConfig, "missing endpoint was accepted");
+    for (unsigned now = 0; now < 120000; now += 1000) { unconfigured.update(now); }
+    expect(missingTransport.connectAttempts == 0, "unconfigured device connected to a service");
+
+    FakeWebSocketTransport unavailableTransport;
+    unavailableTransport.connectResult = false;
+    auto configured = validConfig();
+    configured.bridgeUrl = "wss://configured.example.test:8443/v1/device/ws";
+    BridgeClient unavailable(unavailableTransport, std::move(configured));
+    expect(unavailable.initialize() == ClientError::None, "explicit external endpoint was rejected");
+    expect(unavailable.wifiConnected() == ClientError::TransportFailure, "failed connection was accepted");
+    for (unsigned now = 0; now < 120000; now += 1000) {
+        unavailable.update(now);
+        expect(unavailableTransport.connectedUrl == "wss://configured.example.test:8443/v1/device/ws",
+               "connection failure selected another service");
+    }
+    expect(unavailableTransport.connectAttempts > 1, "explicit endpoint was not retried");
+    expect(unavailableTransport.sentTexts.empty(), "failed connection sent a payload");
+}
+
 void testWifiConnectedResolvesBridgeUrlAfterWifiIsReady()
 {
     FakeWebSocketTransport transport;
@@ -1981,6 +2007,7 @@ void testAudioDecodeFailureClearsPlaybackAndSendsSafeEvent()
 
 int main()
 {
+    testMissingOrUnavailableBridgeNeverSelectsAnotherService();
     testUpdatePollsTransportCallbacks();
     testWifiConnectedConfiguresAuthenticatedConnection();
     testWifiConnectedResolvesBridgeUrlAfterWifiIsReady();

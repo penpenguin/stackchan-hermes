@@ -64,6 +64,7 @@ void StartupWorker::update()
     if (_page_startup) {
         if (_page_startup->isSkipClicked()) {
             mclog::tagInfo(_tag, "startup skipped");
+            GetHAL().setSetupComplete();
             _is_done = true;
         } else if (_page_startup->isStartClicked()) {
             _page_startup.reset();
@@ -86,7 +87,8 @@ void StartupWorker::update()
         if (_worker_wifi->isDone()) {
             _worker_wifi.reset();
             mclog::tagInfo(_tag, "startup back");
-            _page_startup = std::make_unique<PageStartup>();
+            GetHAL().setSetupComplete();
+            _is_done = true;
         }
     }
 }

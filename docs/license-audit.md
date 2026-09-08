@@ -1,6 +1,6 @@
 # 配布物のライセンス確認記録
 
-確認日: 2026-09-07。独自部分は [MIT](../LICENSE) です。
+確認日: 2026-09-08。独自部分は [MIT](../LICENSE) です。
 ソース、第三者パッケージ本体を含めない Python wheel / sdist、M5Stack CoreS3
 （ESP32-S3）向け Firmware ZIP を対象に、発見したフォント・通知・最終構成の問題を
 解消しました。配布時は `LICENSE`、`THIRD_PARTY_NOTICES.md`、`LICENSES/` を保持します。
@@ -14,8 +14,14 @@
 | Python wheel / sdist | MIT メタデータと通知を同梱。第三者パッケージ本体、Firmware、ローカル環境を収録しない。sdist からの再ビルドも検証 |
 | Firmware 依存 | managed components 60件の content hash、Git 依存6件の固定 commit / 既存パッチを照合。全件の通知を保存。[一覧](license-inventory/firmware.md) |
 | フォント | 取得元・版・許諾の明らかな入力から文字9,561字・アイコン135個・見出しを生成。旧字形のコンパイルと収録を禁止 |
-| SDK / ランタイム | ESP-IDF v5.5.4 の固定 commit、個別通知、コンパイルした SDK ソース1,013件の先頭通知、実際に選択された archive 136件を記録 |
-| Firmware の実物 | app / bootloader の map、assets 42件、WakeNet モデル3ファイル、配布する5画像を検証。[構成・ハッシュ](license-inventory/cores3-release.json) |
+| SDK / ランタイム | ESP-IDF v5.5.4 の固定 commit、個別通知、従来監査の SDK ソース1,013件の先頭通知を保持し、ローカル CFW で選択された archive 119件を記録 |
+| Firmware の実物 | app / bootloader の map、assets 38件、WakeNet モデル3ファイル、配布する5画像を検証。[構成・ハッシュ](license-inventory/cores3-release.json) |
+
+2026-09-08 の更新では、従来クラウド・OTA の削除によりリンク archive が136件から119件へ、
+assets が42件から38件へ減りました。新たな archive はなく、残る prebuilt archive の hash は
+元の監査と一致します。元の通知・著作権表示は保守的に保持します。Xiaozhi の MIT パッチと
+Wi-Fi 設定の MIT 派生ファイルは、入力・変更・出力を追跡できる形で配布物に収録します。
+通信先と実機検証の範囲は [network-policy](network-policy.md) を参照してください。
 
 ## 解消した問題
 
@@ -59,14 +65,14 @@ UART とフォントの宣言はそれぞれ
 
 ### 実際にリンク・収録された内容
 
-[SDK 記録](../LICENSES/firmware-sdk.json) に個別通知46件と archive 136件を保存しました。
+[SDK 記録](../LICENSES/firmware-sdk.json) に個別通知46件と archive 119件を保存しました。
 ESP-IDF のルートライセンスだけでなく、Wi-Fi / Bluetooth / PHY、Xtensa libhal、
 newlib、GCC / libstdc++ の条件を含みます。GCC / libstdc++ は GPL-3.0 と
 GCC Runtime Library Exception 3.1 を保持します。通常の GCC による今回の結合は
 ランタイム例外を使います。[GCC の公式説明](https://gcc.gnu.org/onlinedocs/libstdc++/manual/license.html)
 にある対象条件を、独立したプロジェクトコードと開発ツール本体の再配布から区別しています。
 
-assets パーティションを展開し、新しい文字フォント、Twemoji 21枚、M5Stack 素材18件、
+assets パーティションを展開し、新しい文字フォント、Twemoji 21枚、M5Stack 素材14件、
 index、WakeNet モデルを確認しました。モデルの3ファイルは固定 `esp-sr@2.3.1` の
 `wn9_histackchan_tts3` と一致します。画像・効果音は固定 M5Stack snapshot の MIT 通知を、
 Twemoji は Twitter / contributors の帰属と CC-BY-4.0 を保持します。
@@ -91,18 +97,49 @@ python3 firmware/tools/verify_release.py "$release_dir/build" \
   --output .local/releases/stackchan-hermes-cores3.zip
 ```
 
-検証器は、旧字形の混入、生成物・通知の hash、依存の固定版、SDK、実際に選択された
+検証器は、旧クラウド送信ソース・ELF シンボル・設定文字列の混入、Wi-Fi パッチの出力、
+旧字形の混入、生成物・通知の hash、依存の固定版、SDK、実際に選択された
 archive、assets とモデルのバイト列、配布画像の一覧を照合します。ZIP には app、
 bootloader、partition table、初期 OTA データ、assets の5画像と通知を収録します。
 端末の NVS や backup は収録しません。`release-manifest.json` に offset・サイズ・SHA-256
-と実物の構成を記録します。通常の `verify-firmware.sh` でも同じ検証器が走ります。
+と実物の構成を記録します。Xiaozhi / Wi-Fi の変更パッチと hash の記録も同梱します。通常の `verify-firmware.sh` でも同じ検証器が走ります。
 
 Python 配布物は `uv build` で作ります。最低対応 Hatchling 1.27.0 でも実物を作り、
 MIT メタデータ・通知のバイト列、sdist の収録範囲と wheel への再ビルドを確認します。
 ソースリポジトリの配布では Git 管理対象と今回の生成フォント・通知を含め、
 Git 管理外の取得済み依存・ローカル設定を追加しないでください。
 
-## 検証記録
+## 2026-09-08 のローカル CFW 検証記録
+
+- `./scripts/verify.sh`: 成功。Host の pytest 707件、coverage 87.91%、C++ 28件、
+  新規構成の ESP-IDF ビルドと配布物検証が通過。整形・静的解析・型・Protocol・秘密情報・
+  依存脆弱性・offline doctor の検査も成功。新規構成の app は3,368,592 bytes。
+  以下の配布記録は別の検証済みビルドを指し、個々のバイナリ hash を区別する。
+- CoreS3 の実ビルドと配布検証: 成功。app 3,368,576 bytes、assets 2,616,159 bytes。
+- 配布構成: assets 38件、モデル3ファイル、archive 119件、画像5件。個別 hash は
+  [実物の記録](license-inventory/cores3-release.json) に保存。
+- 旧クラウド・MQTT 送信実装のソース選択と ELF シンボル、旧設定文字列の除外を確認。
+  managed cache は変更せず、Wi-Fi 派生ファイルの入力・出力 hash を照合。
+- C++ 28テストにより、ローカル自動検出・外部広告拒否・明示外部 URL・未接続と接続失敗、
+  ローカル省電力・復帰位置・効果音タスク、画像転送の宛先とリダイレクト非追従を確認。
+- 公開するバイナリ・archive・パッチ・ソースの SHA-256 による秘密情報誤検出193件は、
+  値と保存行を個別照合して baseline に追加。検出ルールと除外範囲は維持。
+- 実機 flash、画面・音声・撮影・省電力の実機操作、パケットキャプチャ: 未実施。
+
+### 初回設定・ローカル操作の追加修正
+
+初回 Wi-Fi 設定後の ESP-NOW は Wi-Fi Manager の初期化済みドライバを再利用し、
+設定用 AP・通常接続・接続タイマーを停止して指定チャンネルへ切り替えます。
+BLE の適用済み操作と宛先の一致する ESP-NOW 操作でアイドル時間を更新します。
+不正・未完成の操作や他端末宛てのパケットは活動として扱いません。
+
+追加修正後の `./scripts/verify.sh` は Host 709件、C++ 30件、新規 ESP-IDF ビルド、
+配布物検証まで成功しました。新規構成の app は3,367,424 bytes、配布構成は引き続き
+assets 38件・モデル3ファイル・archive 119件・画像5件です。
+前項の初回ビルド記録と区別し、各 ZIP の正確な画像情報は `release-manifest.json` を参照します。
+実機への書き込み・初回設定操作・無線操作中の省電力確認は未実施です。
+
+## 2026-09-07 の初回配布監査記録
 
 - 置換フォント、配布検証器、関連する既存契約のテスト: 68件成功。
 - CoreS3 の実ビルド: 成功。app 3,808,848 bytes、assets 2,899,513 bytes。

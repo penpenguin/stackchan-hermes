@@ -26,41 +26,10 @@ enum class HeadPetGesture { None, Press, Release, SwipeForward, SwipeBackward };
  * @brief
  *
  */
-enum class WsSignalSource {
-    Local = 0,
-    Remote,
-};
-
-/**
- * @brief
- *
- */
-struct WsTextMessage_t {
-    std::string name;
-    std::string content;
-};
-
-/**
- * @brief
- *
- */
 enum class ImuMotionEvent {
     None = 0,
     Shake,
     PickUp,
-};
-
-/**
- * @brief
- *
- */
-enum class AppConfigEvent {
-    None = 0,
-    AppConnected,
-    AppDisconnected,
-    TryWifiConnect,
-    WifiConnectFailed,
-    WifiConnected,
 };
 
 /**
@@ -77,18 +46,6 @@ enum class CommonLogLevel {
  * @brief
  *
  */
-namespace app_center {
-
-struct AppInfo_t {
-    std::string name;
-    std::string iconUrl;
-    std::string description;
-    std::string firmwareUrl;
-};
-
-using AppInfoList_t = std::vector<AppInfo_t>;
-
-};  // namespace app_center
 
 /**
  * @brief
@@ -105,20 +62,10 @@ enum class WifiStatus {
  * @brief
  *
  */
-struct UserAccountInfo_t {
-    std::string username;
-    std::string deviceName;
-};
-
-/**
- * @brief
- *
- */
-struct XiaozhiConfig_t {
+struct DeviceConfig_t {
     uint32_t idleShutdownTimeSeconds = 600;
     bool allowShutdownWhenCharging   = false;
     uint8_t idleRandomMovementLevel  = 2;
-    bool startAiAgentOnBoot          = false;
 };
 
 /**
@@ -202,31 +149,18 @@ public:
     void setBackLightBrightness(uint8_t brightness, bool permanent = false);
     uint8_t getBackLightBrightness();
 
-    /* --------------------------------- Xiaozhi -------------------------------- */
-    void requestXiaozhiStart()
-    {
-        _xiaozhi_start_requested = true;
-    }
-    bool isXiaozhiStartRequested()
-    {
-        return _xiaozhi_start_requested;
-    }
-    void startXiaozhi();
-    XiaozhiConfig_t getXiaozhiConfig();
-    void setXiaozhiConfig(XiaozhiConfig_t config);
-
     /* ----------------------------------- BLE ---------------------------------- */
     uitk::Signal<const char*> onBleMotionData;
     uitk::Signal<const char*> onBleAvatarData;
     uitk::Signal<const char*> onBleConfigData;
     uitk::Signal<const char*> onBleRgbData;
-    uitk::Signal<AppConfigEvent> onAppConfigEvent;
 
     void startBleServer();
     bool isBleConnected();
-    void startAppConfigServer();
-    bool isAppConfiged();
-    void resetAppConfiged();
+    bool isSetupComplete();
+    void setSetupComplete();
+    DeviceConfig_t getDeviceConfig();
+    void setDeviceConfig(DeviceConfig_t config);
 
     /* --------------------------------- HeadPet -------------------------------- */
     uitk::Signal<HeadPetGesture> onHeadPetGesture;
@@ -238,20 +172,6 @@ public:
 
     /* ---------------------------------- Power --------------------------------- */
     void setServoPowerEnabled(bool enabled);
-
-    /* -------------------------------- Websocket ------------------------------- */
-    uitk::Signal<std::string_view> onWsMotionData;
-    uitk::Signal<std::string_view> onWsAvatarData;
-    uitk::Signal<std::string> onWsCallRequest;
-    uitk::Signal<bool> onWsCallResponse;
-    uitk::Signal<WsSignalSource> onWsCallEnd;
-    uitk::Signal<const WsTextMessage_t&> onWsTextMessage;
-    uitk::Signal<bool> onWsVideoModeChange;
-    uitk::Signal<std::shared_ptr<LvglImage>> onWsVideoFrame;
-    uitk::Signal<std::string_view> onWsDanceData;
-    uitk::Signal<CommonLogLevel, std::string_view> onWsLog;
-
-    void startWebSocketAvatarService(std::function<void(std::string_view)> onStartLog);
 
     /* ----------------------------------- IMU ---------------------------------- */
     uitk::Signal<ImuMotionEvent> onImuMotionEvent;
@@ -269,30 +189,14 @@ public:
     void setLaserEnabled(bool enabled);
 
     /* ------------------------------- Warm Reboot ------------------------------ */
-    void requestWarmReboot(int appIndex);
-    int getWarmRebootTarget();
+    void requestWarmReboot(std::string_view appName);
+    std::string getWarmRebootTarget();
     void clearWarmRebootRequest();
 
     /* --------------------------------- Network -------------------------------- */
     void startNetwork(std::function<void(std::string_view)> onLog);
     WifiStatus getWifiStatus();
     void startSntp();
-
-    /* -------------------------------- App center ------------------------------- */
-    app_center::AppInfoList_t fetchAppList();
-    void launchApp(std::string_view url, std::function<void(int)> onProgress);
-
-    /* --------------------------------- EzData --------------------------------- */
-    void startEzDataService(std::function<void(std::string_view)> onStartLog);
-    uitk::Signal<std::string_view> onEzdataPairCode;
-
-    /* ------------------------------- User Acount ------------------------------ */
-    UserAccountInfo_t getUserAccountInfo();
-    bool updateAccountInfo(std::function<void(std::string_view)> onLog);
-    bool unbindAccount(std::function<void(std::string_view)> onLog);
-
-    /* ----------------------------------- OTA ---------------------------------- */
-    bool updateFirmware(std::function<void(std::string_view)> onLog);
 
     /* ---------------------------------- Audio --------------------------------- */
     void setSpeakerVolume(uint8_t volume, bool permanent = false);
@@ -302,11 +206,9 @@ public:
     void clearupMicTest();
 
 private:
-    bool _xiaozhi_start_requested = false;
 
-    void xiaozhi_board_init();
+    void board_init();
     void lvgl_init();
-    void xiaozhi_mcp_init();
     void ble_init(bool useAltUuid);
     void servo_init();
     void head_touch_init();

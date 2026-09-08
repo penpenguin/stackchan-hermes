@@ -143,6 +143,7 @@ static void _head_touch_update_task(void* param)
         // Update and fire event
         gesture = recognizer.update(data);
         if (gesture != HeadPetGesture::None) {
+            hal_bridge::note_activity();
             GetHAL().onHeadPetGesture.emit(gesture);
         }
 

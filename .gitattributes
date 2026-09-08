@@ -1,5 +1,7 @@
 # Preserve third-party legal texts byte-for-byte, including upstream whitespace.
 LICENSES/texts/*.txt -text -whitespace
+# Unified patches retain upstream context/deleted-line whitespace byte-for-byte.
+firmware/patches/*.patch -text -whitespace
 # These upstream reStructuredText headings use seven equals signs.
 LICENSES/texts/75c5bbce99ab35522e48ef29d5be352f35c428a385cfed69231ae0ac865fecca.txt conflict-marker-size=32
 LICENSES/texts/89139e1465d1950bcf0710676de3e4344a4d1361a8e3fcf7441f91244b74fe1f.txt conflict-marker-size=32

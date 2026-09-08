@@ -14,10 +14,7 @@
 #include "jpg/image_to_jpeg.h"
 #include "esp_video_init.h"
 
-struct JpegChunk {
-    uint8_t* data;
-    size_t len;
-};
+;
 
 class StackChanCamera : public Camera {
 private:
@@ -40,22 +37,17 @@ private:
         size_t length = 0;
     };
     std::vector<MmapBuffer> mmap_buffers_;
-    std::string explain_url_;
-    std::string explain_token_;
-    std::thread encoder_thread_;
 
 public:
     StackChanCamera(const esp_video_init_config_t& config);
     ~StackChanCamera();
 
-    virtual void SetExplainUrl(const std::string& url, const std::string& token);
     virtual bool Capture() override;
     bool StreamCaptures();
 
     // 翻转控制函数
     virtual bool SetHMirror(bool enabled) override;
     virtual bool SetVFlip(bool enabled) override;
-    virtual std::string Explain(const std::string& question);
 
     const uint8_t* GetFrameData()
     {

@@ -9,8 +9,7 @@ add_definitions(-DFIRMWARE_VERSION=\"${PROJECT_VER}\")
 add_compile_options(-Wno-missing-field-initializers)
 
 # Auto-load a local sdkconfig overlay (git-ignored) when present. Lets
-# self-hosted / custom deployments pin CONFIG_STACKCHAN_SERVER_URL,
-# CONFIG_OTA_URL, etc. without touching committed defaults.
+# custom deployments pin the explicit Hermes Bridge URL without changing defaults.
 # Manual equivalent: SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.local" idf.py build
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.defaults.local")
     set(SDKCONFIG_DEFAULTS

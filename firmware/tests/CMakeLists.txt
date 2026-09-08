@@ -4,6 +4,28 @@ project(stackchan_firmware_tests LANGUAGES CXX)
 
 enable_testing()
 
+add_executable(espnow_wifi_test espnow_wifi_test.cpp)
+target_include_directories(espnow_wifi_test PRIVATE fakes/espnow_wifi ../main)
+target_compile_features(espnow_wifi_test PRIVATE cxx_std_17)
+add_test(NAME espnow_wifi_test COMMAND espnow_wifi_test)
+
+add_executable(local_control_activity_test
+    local_control_activity_test.cpp
+    ../main/stackchan/json/json_helper.cpp
+)
+target_include_directories(local_control_activity_test PRIVATE
+    fakes/local_control ../main ../components/ArduinoJson/src
+)
+target_compile_features(local_control_activity_test PRIVATE cxx_std_17)
+add_test(NAME local_control_activity_test COMMAND local_control_activity_test)
+
+add_executable(local_device_policy_test local_device_policy_test.cpp)
+target_include_directories(local_device_policy_test PRIVATE ../main)
+target_compile_features(local_device_policy_test PRIVATE cxx_std_17)
+add_test(NAME local_device_policy_test COMMAND local_device_policy_test)
+
+
+
 add_executable(motion_math_test
     motion_math_test.cpp
     ../main/stackchan/motion/motion_math.cpp
@@ -97,6 +119,23 @@ add_test(
 )
 
 find_package(Threads REQUIRED)
+
+add_executable(camera_upload_redirect_test
+    camera_upload_redirect_test.cpp
+    ../main/hal/stackchan_bridge_camera_upload.h
+    ../managed_components/78__esp-ml307/src/http_client.cc
+    ../components/stackchan_bridge_client/camera_capture.cpp
+)
+target_include_directories(camera_upload_redirect_test PRIVATE
+    fakes/websocket_wire
+    ../managed_components/78__esp-ml307/include
+    ../components/stackchan_bridge_client/include
+    ../components/ArduinoJson/src
+    ../main/hal
+)
+target_compile_features(camera_upload_redirect_test PRIVATE cxx_std_17)
+target_link_libraries(camera_upload_redirect_test PRIVATE Threads::Threads)
+add_test(NAME camera_upload_redirect_test COMMAND camera_upload_redirect_test)
 
 add_executable(websocket_random_test
     websocket_random_test.cpp
@@ -205,6 +244,7 @@ add_test(NAME bridge_client_settings_test COMMAND $<TARGET_FILE:bridge_client_se
 add_executable(bridge_client_discovery_test
     bridge_client_discovery_test.cpp
     ../components/stackchan_bridge_client/discovery.cpp
+    ../components/stackchan_bridge_client/settings.cpp
 )
 
 target_include_directories(bridge_client_discovery_test PRIVATE

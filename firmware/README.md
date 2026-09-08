@@ -6,6 +6,11 @@ preserved in `LICENSE`. Fetched Git dependencies and ESP-IDF managed components 
 inputs; the two verification scripts reject commit, reviewed-patch, lock-hash or content drift
 before a build.
 
+The CFW retains local apps and the Hermes Bridge. Legacy cloud apps, MQTT/audio protocols,
+cloud MCP and OTA are excluded from compilation. Local audio, power saving and Wi-Fi setup
+run independently of the former AI application. Updates use USB. See the
+[network policy](../docs/network-policy.md) for destinations and retained settings.
+
 ## Verify the integrated Firmware
 
 Activate ESP-IDF v5.5.4 only in the Firmware shell, then run:
@@ -23,7 +28,7 @@ cd ..
 ```
 
 The final script verifies six fetched Git repositories, 60 downloaded ESP Component Registry
-resolutions and 26 host C++ tests. The WebSocket wire test compiles the modified transport against
+resolutions and 30 host C++ tests. The WebSocket wire test compiles the modified transport against
 the locked `78/esp-ml307` headers, so managed components must be resolved first. The final script
 then creates a fresh temporary `sdkconfig`, applies
 `sdkconfig.hermes.defaults`, and builds the Bridge-enabled image so an ignored local `sdkconfig`
@@ -31,7 +36,7 @@ cannot silently disable the integration. The original reviewed baseline had 59 m
 components; official `espressif/mdns==1.11.3` is the one integrated addition.
 
 The retained no-touch correction checkpoint predates the playback-completion target and recorded
-19 host C++ tests; that historical evidence remains distinct from the current 26-test suite.
+19 host C++ tests; that historical evidence remains distinct from the current 30-test suite.
 
 `verify_managed_components.py` recomputes every downloaded component hash locally, without
 trusting only `.component_hash`. Do not run `idf.py update-dependencies` as part of reproduction.

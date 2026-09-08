@@ -68,21 +68,18 @@ void AppSetup::onOpen()
               [&]() {
                   _destroy_menu = true;
                   _worker       = std::make_unique<TimezoneWorker>();
-              }}},
-        },
-        {
-            "AI.Agent",
-            {{"General",
+              }},
+             {"Idle Movement",
               [&]() {
                   _destroy_menu    = true;
                   _need_warm_reset = true;
-                  _worker          = std::make_unique<XiaozhiGeneralWorker>();
+                  _worker          = std::make_unique<DeviceMovementWorker>();
               }},
              {"Power Saving",
               [&]() {
                   _destroy_menu    = true;
                   _need_warm_reset = true;
-                  _worker          = std::make_unique<XiaozhiPowerSavingWorker>();
+                  _worker          = std::make_unique<DevicePowerSavingWorker>();
               }}},
         },
         {
@@ -104,15 +101,6 @@ void AppSetup::onOpen()
               }}},
         },
         {
-            "Account",
-            {{"Unbind & Reset",
-              [&]() {
-                  _destroy_menu    = true;
-                  _need_warm_reset = true;
-                  _worker          = std::make_unique<AccountWorker>();
-              }}},
-        },
-        {
             "Firmware",
             {
                 {fmt::format("Version:  {}", common::FirmwareVersion),
@@ -124,17 +112,6 @@ void AppSetup::onOpen()
                          _worker       = std::make_unique<FwVersionWorker>();
                      }
                  }},
-                {"Check for Updates",
-                 [&]() {
-                     _destroy_menu    = true;
-                     _need_warm_reset = true;
-                     _worker          = std::make_unique<SystemUpdateWorker>();
-                 }},
-                //  {"Factory Reset",
-                //   [&]() {
-                //       _destroy_menu = true;
-                //       _worker       = std::make_unique<FactoryResetWorker>();
-                //   }}
             },
         },
     };
@@ -188,6 +165,6 @@ void AppSetup::onClose()
     view::destroy_status_bar();
 
     if (_need_warm_reset) {
-        GetHAL().requestWarmReboot(6);
+        GetHAL().requestWarmReboot("SETUP");
     }
 }

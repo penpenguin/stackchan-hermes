@@ -7,6 +7,7 @@
 #include <esp_err.h>
 #include <esp_netif.h>
 #include <mdns.h>
+#include <lwip/def.h>
 #include <stackchan_bridge_client/discovery.h>
 
 namespace stackchan::hermes {
@@ -28,6 +29,11 @@ std::string txtValue(const mdns_result_t& result, const char* key)
 
 std::string compatibleUrl(const mdns_result_t& result)
 {
+    esp_netif_ip_info_t interfaceInfo{};
+    if (result.esp_netif == nullptr
+        || esp_netif_get_ip_info(result.esp_netif, &interfaceInfo) != ESP_OK) {
+        return {};
+    }
     for (const mdns_ip_addr_t* address = result.addr; address != nullptr;
          address = address->next) {
         if (address->addr.type != ESP_IPADDR_TYPE_V4) {
@@ -42,6 +48,8 @@ std::string compatibleUrl(const mdns_result_t& result)
         service.port = result.port;
         service.protocolVersion = txtValue(result, "protocol_version");
         service.authRequired = txtValue(result, "auth_required");
+        service.interfaceAddress = lwip_ntohl(interfaceInfo.ip.addr);
+        service.interfaceNetmask = lwip_ntohl(interfaceInfo.netmask.addr);
         const std::string url = bridge_client::buildMdnsBridgeWebSocketUrl(service);
         if (!url.empty()) {
             return url;

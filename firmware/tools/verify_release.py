@@ -134,6 +134,77 @@ def verify_notices(record: object, root: Path) -> None:
             verify_notices(value, root)
 
 
+def verify_network_sources(commands: list[dict]) -> None:
+    """Reject legacy senders even if the linker would discard their symbols."""
+    forbidden = (
+        "/main/application.cc",
+        "/main/ota.cc",
+        "/main/mcp_server.cc",
+        "/main/protocols/",
+        "/audio/processors/audio_debugger.cc",
+        "/boards/common/esp32_camera.cc",
+        "/boards/common/esp_video.cc",
+        "/boards/common/press_to_talk_mcp_tool.cc",
+        "/hal/hal_ws_avatar.cpp",
+        "/hal/hal_account.cpp",
+        "/hal/hal_ezdata.cpp",
+        "/hal/hal_app_center.cpp",
+        "/hal/hal_ota.cpp",
+        "/hal/hal_mcp.cpp",
+        "/utils/ota/",
+        "/utils/ezdata/",
+        "/utils/server/",
+        "/apps/app_ai_agent/",
+        "/apps/app_app_center/",
+        "/apps/app_ezdata/",
+        "/managed_components/78__esp-wifi-connect/wifi_configuration_ap.cc",
+        "/src/esp/esp_network.cc",
+        "/src/esp/esp_mqtt.cc",
+        "/src/esp/esp_udp.cc",
+        "/src/ml307/",
+        "/src/ec801e/",
+        "/wifi_configuration.html.S",
+    )
+    for command in commands:
+        source = Path(command["file"]).as_posix()
+        if any(part in source for part in forbidden):
+            raise ValueError(f"Legacy cloud source compiled: {source}")
+
+
+def verify_network_symbols(symbols: str) -> None:
+    forbidden = (
+        "Application::",
+        "Ota::",
+        "MqttProtocol::",
+        "WebsocketProtocol::",
+        "McpServer::",
+        "Hal::startEzDataService",
+        "Hal::startXiaozhi",
+        "Hal::startWebSocketAvatarService",
+        "Hal::updateAccountInfo",
+        "Hal::unbindAccount",
+        "Hal::updateFirmware",
+        "Hal::launchApp",
+        "StackChanCamera::Explain",
+        "StackChanCamera::SetExplainUrl",
+        "Assets::Download",
+        "AudioDebugger::",
+        "EspMqtt::",
+        "esp_mqtt_client_",
+        "ezdata_",
+        "ota_update",
+    )
+    for line in symbols.splitlines():
+        if any(symbol in line for symbol in forbidden):
+            raise ValueError(f"Legacy cloud symbol linked: {line.strip()}")
+
+
+def verify_network_strings(elf: bytes) -> None:
+    for forbidden in (b"ota_url\0", b"boot_ai\0", b"api.tenclass.net", b"47.113.125.164"):
+        if forbidden in elf:
+            raise ValueError(f"Legacy cloud configuration linked: {forbidden!r}")
+
+
 def verify_build(build: Path, root: Path) -> dict:
     firmware = root / "firmware"
     project = json.loads((build / "project_description.json").read_text())
@@ -173,6 +244,19 @@ def verify_build(build: Path, root: Path) -> dict:
         raise ValueError("Generated font manifest differs from license review")
     commands = json.loads((build / "compile_commands.json").read_text())
     verify_font_sources(commands, firmware)
+    verify_network_sources(commands)
+    verify_network_strings((build / "stack-chan.elf").read_bytes())
+    wifi_manifest = json.loads((firmware / "patches/esp-wifi-connect.json").read_text())
+    for record in wifi_manifest["files"]:
+        path = build / "local-wifi" / record["output"]
+        if file_record(path)["sha256"] != record["output_sha256"]:
+            raise ValueError("Local Wi-Fi output differs from reviewed patch")
+    nm = Path(project["c_compiler"]).with_name("xtensa-esp32s3-elf-nm")
+    verify_network_symbols(
+        subprocess.check_output(
+            [str(nm), "--demangle", "--defined-only", str(build / "stack-chan.elf")], text=True
+        )
+    )
     compiled = {Path(command["file"]).resolve() for command in commands}
     for output in outputs:
         path = firmware / output["path"]
@@ -252,6 +336,7 @@ def verify_build(build: Path, root: Path) -> dict:
         "models": models,
         "linked_archives": archives,
         "hardware_tested": False,
+        "legacy_cloud_sources_and_symbols_absent": True,
     }
 
 
@@ -268,18 +353,23 @@ def main() -> int:
         report = verify_build(build, root)
         if args.output:
             docs = [
+                root / "README.md",
                 root / "LICENSE",
                 root / "THIRD_PARTY_NOTICES.md",
                 root / "firmware/LICENSE",
                 root / "firmware/UPSTREAM.md",
+                root / "firmware/upstream-lock.json",
                 root / "firmware/release-fonts/README.md",
                 root / "docs/license-audit.md",
                 root / "docs/licensing.md",
                 root / "docs/hardware-setup.md",
+                root / "docs/network-policy.md",
+                root / "docs/operations.md",
             ]
             docs.extend(sorted(path for path in (root / "LICENSES").rglob("*") if path.is_file()))
             docs.extend(sorted((root / "docs/license-inventory").glob("*")))
             docs.extend(sorted((root / "firmware/release-fonts").glob("*.json")))
+            docs.extend(sorted((root / "firmware/patches").glob("*")))
             report["notice_files"] = [
                 {"path": path.relative_to(root).as_posix(), **file_record(path)} for path in docs
             ]
@@ -298,6 +388,8 @@ def main() -> int:
                     "Keep LICENSE, THIRD_PARTY_NOTICES.md and LICENSES/ with these binaries.\n"
                     "Some Espressif libraries and models are restricted to Espressif products.\n"
                     "See docs/license-audit.md for the review scope.\n"
+                    "Local apps and explicitly configured Hermes Bridge only; updates use USB.\n"
+                    "See docs/network-policy.md for destinations and local setup.\n"
                     "release-manifest.json records image offsets, sizes and SHA-256 hashes.\n"
                     "This build has not been flashed or tested on hardware.\n"
                     "Before flashing, follow the project's docs/hardware-setup.md "

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 #include "hal.h"
+#include "board/hal_bridge.h"
 #include <memory>
 #include <mooncake_log.h>
 #include <nvs_flash.h>
@@ -32,14 +33,14 @@ void Hal::init()
     }
     ESP_ERROR_CHECK(ret);
 
-    xiaozhi_board_init();
-    xiaozhi_mcp_init();
+    board_init();
     head_touch_init();
     io_expander_init();
     rtc_init();
     imu_init();
     servo_init();
     lvgl_init();
+    hal_bridge::initialize_local_audio();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -48,7 +49,6 @@ void Hal::init()
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <system_info.h>
-#include <esp_ota_ops.h>
 #include <esp_system.h>
 #include <esp_timer.h>
 #include <esp_mac.h>
@@ -87,37 +87,8 @@ void Hal::reboot()
     esp_restart();
 }
 
-static void _confirm_ota_image_if_stable()
-{
-    constexpr uint32_t ota_confirm_delay_ms = 20000;
-    static bool ota_confirm_checked         = false;
-    if (ota_confirm_checked || GetHAL().millis() < ota_confirm_delay_ms) {
-        return;
-    }
-    ota_confirm_checked = true;
-
-    const esp_partition_t* running = esp_ota_get_running_partition();
-    if (running == nullptr) {
-        mclog::tagError(_tag, "failed to get running partition for ota confirmation");
-        return;
-    }
-
-    esp_ota_img_states_t ota_state;
-    if (esp_ota_get_state_partition(running, &ota_state) != ESP_OK) {
-        mclog::tagError(_tag, "failed to get ota state for partition: {}", running->label);
-        return;
-    }
-
-    mclog::tagInfo(_tag, "ota confirm check: partition={}, state={}", running->label, static_cast<int>(ota_state));
-    if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
-        mclog::tagInfo(_tag, "ota image is stable, marking current app valid");
-        esp_ota_mark_app_valid_cancel_rollback();
-    }
-}
-
 void Hal::updateHeapStatusLog()
 {
-    _confirm_ota_image_if_stable();
 
     static uint32_t last_log_tick = 0;
     if (millis() - last_log_tick < 10000) {
@@ -128,99 +99,18 @@ void Hal::updateHeapStatusLog()
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                   Xiaozhi                                  */
+/*                                Local hardware                              */
 /* -------------------------------------------------------------------------- */
 #include "board/hal_bridge.h"
 #include <stackchan/stackchan.h>
 #include <apps/common/common.h>
 #include <assets/assets.h>
 
-void Hal::xiaozhi_board_init()
+void Hal::board_init()
 {
-    mclog::tagInfo(_tag, "xiaozhi board init");
+    mclog::tagInfo(_tag, "local board init");
 
-    hal_bridge::xiaozhi_board_init();
-}
-
-static void _stackchan_update_task(void* param)
-{
-    bool is_setup_done = false;
-
-    while (1) {
-        vTaskDelay(pdMS_TO_TICKS(20));
-
-        tools::update_reminders();
-
-        LvglLockGuard lock;
-
-        if (!hal_bridge::is_xiaozhi_idle()) {
-            vTaskDelay(pdMS_TO_TICKS(100));
-        }
-
-        GetStackChan().update();
-
-        if (!hal_bridge::is_xiaozhi_ready()) {
-            continue;
-        }
-
-        if (!is_setup_done) {
-            // Setup when xiaozhi ready
-            GetHAL().startSntp();
-            view::create_home_indicator([]() { GetHAL().requestWarmReboot(0); }, 0x81DBBD, 0x134233);
-            view::create_status_bar(0x81DBBD, 0x134233);
-            is_setup_done = true;
-        }
-
-        view::update_home_indicator();
-        view::update_status_bar();
-    }
-}
-
-void Hal::startXiaozhi()
-{
-    mclog::tagInfo(_tag, "start xiaozhi");
-
-    auto& motion = GetStackChan().motion();
-    motion.setAutoAngleSyncEnabled(true);
-    motion.setAutoTorqueReleaseEnabled(true);
-
-    // Setup reminder handler
-    tools::on_reminder_triggered().clear();
-    tools::on_reminder_triggered().connect([](int id, std::string_view msg) {
-        mclog::tagInfo(_tag, "reminder triggered: id: {}, msg: {}", id, msg);
-        {
-            LvglLockGuard lock;
-            auto& avatar = GetStackChan().avatar();
-            avatar.addDecorator(std::make_unique<view::ReminderView>(lv_screen_active(), msg));
-        }
-        hal_bridge::app_play_sound(OGG_NEW_NOTIFICATION);
-    });
-
-    // Start stackchan update task
-    xTaskCreatePinnedToCore(_stackchan_update_task, "stackchan", 4096, NULL, 3, NULL, 1);
-
-    hal_bridge::start_xiaozhi_app();
-}
-
-XiaozhiConfig_t Hal::getXiaozhiConfig()
-{
-    auto bridge_config = hal_bridge::get_xiaozhi_config();
-    return XiaozhiConfig_t{
-        .idleShutdownTimeSeconds   = bridge_config.idleShutdownTimeSeconds,
-        .allowShutdownWhenCharging = bridge_config.allowShutdownWhenCharging,
-        .idleRandomMovementLevel   = bridge_config.idleRandomMovementLevel,
-        .startAiAgentOnBoot        = bridge_config.startAiAgentOnBoot,
-    };
-}
-
-void Hal::setXiaozhiConfig(XiaozhiConfig_t config)
-{
-    hal_bridge::set_xiaozhi_config({
-        .idleShutdownTimeSeconds   = config.idleShutdownTimeSeconds,
-        .allowShutdownWhenCharging = config.allowShutdownWhenCharging,
-        .idleRandomMovementLevel   = config.idleRandomMovementLevel,
-        .startAiAgentOnBoot        = config.startAiAgentOnBoot,
-    });
+    hal_bridge::board_init();
 }
 
 uint8_t Hal::getBatteryLevel()
@@ -322,32 +212,50 @@ void Hal::lvgl_init()
 #include <settings.h>
 #include <string_view>
 
-static std::string_view _warm_boot_nvs_ns  = "warm_boot";
-static std::string_view _warm_boot_nvs_key = "app_index";
-
-void Hal::requestWarmReboot(int appIndex)
+void Hal::requestWarmReboot(std::string_view appName)
 {
-    mclog::tagInfo(_tag, "warm reboot request to app index: {}", appIndex);
-
     {
-        Settings settings(_warm_boot_nvs_ns.data(), true);
-        settings.SetInt(_warm_boot_nvs_key.data(), appIndex);
+        Settings settings("warm_boot", true);
+        settings.SetString("app_name", std::string(appName));
+        settings.EraseKey("app_index");
     }
-
     delay(100);
     esp_restart();
 }
 
-int Hal::getWarmRebootTarget()
+std::string Hal::getWarmRebootTarget()
 {
-    Settings settings(_warm_boot_nvs_ns.data(), false);
-    return settings.GetInt(_warm_boot_nvs_key.data(), -1);
+    Settings settings("warm_boot", false);
+    return settings.GetString("app_name", "");
 }
 
 void Hal::clearWarmRebootRequest()
 {
-    mclog::tagInfo(_tag, "clear warm reboot request");
+    Settings settings("warm_boot", true);
+    settings.EraseKey("app_name");
+    settings.EraseKey("app_index");
+}
 
-    Settings settings(_warm_boot_nvs_ns.data(), true);
-    settings.SetInt(_warm_boot_nvs_key.data(), -1);
+DeviceConfig_t Hal::getDeviceConfig()
+{
+    const auto config = hal_bridge::get_device_config();
+    return {config.idleShutdownTimeSeconds, config.allowShutdownWhenCharging, config.idleRandomMovementLevel};
+}
+
+void Hal::setDeviceConfig(DeviceConfig_t config)
+{
+    hal_bridge::set_device_config({config.idleShutdownTimeSeconds, config.allowShutdownWhenCharging,
+                                   config.idleRandomMovementLevel});
+}
+
+bool Hal::isSetupComplete()
+{
+    Settings settings("device", false);
+    return settings.GetBool("setup_done", false);
+}
+
+void Hal::setSetupComplete()
+{
+    Settings settings("device", true);
+    settings.SetBool("setup_done", true);
 }

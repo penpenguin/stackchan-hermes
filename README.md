@@ -9,6 +9,10 @@ Host 側には、認証付き Device Gateway、Control API、Opus/VAD/STT/Hermes
 独立した Bridge client、公式 HAL adapter、NVS/USB provisioning、mDNS、音声、カメラ、表示を
 統合しています。
 
+CFW は従来クラウド機能と OTA を削除し、ローカル機能と設定済み Bridge を使います。
+更新は USB、Wi-Fi 設定は本体のローカルホットスポットで行います。
+送信先・旧設定の扱い・検証範囲は [通信方針](docs/network-policy.md) を参照してください。
+
 ## セットアップ
 
 以下は Bridge・Hermes・音声サービスを同じ Mac または Linux / WSL2 ホストで動かし、
