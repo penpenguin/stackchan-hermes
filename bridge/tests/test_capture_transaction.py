@@ -78,8 +78,14 @@ def test_duplicate_upload_is_owned_identical_and_does_not_extend_lifetime(tmp_pa
     )
 
 
-async def test_saved_image_without_completion_reports_completion_timeout(tmp_path: Path) -> None:
-    store = CaptureStore(directory=tmp_path, ttl_seconds=600, max_bytes=2097152)
+@pytest.mark.parametrize("deadline_already_elapsed", [False, True])
+async def test_saved_image_without_completion_reports_completion_timeout(
+    tmp_path: Path, deadline_already_elapsed: bool
+) -> None:
+    now = [0.0]
+    store = CaptureStore(
+        directory=tmp_path, ttl_seconds=600, max_bytes=2097152, monotonic_clock=lambda: now[0]
+    )
     capture = store.reserve("sim-001", timeout_seconds=0.02)
     store.save(
         capture.capture_id,
@@ -87,6 +93,9 @@ async def test_saved_image_without_completion_reports_completion_timeout(tmp_pat
         content_type="image/jpeg",
         body=generate_synthetic_jpeg(),
     )
+    assert store.status(capture.capture_id, device_id="sim-001")["state"] == "image_saved"
+    if deadline_already_elapsed:
+        now[0] = 0.02
     with pytest.raises(CaptureValidationError) as error:
         await store.wait_for_completion(capture.capture_id)
     assert error.value.code == "CAPTURE_COMPLETION_TIMEOUT"
