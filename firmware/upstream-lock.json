@@ -16,7 +16,7 @@
     "LICENSE": "69de21aa5e3dea7723e781bc773a701db5afce066421c7518db2092d743e4a3e",
     "dependencies.lock": "676b3fdbf3cbcf0e600b34422e79e64a9bb2d4b29fa56da431829a37fe06bb87",
     "partitions.csv": "4b6823597817f7ac9e32994329526ba44467279d39b57ceb934648747cdca6be",
-    "patches/xiaozhi-esp32.patch": "4bf9a9c0cff5185e9b5962ba329650ba7c4ca25a90d267db559ea5f17acffc3b",
+    "patches/xiaozhi-esp32.patch": "748a578868b495ad618e02489c12fde77b00c5e1405a50700af57c24422e7ce8",
     "repos.json": "3c64af4d007d23d34802ecd725241f1373c93baa02c65a039c9768dcfa0d3641",
     "sdkconfig.defaults": "bf5c0944143b01b7e43efe34c997d5eb9c11cbd45e11b570dfeeaf873e09398e"
   },
@@ -45,7 +45,7 @@
       "commit": "e77dedb1309153bb63fed285772962c920c97dd4",
       "license": "MIT",
       "patch": "patches/xiaozhi-esp32.patch",
-      "patched_diff_sha256": "4bf9a9c0cff5185e9b5962ba329650ba7c4ca25a90d267db559ea5f17acffc3b"
+      "patched_diff_sha256": "748a578868b495ad618e02489c12fde77b00c5e1405a50700af57c24422e7ce8"
     },
     {
       "path": "components/ArduinoJson",

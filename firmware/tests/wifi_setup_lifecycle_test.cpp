@@ -56,4 +56,21 @@ int main()
         assert(wifi.IsConnected() && wifi.stationStarts == stationStarts);
     }
     wifi.reset();
+    {
+        SsidManager::GetInstance().ssids = {"saved-network"};
+        TestBoard board;
+        board.StartNetwork();
+        // Exit after a running timeout checked its flag, just before AP startup.
+        wifi.beforeApStart = [&]() { board.ExitWifiConfigMode(); };
+        board.fireTimeout();
+        assert(!wifi.ap && wifi.station && !board.timerActive());
+
+        board.EnterWifiConfigMode();
+        wifi.StopConfigAp();
+        // Exit just before that timeout stops the pending station connection.
+        wifi.beforeStationStop = [&]() { board.ExitWifiConfigMode(); };
+        board.fireTimeout();
+        assert(!wifi.ap && wifi.station && !board.timerActive());
+    }
+    wifi.reset();
 }

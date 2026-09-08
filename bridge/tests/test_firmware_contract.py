@@ -124,7 +124,7 @@ def test_vendor_snapshot_records_immutable_upstream_and_dependency_provenance() 
     )
     assert xiaozhi["patch"] == "patches/xiaozhi-esp32.patch"
     assert xiaozhi["patched_diff_sha256"] == (
-        "4bf9a9c0cff5185e9b5962ba329650ba7c4ca25a90d267db559ea5f17acffc3b"
+        "748a578868b495ad618e02489c12fde77b00c5e1405a50700af57c24422e7ce8"
     )
 
 

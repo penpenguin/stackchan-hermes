@@ -73,7 +73,7 @@
       "git_tree_sha": "e77dedb1309153bb63fed285772962c920c97dd4",
       "local_changes": {
         "patch": "firmware/patches/xiaozhi-esp32.patch",
-        "sha256": "4bf9a9c0cff5185e9b5962ba329650ba7c4ca25a90d267db559ea5f17acffc3b",
+        "sha256": "748a578868b495ad618e02489c12fde77b00c5e1405a50700af57c24422e7ce8",
         "description": "Preserve shared audio, display and CoreS3 hardware; remove cloud application dependencies, image explanation interface, asset download, telemetry builders and audio debugger. Close Wi-Fi provisioning on setup exit and suppress automatic AP reopening while preserving saved station connections. Cloud app/protocol/MCP/OTA units are excluded by main/CMakeLists.txt."
       }
     },

@@ -866,7 +866,7 @@ index 7bc917b..874b137 100644
  
  #endif // I2C_DEVICE_H
 diff --git a/main/boards/common/wifi_board.cc b/main/boards/common/wifi_board.cc
-index 377685b..e9b56db 100644
+index 377685b..e76f8da 100644
 --- a/main/boards/common/wifi_board.cc
 +++ b/main/boards/common/wifi_board.cc
 @@ -1,7 +1,7 @@
@@ -914,7 +914,7 @@ index 377685b..e9b56db 100644
              in_config_mode_ = false;
              ESP_LOGI(TAG, "Connected to WiFi: %s", data.c_str());
              break;
-@@ -150,6 +144,7 @@ void WifiBoard::SetNetworkEventCallback(NetworkEventCallback callback) {
+@@ -150,90 +144,27 @@ void WifiBoard::SetNetworkEventCallback(NetworkEventCallback callback) {
  
  void WifiBoard::OnWifiConnectTimeout(void* arg) {
      auto* board = static_cast<WifiBoard*>(arg);
@@ -922,7 +922,9 @@ index 377685b..e9b56db 100644
      ESP_LOGW(TAG, "WiFi connection timeout, entering config mode");
  
      WifiManager::GetInstance().StopStation();
-@@ -157,83 +152,16 @@ void WifiBoard::OnWifiConnectTimeout(void* arg) {
+     board->StartWifiConfigMode();
++    // Exit can race a timeout that was already running when its timer was stopped.
++    if (!board->allow_config_mode_) { board->TryWifiConnect(); }
  }
  
  void WifiBoard::StartWifiConfigMode() {
@@ -965,6 +967,7 @@ index 377685b..e9b56db 100644
 -    }, "acoustic_wifi", 4096, reinterpret_cast<void*>(channel), 2, NULL);
 -#endif
 +    WifiManager::GetInstance().StartConfigAp();
++    if (!allow_config_mode_) { WifiManager::GetInstance().StopConfigAp(); }
  }
  
  void WifiBoard::EnterWifiConfigMode() {
@@ -1010,7 +1013,7 @@ index 377685b..e9b56db 100644
      StartWifiConfigMode();
  }
  
-@@ -241,6 +169,15 @@ bool WifiBoard::IsInWifiConfigMode() const {
+@@ -241,6 +172,15 @@ bool WifiBoard::IsInWifiConfigMode() const {
      return WifiManager::GetInstance().IsConfigMode();
  }
  
@@ -1026,7 +1029,7 @@ index 377685b..e9b56db 100644
  NetworkInterface* WifiBoard::GetNetwork() {
      static EspNetwork network;
      return &network;
-@@ -265,21 +202,7 @@ const char* WifiBoard::GetNetworkStateIcon() {
+@@ -265,21 +205,7 @@ const char* WifiBoard::GetNetworkStateIcon() {
      return FONT_AWESOME_WIFI_WEAK;
  }
  
@@ -1048,7 +1051,7 @@ index 377685b..e9b56db 100644
  
  void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
      WifiPowerSaveLevel wifi_level;
-@@ -297,61 +220,3 @@ void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
+@@ -297,61 +223,3 @@ void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
      }
      WifiManager::GetInstance().SetPowerSaveLevel(wifi_level);
  }

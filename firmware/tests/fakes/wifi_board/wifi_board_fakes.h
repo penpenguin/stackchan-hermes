@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <functional>
 #include <string>
+#include <utility>
 #include <vector>
 
 enum class NetworkEvent { Scanning, Connecting, Connected, Disconnected, WifiConfigModeEnter, WifiConfigModeExit };
@@ -77,11 +78,13 @@ public:
         if (!station) { ++stationStarts; station = true; }
     }
     void StopStation() {
+        if (auto hook = std::exchange(beforeStationStop, nullptr)) { hook(); }
         if (!station) { return; }
         station = connected = false;
         notify(WifiEvent::Disconnected);
     }
     void StartConfigAp() {
+        if (auto hook = std::exchange(beforeApStart, nullptr)) { hook(); }
         if (ap) { return; }
         StopStation();
         ap = true;
@@ -100,5 +103,6 @@ public:
     void reset() { *this = WifiManager{}; SsidManager::GetInstance().ssids.clear(); }
     bool ap = false, station = false, connected = false;
     int apStarts = 0, stationStarts = 0;
+    std::function<void()> beforeApStart, beforeStationStop;
     std::function<void(WifiEvent, const std::string&)> callback;
 };
