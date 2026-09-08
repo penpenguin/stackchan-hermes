@@ -14,6 +14,32 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def test_main_source_discovery_supports_idf_script_mode_and_incremental_changes(
+    tmp_path: Path,
+) -> None:
+    cmake = (ROOT / "firmware/main/CMakeLists.txt").read_text()
+    discovery = cmake.split("# Shared local-only upstream implementation.", 1)[0]
+    (tmp_path / "sources.cmake").write_text(
+        discovery
+        + '\nfile(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/sources.txt" "${STACK_CHAN_SOURCES}")\n'
+    )
+    subprocess.run(["cmake", "-P", "sources.cmake"], cwd=tmp_path, check=True)
+    (tmp_path / "CMakeLists.txt").write_text(
+        "cmake_minimum_required(VERSION 3.16)\nproject(source_discovery NONE)\n"
+        'include(sources.cmake)\nadd_custom_target(check ALL COMMAND "${CMAKE_COMMAND}" -E true)\n'
+    )
+    build = tmp_path / "build"
+    subprocess.run(["cmake", "-S", str(tmp_path), "-B", str(build)], check=True)
+    source = tmp_path / "hal/new_settings.cc"
+    source.parent.mkdir()
+    source.write_text("// New local implementation\n")
+    subprocess.run(["cmake", "--build", str(build)], check=True)
+    assert str(source) in (tmp_path / "sources.txt").read_text()
+    source.unlink()
+    subprocess.run(["cmake", "--build", str(build)], check=True)
+    assert str(source) not in (tmp_path / "sources.txt").read_text()
+
+
 def _verifier() -> ModuleType:
     path = ROOT / "firmware/tools/verify_release.py"
     spec = importlib.util.spec_from_file_location("verify_release", path)
