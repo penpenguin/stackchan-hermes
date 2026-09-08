@@ -5,6 +5,7 @@
  */
 #pragma once
 #include "stackchan_camera.h"
+#include "device_config.h"
 #include <hal/local_activity.h>
 #include <cstdint>
 #include <functional>
@@ -26,12 +27,6 @@ struct Data_t {
     TouchPoint_t touchPoint;
 };
 
-struct DeviceConfig_t {
-    uint32_t idleShutdownTimeSeconds = 600;
-    bool allowShutdownWhenCharging   = false;
-    uint8_t idleRandomMovementLevel  = 2;
-};
-
 void lock();
 void unlock();
 Data_t& get_data();
@@ -50,8 +45,6 @@ bool app_schedule(std::function<void()> callback);
 void update_local_tasks();
 AudioService& local_audio();
 bool local_audio_busy();
-DeviceConfig_t get_device_config();
-void set_device_config(const DeviceConfig_t& config);
 
 i2c_master_bus_handle_t board_get_i2c_bus();
 StackChanCamera* board_get_camera();

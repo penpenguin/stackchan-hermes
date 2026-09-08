@@ -4,6 +4,11 @@ project(stackchan_firmware_tests LANGUAGES CXX)
 
 enable_testing()
 
+add_executable(device_config_test device_config_test.cpp ../main/hal/board/device_config.cc)
+target_include_directories(device_config_test PRIVATE fakes/settings ../main)
+target_compile_features(device_config_test PRIVATE cxx_std_17)
+add_test(NAME device_config_test COMMAND device_config_test)
+
 # Compile the exact patched Wi-Fi board sources with deterministic network/timer fakes.
 set(WIFI_BOARD_TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/wifi-board")
 file(MAKE_DIRECTORY "${WIFI_BOARD_TEST_DIR}" "${WIFI_BOARD_TEST_DIR}/freertos" "${WIFI_BOARD_TEST_DIR}/assets")

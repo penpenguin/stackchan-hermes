@@ -268,14 +268,7 @@ void StackChanAvatarDisplay::SetupUI()
 
     // GetHAL().startStackChanAutoUpdate(24);
 
-    auto config        = hal_bridge::get_device_config();
-    Settings motionSettings("motion", false);
-    idle_motion_level_ = motionSettings.GetInt(
-        "idle_level", config.idleRandomMovementLevel
-    );
-    if (idle_motion_level_ > 3) {
-        idle_motion_level_ = 0;
-    }
+    idle_motion_level_ = hal_bridge::get_device_config().idleRandomMovementLevel;
 
     ESP_LOGI(TAG, "Avatar created and started");
 }
