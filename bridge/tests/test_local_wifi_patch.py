@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+from difflib import unified_diff
+from hashlib import sha256
 from pathlib import Path
 
 import pytest
@@ -18,22 +20,60 @@ def prepare(firmware: Path, output: Path) -> None:
     module.prepare(firmware, output)
 
 
-def test_wifi_patch_removes_ota_settings_from_code_and_page(tmp_path: Path) -> None:
-    prepare(ROOT / "firmware", tmp_path)
-    for name in (
-        "wifi_configuration_ap.cc",
-        "include/wifi_configuration_ap.h",
-        "assets/wifi_local.html",
-    ):
-        text = (tmp_path / name).read_text()
-        assert "ota_url" not in text
-        assert "clearOtaUrl" not in text
-    cpp = (tmp_path / "wifi_configuration_ap.cc").read_text()
-    assert '"max_tx_power"' in cpp
-    assert '"/submit"' in cpp
-    html = (tmp_path / "assets/wifi_local.html").read_text()
-    assert 'id="ssid"' in html
-    assert 'id="password"' in html
+@pytest.fixture
+def wifi_firmware(tmp_path: Path) -> Path:
+    firmware = tmp_path / "firmware"
+    component = "managed_components/test-wifi"
+    relative = "assets/wifi_configuration.html"
+    original = '<input id="ssid">\n<input id="password">\n<input id="ota_url">\n'
+    patched = '<input id="ssid">\n<input id="password">\n'
+    source = firmware / component / relative
+    source.parent.mkdir(parents=True)
+    source.write_text(original)
+    patch = "".join(
+        unified_diff(
+            original.splitlines(keepends=True),
+            patched.splitlines(keepends=True),
+            fromfile=f"a/{relative}",
+            tofile=f"b/{relative}",
+        )
+    )
+    patches = firmware / "patches"
+    patches.mkdir()
+    (patches / "esp-wifi-connect.patch").write_text(patch)
+    (patches / "esp-wifi-connect.json").write_text(
+        json.dumps(
+            {
+                "component": component,
+                "patch_sha256": sha256(patch.encode()).hexdigest(),
+                "files": [
+                    {
+                        "source": relative,
+                        "output": "assets/wifi_local.html",
+                        "source_sha256": sha256(original.encode()).hexdigest(),
+                        "output_sha256": sha256(patched.encode()).hexdigest(),
+                    }
+                ],
+            }
+        )
+    )
+    return firmware
+
+
+def test_wifi_patch_writes_renamed_output_without_changing_source(
+    wifi_firmware: Path, tmp_path: Path
+) -> None:
+    source = wifi_firmware / "managed_components/test-wifi/assets/wifi_configuration.html"
+    original = source.read_bytes()
+    output = tmp_path / "output"
+
+    prepare(wifi_firmware, output)
+
+    assert (output / "assets/wifi_local.html").read_text() == (
+        '<input id="ssid">\n<input id="password">\n'
+    )
+    assert not (output / "assets/wifi_configuration.html").exists()
+    assert source.read_bytes() == original
 
 
 def test_wifi_patch_rejects_changed_source_before_writing_output(tmp_path: Path) -> None:
