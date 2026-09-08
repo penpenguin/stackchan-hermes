@@ -600,7 +600,11 @@ def create_device_gateway_app(
         rate_per_second=config.capture_rate_per_minute / 60,
         capacity=config.capture_rate_burst,
     )
-    receipt_rate_limiter = TokenBucketRateLimiter(rate_per_second=1, capacity=4)
+    # Allow an initial check and a recovery check for each permitted upload.
+    receipt_rate_limiter = TokenBucketRateLimiter(
+        rate_per_second=max(1.0, 2 * config.capture_rate_per_minute / 60),
+        capacity=max(4, 2 * config.capture_rate_burst),
+    )
 
     @app.get("/v1/device/captures/{capture_id}/status")
     async def capture_status(capture_id: UUID, request: Request) -> JSONResponse:

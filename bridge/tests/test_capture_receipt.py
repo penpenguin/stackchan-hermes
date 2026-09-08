@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from functools import partial
 from pathlib import Path
 from uuid import uuid4
 
@@ -9,6 +10,93 @@ import pytest
 from stackchan_bridge.captures.store import CaptureStore
 from stackchan_bridge.device_gateway import application as gateway
 from stackchan_simulator.fixtures import generate_synthetic_jpeg
+
+
+@pytest.fixture
+def receipt_clock(monkeypatch: pytest.MonkeyPatch) -> list[float]:
+    now = [0.0]
+    monkeypatch.setattr(gateway, "verify_device_token", lambda *_: True)
+    monkeypatch.setattr(
+        gateway,
+        "TokenBucketRateLimiter",
+        partial(gateway.TokenBucketRateLimiter, clock=lambda: now[0]),
+    )
+    return now
+
+
+@pytest.mark.parametrize(
+    ("rate_per_minute", "burst", "interval", "count"),
+    [(6, 2, 10.0, 8), (120, 1, 0.5, 8), (480, 1, 0.125, 12), (60, 6, 0.0, 6)],
+)
+async def test_receipts_allow_initial_and_recovery_checks_at_the_configured_capture_rate(
+    tmp_path: Path,
+    receipt_clock: list[float],
+    rate_per_minute: int,
+    burst: int,
+    interval: float,
+    count: int,
+) -> None:
+    store = CaptureStore(directory=tmp_path, ttl_seconds=600, max_bytes=2_097_152)
+    app = gateway.create_device_gateway_app(
+        gateway.DeviceGatewayConfig(
+            device_token_hashes={"sim-001": "synthetic"},
+            capture_rate_per_minute=rate_per_minute,
+            capture_rate_burst=burst,
+            authentication_rate_per_second=100,
+            authentication_rate_burst=100,
+        ),
+        capture_store=store,
+    )
+    jpeg = generate_synthetic_jpeg()
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app),
+        base_url="http://gateway",
+        headers={"Authorization": "Bearer synthetic", "X-StackChan-Device-Id": "sim-001"},
+    ) as client:
+        for _ in range(count):
+            capture = store.reserve("sim-001")
+            url = f"/v1/device/captures/{capture.capture_id}"
+            initial = await client.get(f"{url}/status")
+            assert initial.status_code == 200
+            assert initial.json()["state"] == "reserved"
+            upload = await client.post(url, files={"file": ("capture.jpg", jpeg, "image/jpeg")})
+            assert upload.status_code == 201
+            receipt = await client.get(f"{url}/status")
+            assert receipt.status_code == 200
+            assert receipt.json()["sha256"] == upload.json()["sha256"]
+            receipt_clock[0] += interval
+
+
+async def test_receipt_limit_still_returns_retry_after_and_refills(
+    tmp_path: Path, receipt_clock: list[float]
+) -> None:
+    store = CaptureStore(directory=tmp_path, ttl_seconds=600, max_bytes=2_097_152)
+    app = gateway.create_device_gateway_app(
+        gateway.DeviceGatewayConfig(
+            device_token_hashes={"sim-001": "synthetic"},
+            capture_rate_per_minute=120,
+            capture_rate_burst=3,
+            authentication_rate_per_second=100,
+            authentication_rate_burst=100,
+        ),
+        capture_store=store,
+    )
+    capture = store.reserve("sim-001")
+    url = f"/v1/device/captures/{capture.capture_id}/status"
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app),
+        base_url="http://gateway",
+        headers={"Authorization": "Bearer synthetic", "X-StackChan-Device-Id": "sim-001"},
+    ) as client:
+        for _ in range(6):
+            assert (await client.get(url)).status_code == 200
+        limited = await client.get(url)
+        assert limited.status_code == 429
+        assert limited.json()["error"]["code"] == "CAPTURE_STATUS_RATE_LIMITED"
+        retry_after = int(limited.headers["Retry-After"])
+        assert retry_after > 0
+        receipt_clock[0] += retry_after
+        assert (await client.get(url)).status_code == 200
 
 
 async def test_receipt_recovers_lost_ack_without_spending_upload_quota(

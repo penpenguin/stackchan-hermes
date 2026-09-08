@@ -300,6 +300,10 @@ Before acquiring a frame, Firmware requests authenticated
 `succeeded`, `failed`, `cancelled`, `expired`; terminal states never return to an active state.
 Firmware uses the request start plus server remaining time, never extending its local deadline.
 The final 20% of the command budget (at most one second) is reserved for cleanup and notification.
+Receipt queries have a separate per-device quota for initial and recovery checks:
+`max(1, 2 * capture_rate_per_minute / 60)` requests/second with a burst of
+`max(4, 2 * capture_rate_burst)`. Excess queries return 429 `CAPTURE_STATUS_RATE_LIMITED`
+with `Retry-After`; they do not consume the upload quota.
 
 JPEG encoding happens once into bounded PSRAM. Each HTTP operation uses at most three seconds
 and the remaining work budget, including DNS, TCP/TLS connection, writes, response reads and close.
