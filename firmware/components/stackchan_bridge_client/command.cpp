@@ -352,13 +352,21 @@ CommandParseError parseCommandJson(const std::string& input, Command& output)
     } else if (std::string(name) == "camera.capture") {
         const char* captureId = arguments["capture_id"].as<const char*>();
         JsonVariantConst quality = arguments["quality"];
-        if (arguments.size() != 2 || !isValidUuid(captureId) || !quality.is<int>()
+        if (arguments.size() != 3 || !arguments["timeout_ms"].is<int>()
+            || arguments["timeout_ms"].as<int>() < 1 || arguments["timeout_ms"].as<int>() > 120000
+            || !isValidUuid(captureId) || !quality.is<int>()
             || quality.as<int>() < 10 || quality.as<int>() > 95) {
             return CommandParseError::InvalidArgument;
         }
         parsed.name = CommandName::CameraCapture;
         parsed.arguments.captureId = captureId;
         parsed.arguments.quality = quality.as<int>();
+        parsed.arguments.captureTimeoutMs = arguments["timeout_ms"].as<int>();
+    } else if (std::string(name) == "camera.cancel") {
+        const char* captureId = arguments["capture_id"].as<const char*>();
+        if (arguments.size() != 1 || !isValidUuid(captureId)) { return CommandParseError::InvalidArgument; }
+        parsed.name = CommandName::CameraCancel;
+        parsed.arguments.captureId = captureId;
     } else if (std::string(name) == "speech.cancel") {
         if (arguments.size() != 0 || turnId == nullptr) {
             return CommandParseError::InvalidArgument;
@@ -405,7 +413,8 @@ bool isSameCommandRequest(const Command& left, const Command& right)
         && left.arguments.green == right.arguments.green
         && left.arguments.blue == right.arguments.blue
         && left.arguments.captureId == right.arguments.captureId
-        && left.arguments.quality == right.arguments.quality;
+        && left.arguments.quality == right.arguments.quality
+        && left.arguments.captureTimeoutMs == right.arguments.captureTimeoutMs;
 }
 
 CommandResultBuildError buildCommandResultJson(

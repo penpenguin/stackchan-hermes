@@ -96,7 +96,11 @@ def camera_completed(*, ok: bool) -> EventMessage:
                 "data": {
                     "capture_id": "4936d914-cef8-443e-830a-d3c717ccc178",
                     "ok": ok,
-                    **({} if ok else {"error_code": "CAPTURE_FAILED"}),
+                    **(
+                        {"sha256": "0" * 64, "size_bytes": 128}
+                        if ok
+                        else {"error_code": "CAPTURE_FAILED"}
+                    ),
                 },
             },
         }

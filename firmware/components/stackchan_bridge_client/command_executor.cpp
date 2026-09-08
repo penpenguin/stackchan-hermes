@@ -299,13 +299,17 @@ CommandExecutionResult executeCommand(const Command& command, DeviceCommandTarge
             ? success()
             : invalidState("Speech turn is not active");
     }
+    if (command.name == CommandName::CameraCancel) {
+        return target.cancelCapture(command.arguments.captureId) ? success() : invalidState("Capture is not active");
+    }
     if (command.name == CommandName::CameraCapture) {
         if (!isValidUuid(command.arguments.captureId) || command.arguments.quality < 10
-            || command.arguments.quality > 95) {
+            || command.arguments.quality > 95 || command.arguments.captureTimeoutMs < 1
+            || command.arguments.captureTimeoutMs > 120000) {
             return invalidArgument("Camera capture is outside the supported range");
         }
         switch (target.startCapture(
-            command.arguments.captureId, command.arguments.quality
+            command.arguments.captureId, command.arguments.quality, command.arguments.captureTimeoutMs
         )) {
             case CommandTargetResult::Success:
                 return success();

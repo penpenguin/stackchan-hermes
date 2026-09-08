@@ -24,7 +24,7 @@ public:
         return static_cast<int>(data.size());
     }
     void respond(int status) {
-        stream_callback_("HTTP/1.1 " + std::to_string(status) + " Response\r\n"
+        stream_callback_("HTTP/1.1 100 Continue\r\n\r\nHTTP/1.1 " + std::to_string(status) + " Response\r\n"
                          "Location: https://other.example.test:9443/stolen\r\n"
                          "Content-Length: 0\r\n\r\n");
     }

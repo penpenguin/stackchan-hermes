@@ -54,7 +54,8 @@ public:
     virtual bool homeHead(int speed) = 0;
     virtual bool getHeadAngles(HeadAngles& output) const = 0;
     virtual bool cancelSpeech(const std::string& turnId) = 0;
-    virtual CommandTargetResult startCapture(const std::string& captureId, int quality) = 0;
+    virtual bool cancelCapture(const std::string&) { return false; }
+    virtual CommandTargetResult startCapture(const std::string& captureId, int quality, int timeoutMs) = 0;
 };
 
 CommandExecutionResult executeCommand(const Command& command, DeviceCommandTarget& target);

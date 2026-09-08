@@ -17,5 +17,5 @@ def test_checked_in_protocol_examples_match_their_schemas() -> None:
     )
 
     assert result.returncode == 0, result.stderr
-    assert "11 valid examples" in result.stdout
-    assert "8 expected invalid examples" in result.stdout
+    assert "15 valid examples" in result.stdout
+    assert "11 expected invalid examples" in result.stdout

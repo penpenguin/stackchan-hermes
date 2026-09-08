@@ -351,7 +351,7 @@ void testCameraCaptureRetainsUuidAndBoundedQuality()
         "message_id":"519a16ce-3a07-4ab6-9767-f39bcc096cb8",
         "request_id":"79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc","sent_at_ms":13,
         "payload":{"name":"camera.capture","args":{
-            "capture_id":"c9ef993d-25aa-4f9f-a35d-6441d2f87ee7","quality":80
+            "capture_id":"c9ef993d-25aa-4f9f-a35d-6441d2f87ee7","quality":80,"timeout_ms":10000
         }}
     })";
     Command command;

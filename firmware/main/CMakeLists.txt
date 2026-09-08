@@ -223,6 +223,7 @@ idf_component_register(SRCS ${SOURCES}
                     INCLUDE_DIRS ${INCLUDE_DIRS}
                     WHOLE_ARCHIVE
                     PRIV_REQUIRES
+                        esp-tls
                         esp_pm
                         esp_psram
                         esp_netif
@@ -249,6 +250,10 @@ idf_component_register(SRCS ${SOURCES}
                         stackchan_bridge_client
                         espressif__mdns
                     )
+
+# Capture TCP polling rearms the pinned IDF 5.5.4 ESP-TLS descriptor sets.
+idf_component_get_property(CAPTURE_TLS_COMPONENT_PATH esp-tls COMPONENT_DIR)
+target_include_directories(${COMPONENT_LIB} PRIVATE "${CAPTURE_TLS_COMPONENT_PATH}/private_include")
 
 # The pinned esp-now component wraps these SDK log functions. Keep its wrappers
 # reachable even when the application has no earlier esp_log_write reference.
@@ -315,6 +320,19 @@ target_compile_definitions(${COMPONENT_LIB}
                     PRIVATE BUILTIN_TEXT_FONT=${BUILTIN_TEXT_FONT} BUILTIN_ICON_FONT=${BUILTIN_ICON_FONT}
                     )
 
+# Fail configuration if either side of a reviewed camera derivative changed.
+execute_process(
+    COMMAND "${PYTHON}" "${CMAKE_CURRENT_SOURCE_DIR}/../tools/verify_camera_derivatives.py"
+    RESULT_VARIABLE CAPTURE_DERIVATIVE_RESULT
+)
+if(NOT CAPTURE_DERIVATIVE_RESULT EQUAL 0)
+    message(FATAL_ERROR "Camera derivative verification failed")
+endif()
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/../patches/camera-derivatives.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../tools/verify_camera_derivatives.py"
+)
+
 # The pinned esp-ml307 WebSocket parser does not enforce SetReceiveBufferSize while
 # accumulating frames. Use the reviewed bounded derivative and a Bridge-only factory.
 # MQTT, generic UDP and cellular-modem implementations are not compiled.
@@ -335,14 +353,17 @@ foreach(ESP_ML307_SOURCE IN LISTS ESP_ML307_SOURCES)
     )
     if(ESP_ML307_SOURCE_ABSOLUTE STREQUAL "${ESP_ML307_COMPONENT_PATH}/src/web_socket.cc")
         set(ESP_ML307_WEBSOCKET_REMOVED TRUE)
-    elseif(ESP_ML307_SOURCE_ABSOLUTE MATCHES "/src/(esp/esp_(tcp|ssl)|http_client)\\.cc$")
-        list(APPEND ESP_ML307_FILTERED_SOURCES "${ESP_ML307_SOURCE}")
+    elseif(ESP_ML307_SOURCE_ABSOLUTE MATCHES "/src/esp/esp_(tcp|ssl)\\.cc$")
+        # TCP/TLS are supplied by the checked derivatives below.
     endif()
 endforeach()
 if(NOT ESP_ML307_WEBSOCKET_REMOVED)
     message(FATAL_ERROR "Pinned esp-ml307 WebSocket source layout changed")
 endif()
 list(APPEND ESP_ML307_FILTERED_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/esp_tcp.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/esp_ssl.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/http_client.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/esp_network.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/web_socket.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/websocket_pong.cpp"
@@ -350,6 +371,7 @@ list(APPEND ESP_ML307_FILTERED_SOURCES
 )
 set_property(TARGET ${ESP_ML307_LIB} PROPERTY SOURCES "${ESP_ML307_FILTERED_SOURCES}")
 target_include_directories(${ESP_ML307_LIB} PRIVATE
+    "${ESP_ML307_COMPONENT_PATH}/src/esp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/include"
 )
 
@@ -580,4 +602,17 @@ if ("${size}" AND "${offset}")
     endif()
 else()
     message(STATUS "Assets partition not found, using v1 partition table")
+endif()
+
+# Replace only the reviewed video ioctl translation unit; leave the managed cache intact.
+find_component_by_pattern("^espressif__esp_video$" CAPTURE_VIDEO_COMPONENT CAPTURE_VIDEO_PATH)
+if(NOT CAPTURE_VIDEO_COMPONENT)
+    message(FATAL_ERROR "Pinned camera video component was not resolved")
+else()
+    idf_component_get_property(CAPTURE_VIDEO_LIB ${CAPTURE_VIDEO_COMPONENT} COMPONENT_LIB)
+    get_target_property(CAPTURE_VIDEO_SOURCES ${CAPTURE_VIDEO_LIB} SOURCES)
+    list(FILTER CAPTURE_VIDEO_SOURCES EXCLUDE REGEX "esp_video_ioctl\\.c$")
+    list(APPEND CAPTURE_VIDEO_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/esp_video_ioctl.c")
+    set_property(TARGET ${CAPTURE_VIDEO_LIB} PROPERTY SOURCES "${CAPTURE_VIDEO_SOURCES}")
+    target_include_directories(${CAPTURE_VIDEO_LIB} PRIVATE "${CAPTURE_VIDEO_PATH}/src" "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/include")
 endif()

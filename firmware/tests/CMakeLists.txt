@@ -149,7 +149,7 @@ find_package(Threads REQUIRED)
 add_executable(camera_upload_redirect_test
     camera_upload_redirect_test.cpp
     ../main/hal/stackchan_bridge_camera_upload.h
-    ../managed_components/78__esp-ml307/src/http_client.cc
+    ../components/stackchan_bridge_client/http_client.cpp
     ../components/stackchan_bridge_client/camera_capture.cpp
 )
 target_include_directories(camera_upload_redirect_test PRIVATE
@@ -460,3 +460,38 @@ target_include_directories(bridge_client_session_test PRIVATE
 target_compile_features(bridge_client_session_test PRIVATE cxx_std_17)
 
 add_test(NAME bridge_client_session_test COMMAND $<TARGET_FILE:bridge_client_session_test>)
+
+add_executable(capture_transaction_test capture_transaction_test.cpp ../components/stackchan_bridge_client/command.cpp)
+target_include_directories(capture_transaction_test PRIVATE ../components/stackchan_bridge_client/include ../components/ArduinoJson/src)
+target_compile_features(capture_transaction_test PRIVATE cxx_std_17)
+add_test(NAME capture_transaction_test COMMAND capture_transaction_test)
+
+add_executable(camera_video_deadline_test camera_video_deadline_test.cpp)
+target_include_directories(camera_video_deadline_test PRIVATE ../components/stackchan_bridge_client/include)
+target_compile_features(camera_video_deadline_test PRIVATE cxx_std_17)
+add_test(NAME camera_video_deadline_test COMMAND camera_video_deadline_test)
+
+add_executable(capture_network_test capture_network_test.cpp
+    ../main/hal/capture_network.cpp ../components/stackchan_bridge_client/http_client.cpp)
+add_executable(receive_task_failure_test receive_task_failure_test.cpp
+    ../components/stackchan_bridge_client/esp_tcp.cpp ../components/stackchan_bridge_client/esp_ssl.cpp)
+foreach(capture_test capture_network_test receive_task_failure_test)
+    target_include_directories(${capture_test} PRIVATE fakes/capture_network
+        ../managed_components/78__esp-ml307/include ../managed_components/78__esp-ml307/src/esp
+        fakes/websocket_wire ../main/hal ../components/stackchan_bridge_client/include)
+    target_compile_options(${capture_test} PRIVATE -include ${CMAKE_CURRENT_SOURCE_DIR}/fakes/capture_network/platform.h)
+    target_compile_features(${capture_test} PRIVATE cxx_std_17)
+    target_link_libraries(${capture_test} PRIVATE pthread)
+    add_test(NAME ${capture_test} COMMAND ${capture_test})
+endforeach()
+
+add_executable(camera_worker_test camera_worker_test.cpp ../main/hal/stackchan_bridge_camera.cpp
+    ../main/hal/capture_network.cpp ../components/stackchan_bridge_client/http_client.cpp
+    ../components/stackchan_bridge_client/camera_capture.cpp)
+target_include_directories(camera_worker_test PRIVATE fakes/capture_worker fakes/capture_network
+    ../managed_components/78__esp-ml307/include fakes/websocket_wire ../main/hal
+    ../components/stackchan_bridge_client/include ../components/ArduinoJson/src)
+target_compile_options(camera_worker_test PRIVATE -include ${CMAKE_CURRENT_SOURCE_DIR}/fakes/capture_network/platform.h)
+target_compile_features(camera_worker_test PRIVATE cxx_std_17)
+target_link_libraries(camera_worker_test PRIVATE pthread)
+add_test(NAME camera_worker_test COMMAND camera_worker_test)

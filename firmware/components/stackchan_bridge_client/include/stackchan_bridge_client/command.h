@@ -25,6 +25,7 @@ enum class CommandName {
     LedSetAll,
     LedClear,
     CameraCapture,
+    CameraCancel,
     SpeechCancel,
 };
 
@@ -80,6 +81,7 @@ struct CommandArguments {
     int blue = 0;
     std::string captureId;
     int quality = 0;
+    int captureTimeoutMs = 0;
 };
 
 struct Command {

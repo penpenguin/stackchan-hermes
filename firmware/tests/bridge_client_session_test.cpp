@@ -176,7 +176,7 @@ std::string validAcknowledgement()
         "sent_at_ms": 1235,
         "payload": {
             "connection_id": "123e4567-e89b-12d3-a456-426614174002",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
@@ -1809,6 +1809,8 @@ void testAuthenticatedClientSendsCameraCompletionWithFreshEnvelope()
 {
     FakeWebSocketTransport transport;
     auto config = validConfig();
+    std::string completionAckId;
+    config.cameraCompletedAcknowledged = [&](const std::string& id) { completionAckId = id; };
     config.envelopeFactory = []() {
         EnvelopeMetadata envelope;
         envelope.messageId = "123e4567-e89b-12d3-a456-426614174099";
@@ -1847,6 +1849,9 @@ void testAuthenticatedClientSendsCameraCompletionWithFreshEnvelope()
         transport.sentText.find(R"("error_code":"CAPTURE_FAILED")") != std::string::npos,
         "camera completion lost its failure"
     );
+    const std::string completionAck = R"({"v":1,"type":"camera.completed_ack","message_id":"11111111-1111-4111-8111-111111111111","sent_at_ms":1,"payload":{"capture_id":"c9ef993d-25aa-4f9f-a35d-6441d2f87ee7","accepted":true}})";
+    transport.dataCallback(completionAck.data(), completionAck.size(), false);
+    expect(completionAckId == "c9ef993d-25aa-4f9f-a35d-6441d2f87ee7", "completion ACK did not reach the camera queue");
 }
 
 void testAudioOverflowSendsOwnedEventOnUpdate()

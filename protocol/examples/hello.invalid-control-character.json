@@ -8,7 +8,9 @@
     "device_name": "Stack\nChan",
     "firmware_version": "0.1.0",
     "hardware_model": "M5STACK-K151",
-    "protocol_versions": [1],
+    "protocol_versions": [
+      1
+    ],
     "capabilities": {
       "microphone": true,
       "speaker": true,
@@ -24,6 +26,7 @@
       "sample_rate": 16000,
       "channels": 1,
       "frame_ms": 60
-    }
+    },
+    "capture_protocol_version": 2
   }
 }

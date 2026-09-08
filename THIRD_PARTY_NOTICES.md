@@ -128,3 +128,10 @@ PY
 依存物と通知を確認します。Python wheel / sdist の通知集は同梱確認済みです。
 CoreS3 Firmware ZIP も、実物の照合と通知集の同梱を行います。作成手順と、将来依存実行環境を
 同梱する場合の確認範囲は [監査記録](docs/license-audit.md) にあります。
+
+Camera reliability derivatives of `78/esp-ml307` 3.6.5 (Apache-2.0) and
+`espressif/esp_video` 1.3.1 (ESPRESSIF MIT; use on Espressif products) are recorded in
+[the camera manifest](firmware/patches/camera-derivatives.json) and
+[the managed-component inventory](LICENSES/firmware-managed.json). Original and derivative
+hashes are checked during configuration and against release compilation inputs. The managed
+component cache remains unchanged; retained license texts are listed in the inventory.

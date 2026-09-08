@@ -32,13 +32,27 @@
         "led_count"
       ],
       "properties": {
-        "microphone": { "type": "boolean" },
-        "speaker": { "type": "boolean" },
-        "camera": { "type": "boolean" },
-        "touch": { "type": "boolean" },
-        "head": { "type": "boolean" },
-        "display": { "type": "boolean" },
-        "avatar": { "type": "boolean" },
+        "microphone": {
+          "type": "boolean"
+        },
+        "speaker": {
+          "type": "boolean"
+        },
+        "camera": {
+          "type": "boolean"
+        },
+        "touch": {
+          "type": "boolean"
+        },
+        "head": {
+          "type": "boolean"
+        },
+        "display": {
+          "type": "boolean"
+        },
+        "avatar": {
+          "type": "boolean"
+        },
         "led_count": {
           "type": "integer",
           "minimum": 0,
@@ -49,13 +63,28 @@
     },
     "audio": {
       "type": "object",
-      "required": ["codec", "sample_rate", "channels", "frame_ms"],
+      "required": [
+        "codec",
+        "sample_rate",
+        "channels",
+        "frame_ms"
+      ],
       "properties": {
-        "codec": { "const": "opus" },
-        "sample_rate": { "const": 16000 },
-        "channels": { "const": 1 },
+        "codec": {
+          "const": "opus"
+        },
+        "sample_rate": {
+          "const": 16000
+        },
+        "channels": {
+          "const": 1
+        },
         "frame_ms": {
-          "enum": [20, 40, 60]
+          "enum": [
+            20,
+            40,
+            60
+          ]
         }
       },
       "additionalProperties": true
@@ -69,7 +98,8 @@
         "hardware_model",
         "protocol_versions",
         "capabilities",
-        "audio"
+        "audio",
+        "capture_protocol_version"
       ],
       "properties": {
         "device_id": {
@@ -108,6 +138,9 @@
         },
         "audio": {
           "$ref": "#/$defs/audio"
+        },
+        "capture_protocol_version": {
+          "const": 2
         }
       },
       "additionalProperties": true

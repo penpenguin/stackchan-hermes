@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "component": "78/esp-ml307",
+      "source": "firmware/managed_components/78__esp-ml307/src/http_client.cc",
+      "source_sha256": "c33ea32a2587ccccb8300c62c3614f19970ccedd46b56b64e253fc9ea5a7c145",
+      "derivative": "firmware/components/stackchan_bridge_client/http_client.cpp",
+      "derivative_sha256": "41595d712f22331ffa99154d599911787426312d6988ae6806cbc9d78c64a9b8",
+      "description": "Consume interim HTTP responses and suppress credential-bearing header logging."
+    },
+    {
+      "component": "78/esp-ml307",
+      "source": "firmware/managed_components/78__esp-ml307/src/esp/esp_tcp.cc",
+      "source_sha256": "0e3647b95261a98a1dc952df41fcb4606fa51bbfb508ce0a802bc07d6b70e11b",
+      "derivative": "firmware/components/stackchan_bridge_client/esp_tcp.cpp",
+      "derivative_sha256": "052045a988008989d8ed207df321dde832e84e0fbd3c5126f267f1dff1ece31e",
+      "description": "Reject failed receive task creation and zero sends; release failed resources."
+    },
+    {
+      "component": "78/esp-ml307",
+      "source": "firmware/managed_components/78__esp-ml307/src/esp/esp_ssl.cc",
+      "source_sha256": "d37ffe4b1dca5cdaba5059c44c606d93972adc5ed0f1d1e5610fbdf4e7b2e700",
+      "derivative": "firmware/components/stackchan_bridge_client/esp_ssl.cpp",
+      "derivative_sha256": "df57ab5b15e6cdb11eb614f1385675b13c1a420c9eeee421b5579ff30056c35e",
+      "description": "Reject failed receive task creation and zero sends; release failed resources."
+    },
+    {
+      "component": "espressif/esp_video",
+      "source": "firmware/managed_components/espressif__esp_video/src/esp_video_ioctl.c",
+      "source_sha256": "996d8a0386fa9e92ba7176b4ee7f9946871c03215eeefffc8ec3b1c4c0dde86c",
+      "derivative": "firmware/components/stackchan_bridge_client/esp_video_ioctl.c",
+      "derivative_sha256": "49ab140d6a1e510eff92c79aaa0bc11d7f94e4ebe4612832d9fd3936aac9e847",
+      "description": "Add a finite dequeue ioctl for cancellable camera frame acquisition."
+    }
+  ]
+}

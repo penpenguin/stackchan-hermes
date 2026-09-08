@@ -8,17 +8,26 @@
     },
     {
       "type": "object",
-      "required": ["device_id"],
+      "required": [
+        "device_id"
+      ],
       "properties": {
-        "type": { "const": "event" },
-        "payload": { "$ref": "#/$defs/eventPayload" }
+        "type": {
+          "const": "event"
+        },
+        "payload": {
+          "$ref": "#/$defs/eventPayload"
+        }
       }
     }
   ],
   "$defs": {
     "eventPayload": {
       "type": "object",
-      "required": ["name", "data"],
+      "required": [
+        "name",
+        "data"
+      ],
       "properties": {
         "name": {
           "enum": [
@@ -36,90 +45,269 @@
             "device.error"
           ]
         },
-        "data": { "type": "object" }
+        "data": {
+          "type": "object"
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "name": { "const": "touch.tap" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/touchTapData" } } }
-        },
-        {
-          "if": { "properties": { "name": { "const": "touch.long_press" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/touchLongPressData" } } }
-        },
-        {
-          "if": { "properties": { "name": { "const": "touch.stroke" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/touchStrokeData" } } }
-        },
-        {
-          "if": { "properties": { "name": { "const": "button.press" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/buttonPressData" } } }
-        },
-        {
-          "if": { "properties": { "name": { "const": "wakeword.detected" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/wakewordData" } } }
-        },
-        {
-          "if": { "properties": { "name": { "const": "battery.changed" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/batteryData" } } }
-        },
-        {
-          "if": { "properties": { "name": { "const": "wifi.changed" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/wifiData" } } }
+          "if": {
+            "properties": {
+              "name": {
+                "const": "touch.tap"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/touchTapData"
+              }
+            }
+          }
         },
         {
           "if": {
-            "properties": { "name": { "enum": ["audio.underrun", "audio.overflow"] } }
+            "properties": {
+              "name": {
+                "const": "touch.long_press"
+              }
+            }
           },
-          "then": { "properties": { "data": { "$ref": "#/$defs/audioBufferData" } } }
-        },
-        {
-          "if": { "properties": { "name": { "const": "camera.completed" } } },
-          "then": { "properties": { "data": { "$ref": "#/$defs/cameraCompletedData" } } }
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/touchLongPressData"
+              }
+            }
+          }
         },
         {
           "if": {
-            "properties": { "name": { "enum": ["servo.error", "device.error"] } }
+            "properties": {
+              "name": {
+                "const": "touch.stroke"
+              }
+            }
           },
-          "then": { "properties": { "data": { "$ref": "#/$defs/deviceFaultData" } } }
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/touchStrokeData"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "const": "button.press"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/buttonPressData"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "const": "wakeword.detected"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/wakewordData"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "const": "battery.changed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/batteryData"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "const": "wifi.changed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/wifiData"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "audio.underrun",
+                  "audio.overflow"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/audioBufferData"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "const": "camera.completed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/cameraCompletedData"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "name": {
+                "enum": [
+                  "servo.error",
+                  "device.error"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/deviceFaultData"
+              }
+            }
+          }
         }
       ],
       "additionalProperties": true
     },
     "touchTapData": {
       "type": "object",
-      "required": ["x", "y"],
+      "required": [
+        "x",
+        "y"
+      ],
       "properties": {
-        "x": { "type": "integer", "minimum": 0, "maximum": 319 },
-        "y": { "type": "integer", "minimum": 0, "maximum": 239 }
+        "x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 319
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 239
+        }
       },
       "additionalProperties": true
     },
     "touchLongPressData": {
       "type": "object",
-      "required": ["x", "y", "duration_ms"],
+      "required": [
+        "x",
+        "y",
+        "duration_ms"
+      ],
       "properties": {
-        "x": { "type": "integer", "minimum": 0, "maximum": 319 },
-        "y": { "type": "integer", "minimum": 0, "maximum": 239 },
-        "duration_ms": { "type": "integer", "minimum": 500, "maximum": 30000 }
+        "x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 319
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 239
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 500,
+          "maximum": 30000
+        }
       },
       "additionalProperties": true
     },
     "touchStrokeData": {
       "type": "object",
-      "required": ["start_x", "start_y", "end_x", "end_y", "duration_ms"],
+      "required": [
+        "start_x",
+        "start_y",
+        "end_x",
+        "end_y",
+        "duration_ms"
+      ],
       "properties": {
-        "start_x": { "type": "integer", "minimum": 0, "maximum": 319 },
-        "start_y": { "type": "integer", "minimum": 0, "maximum": 239 },
-        "end_x": { "type": "integer", "minimum": 0, "maximum": 319 },
-        "end_y": { "type": "integer", "minimum": 0, "maximum": 239 },
-        "duration_ms": { "type": "integer", "minimum": 1, "maximum": 30000 }
+        "start_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 319
+        },
+        "start_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 239
+        },
+        "end_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 319
+        },
+        "end_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 239
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30000
+        }
       },
       "additionalProperties": true
     },
     "buttonPressData": {
       "type": "object",
-      "required": ["button"],
+      "required": [
+        "button"
+      ],
       "properties": {
         "button": {
           "type": "string",
@@ -133,50 +321,123 @@
     "wakewordData": {
       "type": "object",
       "properties": {
-        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
       },
       "additionalProperties": true
     },
     "batteryData": {
       "type": "object",
-      "required": ["percent", "charging"],
+      "required": [
+        "percent",
+        "charging"
+      ],
       "properties": {
-        "percent": { "type": "integer", "minimum": 0, "maximum": 100 },
-        "charging": { "type": "boolean" }
+        "percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "charging": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": true
     },
     "wifiData": {
       "type": "object",
-      "required": ["connected"],
+      "required": [
+        "connected"
+      ],
       "properties": {
-        "connected": { "type": "boolean" },
-        "rssi_dbm": { "type": "integer", "minimum": -127, "maximum": 0 }
+        "connected": {
+          "type": "boolean"
+        },
+        "rssi_dbm": {
+          "type": "integer",
+          "minimum": -127,
+          "maximum": 0
+        }
       },
       "additionalProperties": true
     },
     "audioBufferData": {
       "type": "object",
-      "required": ["stream_id", "dropped_packets"],
+      "required": [
+        "stream_id",
+        "dropped_packets"
+      ],
       "properties": {
-        "stream_id": { "$ref": "common.schema.json#/$defs/uuid" },
-        "dropped_packets": { "type": "integer", "minimum": 1, "maximum": 65535 }
+        "stream_id": {
+          "$ref": "common.schema.json#/$defs/uuid"
+        },
+        "dropped_packets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
       },
       "additionalProperties": true
     },
     "cameraCompletedData": {
       "type": "object",
-      "required": ["capture_id", "ok"],
+      "required": [
+        "capture_id",
+        "ok"
+      ],
       "properties": {
-        "capture_id": { "$ref": "common.schema.json#/$defs/uuid" },
-        "ok": { "type": "boolean" },
-        "error_code": { "$ref": "control.schema.json#/$defs/errorCode" }
+        "capture_id": {
+          "$ref": "common.schema.json#/$defs/uuid"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "error_code": {
+          "$ref": "control.schema.json#/$defs/errorCode"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2097152
+        }
       },
-      "additionalProperties": true
+      "additionalProperties": true,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "ok": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "sha256",
+              "size_bytes"
+            ],
+            "not": {
+              "required": [
+                "error_code"
+              ]
+            }
+          }
+        }
+      ]
     },
     "deviceFaultData": {
       "type": "object",
-      "required": ["code", "message"],
+      "required": [
+        "code",
+        "message"
+      ],
       "properties": {
         "code": {
           "type": "string",

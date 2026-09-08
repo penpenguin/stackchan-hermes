@@ -31,7 +31,8 @@ tests before implementation.
 | Pending commands | 16 per device |
 | Duplicate-ID cache | latest 256 IDs per connection |
 | Device connections | 8 by default |
-| Capture body / timeout | 2,097,152 bytes / 15,000 ms |
+| Capture body / transaction deadline | 2,097,152 bytes / default 10,000 ms (maximum 120,000 ms) |
+| Capture status quota | 60 per minute per device, burst 4; separate from uploads |
 | Capture rate | 6 per minute per device, burst 2 |
 | Non-audio messages | 100 per second per device, burst 200 |
 | Diagnostic string | 512 UTF-8 characters |
@@ -195,7 +196,8 @@ Only local autonomous motion may clamp internally.
 | `head.home` | optional `speed`: 1–100 |
 | `led.set` | `index`: integer 0–255; `r`, `g`, `b`: integer 0–255 |
 | `led.set_all` | `r`, `g`, `b`: integer 0–255 |
-| `camera.capture` | `capture_id`: UUID; `quality`: integer 10–95 |
+| `camera.capture` | `capture_id`: UUID; `quality`: integer 10–95; required `timeout_ms`: integer 1–120,000 |
+| `camera.cancel` | `capture_id`: UUID; cancels only the matching active capture |
 | `speech.cancel` | empty args plus required envelope `turn_id` |
 
 `led.set.index` is additionally less than the authenticated device's `led_count`. A device lacking
@@ -248,7 +250,7 @@ device ID mismatch. Event-specific data is:
 | `battery.changed` | `percent`: 0–100, `charging`: boolean |
 | `wifi.changed` | `connected`: boolean, optional `rssi_dbm`: integer −127–0 |
 | `audio.underrun`, `audio.overflow` | `stream_id`: UUID, `dropped_packets`: integer 1–65,535 |
-| `camera.completed` | `capture_id`: UUID, `ok`: boolean, optional error code |
+| `camera.completed` | `capture_id`: UUID, `ok`: boolean; success requires lowercase SHA-256 `sha256` and `size_bytes` 1–2,097,152; failure carries `error_code` |
 | `servo.error`, `device.error` | stable `code`: 1–64 chars, safe `message`: ≤160 chars |
 
 Tap-to-talk is handled locally by FW/Bridge; blink/idle motion is never emitted. Only meaningful
@@ -278,3 +280,55 @@ or changing binary framing requires v2.
 Run `uv run python scripts/validate-protocol.py` after every schema/example change. Contract tests
 must prove valid and invalid examples, Schema/Pydantic parity, and Firmware constant parity before
 the implementation phase is considered complete.
+
+## Capture transaction protocol 2
+
+Both `hello.payload.capture_protocol_version` and `hello_ack.payload.capture_protocol_version`
+are required and equal to `2`. Upgrade Bridge, Firmware and Simulator together. Legacy capture
+peers are rejected; the outer envelope and `/v1` URLs remain version 1.
+
+A reservation owns one monotonic deadline starting before command dispatch. A successful
+`command_result` acknowledges acceptance. Control returns 201 only when the image is saved and
+`camera.completed(ok=true)` provides its matching SHA-256 and byte count. Firmware sends completion
+after joining its worker, freeing temporary buffers/connections and releasing camera busy.
+Either arrival order is supported; missing command ACK does not override these two proofs.
+
+Before acquiring a frame, Firmware requests authenticated
+`GET /v1/device/captures/{capture_id}/status` using the upload credentials. It returns
+`capture_id`, `state`, `remaining_ms`, `image_saved`, `expires_at`, `reason`, and, when saved,
+`sha256` and `size_bytes`, with `Cache-Control: no-store`. States are `reserved`, `image_saved`,
+`succeeded`, `failed`, `cancelled`, `expired`; terminal states never return to an active state.
+Firmware uses the request start plus server remaining time, never extending its local deadline.
+The final 20% of the command budget (at most one second) is reserved for cleanup and notification.
+Receipt queries have a separate per-device quota for initial and recovery checks:
+`max(1, 2 * capture_rate_per_minute / 60)` requests/second with a burst of
+`max(4, 2 * capture_rate_burst)`. Excess queries return 429 `CAPTURE_STATUS_RATE_LIMITED`
+with `Retry-After`; they do not consume the upload quota.
+
+JPEG encoding happens once into bounded PSRAM. Each HTTP operation uses at most three seconds
+and the remaining work budget, including DNS, TCP/TLS connection, writes, response reads and close.
+Frame dequeue polls in finite slices of at most 20 ms. HTTP runs in the camera worker without a
+separate receive task. The shared TCP/TLS transports also reject failed receive-task creation.
+There are at most three upload attempts, with 250/500 ms backoff. Transport failures, 408 and
+transient 5xx may retry; 501/505 and other errors including redirects are terminal. A 429 retries
+only with a positive numeric `Retry-After` that fits the remaining budget. After an ambiguous
+upload result, receipt lookup precedes another POST; matching saved proof completes the upload.
+An identical duplicate POST by the same owner within the deadline returns the original 201
+metadata without rewriting the file or extending retention. Different content is 409, unknown
+or cancelled IDs are 404, and expired upload deadlines are 410. Reservation checks precede
+upload quota consumption and body reading. Authentication and image validation remain required.
+
+Bridge acknowledges a completion event with `camera.completed_ack`, whose payload is
+`{"capture_id":"<UUID>","accepted":true}` (or `false` when the proof is rejected).
+Firmware keeps at most 16 pending notifications, retries every 500 ms with fresh message IDs,
+and removes an entry on either ACK or deadline. Lost ACKs do not retain camera busy.
+
+Control deadline errors distinguish `CAPTURE_COMPLETION_TIMEOUT` (saved image, no valid completion),
+`COMMAND_TIMEOUT` (no command ACK, image or authenticated receipt/upload evidence), and
+`CAPTURE_TIMEOUT` (other deadline expiry). Failures use 409 `CAPTURE_FAILED` with bounded
+`capture_id`, `stage`, `reason`, and `image_saved` details. When the 1,024 retained transactions
+fill Bridge capacity, both capture and vision requests return 429 `CAPTURE_CAPACITY` before
+dispatching a camera command. New reservations become available as retention expires.
+Cancellation interrupts body reading; late uploads and events cannot reopen a terminal transaction.
+Image retention is independently
+600 seconds by default; deletion never reopens an upload reservation.

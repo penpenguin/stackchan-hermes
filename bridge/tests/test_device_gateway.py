@@ -47,6 +47,7 @@ def hello_message(device_id: str = "sim-001") -> HelloMessage:
             "payload": {
                 "device_id": device_id,
                 "device_name": "StackChan Simulator",
+                "capture_protocol_version": 2,
                 "firmware_version": "0.1.0",
                 "hardware_model": "SIMULATOR",
                 "protocol_versions": [1],

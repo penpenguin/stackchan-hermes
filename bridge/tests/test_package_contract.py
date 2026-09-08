@@ -2010,6 +2010,7 @@ def test_devices_http_runner_prints_bounded_control_response(capsys: object) -> 
                 "devices": [
                     {
                         "device_id": "sim-001",
+                        "capture_protocol_version": 2,
                         "firmware_version": "0.1.0",
                     }
                 ]

@@ -226,9 +226,20 @@ Reconnect uses 1/2/4/8/16/30-second bounded backoff.
   non-archival: their owned capture record and file are deleted immediately after reading the
   JPEG, before Hermes/TTS work, even with persistence enabled or if reading fails. Unrelated
   captures are preserved.
-- Authenticated capture uploads have a fixed ten-second wall-clock deadline covering multipart
-  parsing and file reads. Expiry returns HTTP 408 / `CAPTURE_UPLOAD_TIMEOUT` and closes partial
-  temporary files. A still-valid reservation may be retried within the existing rate limit.
+- Capture protocol 2 requires Bridge, Firmware and Simulator to be upgraded together. Control
+  success requires both image storage and the Firmware completion proof after cleanup. The default
+  ten-second monotonic deadline starts at reservation, covers command dispatch and upload, and is
+  separate from image retention. Body reading is limited to the smaller of ten seconds and the
+  remaining transaction budget; timeout is HTTP 408 / `CAPTURE_UPLOAD_TIMEOUT`. Cancellation
+  interrupts reading and closes temporary files. See [capture protocol](protocol-v1.md#capture-transaction-protocol-2).
+- To investigate a capture, correlate `capture_id`, stage, elapsed time, planned JPEG bytes,
+  actual wire bytes, attempt, HTTP status, error and busy state in Firmware logs. Structured Bridge
+  logs retain capture ID, stage, reason and image-saved status. HTTP headers, credentials and image
+  contents are excluded. A saved image without Firmware completion produces
+  `CAPTURE_COMPLETION_TIMEOUT`; it is not reported as a completed capture.
+- Hardware validation starts with stationary captures and requires the project's separate backup,
+  port and authorization checks. Build and fault-injection tests do not establish the cause of the
+  original device failure or physical timing under load.
 - Microphone WAV storage is off by default. If enabled, use a private ignored directory and a short
   `audio.debug_ttl_seconds`; the runtime emits a warning and startup purge. While the Gateway is
   running, enabled debug storage is purged every `min(60, audio.debug_ttl_seconds)` seconds.

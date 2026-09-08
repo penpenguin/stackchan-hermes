@@ -14,6 +14,7 @@ _IDENTIFIER_FIELDS = (
     "turn_id",
     "stream_id",
     "request_id",
+    "capture_id",
 )
 
 
@@ -43,6 +44,13 @@ class StructuredJsonFormatter(logging.Formatter):
         error_code = _bounded_text(getattr(record, "error_code", None), maximum=64)
         if error_code is not None:
             payload["error_code"] = error_code
+        for field_name in ("stage", "reason"):
+            value = _bounded_text(getattr(record, field_name, None), maximum=64)
+            if value is not None:
+                payload[field_name] = value
+        image_saved = getattr(record, "image_saved", None)
+        if isinstance(image_saved, bool):
+            payload["image_saved"] = image_saved
         if self._privacy_debug_transcripts:
             transcript = _bounded_text(getattr(record, "transcript", None), maximum=2_000)
             if transcript is not None:

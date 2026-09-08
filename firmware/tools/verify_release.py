@@ -245,6 +245,12 @@ def verify_build(build: Path, root: Path) -> dict:
     commands = json.loads((build / "compile_commands.json").read_text())
     verify_font_sources(commands, firmware)
     verify_network_sources(commands)
+    try:
+        from .verify_camera_derivatives import verify_camera_derivatives
+    except ImportError:
+        from verify_camera_derivatives import verify_camera_derivatives
+
+    verify_camera_derivatives(root, firmware / "patches/camera-derivatives.json", commands)
     verify_network_strings((build / "stack-chan.elf").read_bytes())
     wifi_manifest = json.loads((firmware / "patches/esp-wifi-connect.json").read_text())
     for record in wifi_manifest["files"]:

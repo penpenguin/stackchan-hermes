@@ -142,9 +142,11 @@ bridge_client::BridgeClientConfig bindRuntimeHandlers(
         envelope.sentAtMs = GetHAL().millis();
         return envelope;
     };
+    commandTarget.cancelCaptureCallback = [&cameraCapture](const std::string& id) { return cameraCapture.cancel(id); };
+    config.cameraCompletedAcknowledged = [&cameraCapture](const std::string& id) { cameraCapture.acknowledgeCompletion(id); };
     commandTarget.setStartCaptureCallback(
-        [&cameraCapture](const std::string& captureId, int quality) {
-            return cameraCapture.start(captureId, quality);
+        [&cameraCapture](const std::string& captureId, int quality, int timeoutMs) {
+            return cameraCapture.start(captureId, quality, timeoutMs);
         }
     );
     return config;
@@ -244,12 +246,10 @@ public:
             const auto result = client_.sendCameraCompleted(
                 captureCompletion.captureId,
                 captureCompletion.ok,
-                captureCompletion.error
+                captureCompletion.error, captureCompletion.digest, captureCompletion.sizeBytes
             );
-            if (result == bridge_client::ClientError::None
-                || result == bridge_client::ClientError::ProtocolFailure) {
-                cameraCapture_.acknowledgeCompletion();
-            }
+            ESP_LOGI("Capture", "capture_id=%s stage=completion_send ok=%d result=%d resources_released=1",
+                captureCompletion.captureId.c_str(), captureCompletion.ok, static_cast<int>(result));
         }
         if (touchTapRequested_.exchange(false)) {
             client_.sendTouchTap(kHeadTouchEventX, kHeadTouchEventY);

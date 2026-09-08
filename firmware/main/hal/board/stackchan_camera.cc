@@ -1,4 +1,7 @@
 #include <fcntl.h>
+#include <esp_timer.h>
+#include <stackchan_bridge_client/capture_video_ioctl.h>
+#include <stackchan_bridge_client/camera_video_wait.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/param.h>
@@ -387,6 +390,11 @@ StackChanCamera::~StackChanCamera()
 
 bool StackChanCamera::Capture()
 {
+    return Capture(esp_timer_get_time() / 1000 + 1000, nullptr);
+}
+
+bool StackChanCamera::Capture(std::uint64_t deadlineMs, const std::atomic<bool>* cancelled)
+{
 
     if (!streaming_on_ || video_fd_ < 0) {
         return false;
@@ -401,7 +409,17 @@ bool StackChanCamera::Capture()
         struct v4l2_buffer buf = {};
         buf.type               = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory             = V4L2_MEMORY_MMAP;
-        if (ioctl(video_fd_, VIDIOC_DQBUF, &buf) != 0) {
+        if (!stackchan::bridge_client::waitCameraFrame(deadlineMs,
+            [] { return static_cast<std::uint64_t>(esp_timer_get_time() / 1000); },
+            [&] { return cancelled && cancelled->load(); },
+            [&](unsigned waitMs) {
+                stackchan_capture_buffer request{};
+                request.buffer = buf;
+                request.ticks = pdMS_TO_TICKS(waitMs);
+                if (ioctl(video_fd_, VIDIOC_CAPTURE_DQBUF, &request) != 0) { return false; }
+                buf = request.buffer;
+                return true;
+            })) {
             ESP_LOGE(TAG, "VIDIOC_DQBUF failed");
             return false;
         }
