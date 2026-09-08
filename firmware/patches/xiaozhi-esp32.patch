@@ -866,7 +866,7 @@ index 7bc917b..874b137 100644
  
  #endif // I2C_DEVICE_H
 diff --git a/main/boards/common/wifi_board.cc b/main/boards/common/wifi_board.cc
-index 377685b..b03a023 100644
+index 377685b..e9b56db 100644
 --- a/main/boards/common/wifi_board.cc
 +++ b/main/boards/common/wifi_board.cc
 @@ -1,7 +1,7 @@
@@ -889,7 +889,21 @@ index 377685b..b03a023 100644
  
  static const char *TAG = "WifiBoard";
  
-@@ -108,10 +104,6 @@ void WifiBoard::OnNetworkEvent(NetworkEvent event, const std::string& data) {
+@@ -93,9 +89,11 @@ void WifiBoard::TryWifiConnect() {
+     if (have_ssid) {
+         // Start connection attempt with timeout
+         ESP_LOGI(TAG, "Starting WiFi connection attempt");
+-        esp_timer_start_once(connect_timer_, CONNECT_TIMEOUT_SEC * 1000000ULL);
++        if (allow_config_mode_) {
++            esp_timer_start_once(connect_timer_, CONNECT_TIMEOUT_SEC * 1000000ULL);
++        }
+         WifiManager::GetInstance().StartStation();
+-    } else {
++    } else if (allow_config_mode_) {
+         // No SSID configured, enter config mode
+         // Wait for the board version to be shown
+         vTaskDelay(pdMS_TO_TICKS(1500));
+@@ -108,10 +106,6 @@ void WifiBoard::OnNetworkEvent(NetworkEvent event, const std::string& data) {
          case NetworkEvent::Connected:
              // Stop timeout timer
              esp_timer_stop(connect_timer_);
@@ -900,9 +914,19 @@ index 377685b..b03a023 100644
              in_config_mode_ = false;
              ESP_LOGI(TAG, "Connected to WiFi: %s", data.c_str());
              break;
-@@ -158,82 +150,13 @@ void WifiBoard::OnWifiConnectTimeout(void* arg) {
+@@ -150,6 +144,7 @@ void WifiBoard::SetNetworkEventCallback(NetworkEventCallback callback) {
+ 
+ void WifiBoard::OnWifiConnectTimeout(void* arg) {
+     auto* board = static_cast<WifiBoard*>(arg);
++    if (!board->allow_config_mode_) { return; }
+     ESP_LOGW(TAG, "WiFi connection timeout, entering config mode");
+ 
+     WifiManager::GetInstance().StopStation();
+@@ -157,83 +152,16 @@ void WifiBoard::OnWifiConnectTimeout(void* arg) {
+ }
  
  void WifiBoard::StartWifiConfigMode() {
++    if (!allow_config_mode_) { return; }
      in_config_mode_ = true;
 -    // Transition to wifi configuring state
 -    Application::GetInstance().SetDeviceState(kDeviceStateWifiConfiguring);
@@ -978,6 +1002,7 @@ index 377685b..b03a023 100644
 -    }
 -
 -    // Stop any ongoing connection attempt
++    allow_config_mode_ = true;
 +    if (IsInWifiConfigMode()) { return; }
      esp_timer_stop(connect_timer_);
      WifiManager::GetInstance().StopStation();
@@ -985,7 +1010,23 @@ index 377685b..b03a023 100644
      StartWifiConfigMode();
  }
  
-@@ -265,21 +188,7 @@ const char* WifiBoard::GetNetworkStateIcon() {
+@@ -241,6 +169,15 @@ bool WifiBoard::IsInWifiConfigMode() const {
+     return WifiManager::GetInstance().IsConfigMode();
+ }
+ 
++void WifiBoard::ExitWifiConfigMode() {
++    // StopConfigAp emits ConfigModeExit synchronously. Suppress its AP fallback
++    // first, while still allowing a saved station connection to resume.
++    allow_config_mode_ = false;
++    esp_timer_stop(connect_timer_);
++    in_config_mode_ = false;
++    WifiManager::GetInstance().StopConfigAp();
++}
++
+ NetworkInterface* WifiBoard::GetNetwork() {
+     static EspNetwork network;
+     return &network;
+@@ -265,21 +202,7 @@ const char* WifiBoard::GetNetworkStateIcon() {
      return FONT_AWESOME_WIFI_WEAK;
  }
  
@@ -1007,7 +1048,7 @@ index 377685b..b03a023 100644
  
  void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
      WifiPowerSaveLevel wifi_level;
-@@ -297,61 +206,3 @@ void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
+@@ -297,61 +220,3 @@ void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
      }
      WifiManager::GetInstance().SetPowerSaveLevel(wifi_level);
  }
@@ -1070,18 +1111,27 @@ index 377685b..b03a023 100644
 -    return result;
 -}
 diff --git a/main/boards/common/wifi_board.h b/main/boards/common/wifi_board.h
-index 7ee973c..4ca9be6 100644
+index 7ee973c..5a2719a 100644
 --- a/main/boards/common/wifi_board.h
 +++ b/main/boards/common/wifi_board.h
-@@ -12,7 +12,6 @@ protected:
+@@ -5,14 +5,15 @@
+ #include <freertos/FreeRTOS.h>
+ #include <freertos/event_groups.h>
+ #include <esp_timer.h>
++#include <atomic>
+ 
+ class WifiBoard : public Board {
+ protected:
+     esp_timer_handle_t connect_timer_ = nullptr;
      bool in_config_mode_ = false;
++    std::atomic<bool> allow_config_mode_{true};
      NetworkEventCallback network_event_callback_ = nullptr;
  
 -    virtual std::string GetBoardJson() override;
  
      /**
       * Handle network event (called from WiFi manager callbacks)
-@@ -53,7 +52,6 @@ public:
+@@ -53,12 +54,13 @@ public:
      virtual const char* GetNetworkStateIcon() override;
      virtual void SetPowerSaveLevel(PowerSaveLevel level) override;
      virtual AudioCodec* GetAudioCodec() override { return nullptr; }
@@ -1089,6 +1139,13 @@ index 7ee973c..4ca9be6 100644
      
      /**
       * Enter WiFi configuration mode (thread-safe, can be called from any task)
+      */
+     void EnterWifiConfigMode();
++    // Close provisioning until the user explicitly opens it again.
++    void ExitWifiConfigMode();
+     
+     /**
+      * Check if in WiFi config mode
 diff --git a/main/display/display.cc b/main/display/display.cc
 index 50fc1c5..0922722 100644
 --- a/main/display/display.cc

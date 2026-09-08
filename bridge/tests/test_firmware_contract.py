@@ -12,6 +12,13 @@ ROOT = Path(__file__).resolve().parents[2]
 FIRMWARE_ROOT = ROOT / "firmware"
 
 
+def test_wifi_setup_destruction_exits_configuration_mode() -> None:
+    source = (FIRMWARE_ROOT / "main/apps/app_setup/workers/connectivity.cpp").read_text()
+    destructor = re.search(r"WifiSetupWorker::~WifiSetupWorker\(\)\s*\{([^}]+)\}", source)
+    assert destructor is not None, "Done and cancellation must release Wi-Fi configuration mode"
+    assert "ExitWifiConfigMode()" in destructor.group(1)
+
+
 def test_espnow_reuses_managed_wifi_instead_of_creating_a_second_event_loop() -> None:
     espnow = (FIRMWARE_ROOT / "main/hal/hal_espnow.cpp").read_text()
     board = (FIRMWARE_ROOT / "main/hal/board/stackchan.cc").read_text()
@@ -117,7 +124,7 @@ def test_vendor_snapshot_records_immutable_upstream_and_dependency_provenance() 
     )
     assert xiaozhi["patch"] == "patches/xiaozhi-esp32.patch"
     assert xiaozhi["patched_diff_sha256"] == (
-        "b4bf351e08dd5e63eab3e936cb955fc87ac6faefadb2e926bcdbc2015357116b"
+        "4bf9a9c0cff5185e9b5962ba329650ba7c4ca25a90d267db559ea5f17acffc3b"
     )
 
 

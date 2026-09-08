@@ -29,7 +29,10 @@ WifiSetupWorker::WifiSetupWorker()
     _done->onClick().connect([this]() { _done_clicked = true; });
 }
 
-WifiSetupWorker::~WifiSetupWorker() = default;
+WifiSetupWorker::~WifiSetupWorker()
+{
+    static_cast<WifiBoard&>(Board::GetInstance()).ExitWifiConfigMode();
+}
 
 void WifiSetupWorker::update()
 {

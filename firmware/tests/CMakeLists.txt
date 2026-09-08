@@ -4,6 +4,22 @@ project(stackchan_firmware_tests LANGUAGES CXX)
 
 enable_testing()
 
+# Compile the exact patched Wi-Fi board sources with deterministic network/timer fakes.
+set(WIFI_BOARD_TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/wifi-board")
+file(MAKE_DIRECTORY "${WIFI_BOARD_TEST_DIR}" "${WIFI_BOARD_TEST_DIR}/freertos" "${WIFI_BOARD_TEST_DIR}/assets")
+foreach(source wifi_board.cc wifi_board.h)
+    configure_file("../xiaozhi-esp32/main/boards/common/${source}" "${WIFI_BOARD_TEST_DIR}/${source}" COPYONLY)
+endforeach()
+foreach(header board.h display.h audio_codec.h system_info.h settings.h assets/lang_config.h
+        freertos/FreeRTOS.h freertos/task.h freertos/event_groups.h esp_timer.h esp_network.h
+        esp_log.h font_awesome.h wifi_manager.h wifi_station.h ssid_manager.h)
+    file(WRITE "${WIFI_BOARD_TEST_DIR}/${header}" "#include \"wifi_board_fakes.h\"\n")
+endforeach()
+add_executable(wifi_setup_lifecycle_test wifi_setup_lifecycle_test.cpp "${WIFI_BOARD_TEST_DIR}/wifi_board.cc")
+target_include_directories(wifi_setup_lifecycle_test PRIVATE "${WIFI_BOARD_TEST_DIR}" fakes/wifi_board)
+target_compile_features(wifi_setup_lifecycle_test PRIVATE cxx_std_17)
+add_test(NAME wifi_setup_lifecycle_test COMMAND wifi_setup_lifecycle_test)
+
 add_executable(espnow_wifi_test espnow_wifi_test.cpp)
 target_include_directories(espnow_wifi_test PRIVATE fakes/espnow_wifi ../main)
 target_compile_features(espnow_wifi_test PRIVATE cxx_std_17)

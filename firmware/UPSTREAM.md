@@ -105,6 +105,10 @@ excluded. The revised [MIT patch](patches/xiaozhi-esp32.patch) also removes thei
 from shared sources; its exact diff digest is checked by [upstream-lock.json](upstream-lock.json).
 The fixed Git commits are unchanged. The patch is stored as a verbatim upstream diff, including
 original whitespace on context/deleted lines; added source lines pass the whitespace check.
+The Wi-Fi board patch also closes provisioning on setup completion/cancellation, resumes saved
+station connections and suppresses AP fallback until setup is explicitly reopened. A host C++
+test compiles the exact patched board sources with deterministic Wi-Fi/timer fakes to cover
+offline exit, saved/pending/connected stations, delayed timeouts and repeated setup entry.
 
 The pinned `78/esp-wifi-connect@3.1.2` MIT configuration page and API formerly retained `ota_url`.
 [The local patch](patches/esp-wifi-connect.patch) removes that field, its NVS reads/writes and
