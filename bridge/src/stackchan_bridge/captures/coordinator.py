@@ -55,9 +55,11 @@ class CaptureCoordinator:
         try:
             reservation = self._store.reserve(device_id, timeout_seconds=self._timeout_seconds)
         except CaptureValidationError as error:
-            raise CaptureCommandFailedError(
+            failure = CaptureCommandFailedError(
                 "capture capacity unavailable", details={"reason": error.code}
-            ) from error
+            )
+            failure.code = error.code
+            raise failure from error
         capture_id = reservation.capture_id
         self._active[device_id] = capture_id
         command = asyncio.create_task(

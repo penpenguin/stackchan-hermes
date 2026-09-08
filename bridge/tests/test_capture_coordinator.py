@@ -20,6 +20,20 @@ from stackchan_simulator.fixtures import generate_synthetic_jpeg
 from .test_control_api import simulator_hello
 
 
+async def test_capture_coordinator_preserves_the_capacity_error(tmp_path: Path) -> None:
+    store = CaptureStore(directory=tmp_path, ttl_seconds=600, max_bytes=2_097_152)
+    for _ in range(1024):
+        store.reserve("sim-001")
+    registry = DeviceRegistry(command_timeout_seconds=5)
+    coordinator = CaptureCoordinator(registry, store, timeout_seconds=10)
+
+    with pytest.raises(CaptureCommandFailedError) as error:
+        await coordinator.take_photo("sim-001")
+
+    assert error.value.code == "CAPTURE_CAPACITY"
+    assert error.value.details == {"reason": "CAPTURE_CAPACITY"}
+
+
 class UploadingCaptureWebSocket:
     def __init__(
         self,

@@ -188,7 +188,7 @@ def create_control_app(
                 504, error.code, "capture deadline expired", details=error.details
             )
         except CaptureCommandFailedError as error:
-            return _error_response(409, error.code, "device capture failed", details=error.details)
+            return _capture_error_response(error)
         except DeviceDisconnectedError:
             return _error_response(409, "CAPTURE_FAILED", "device capture failed")
         except CommandTimedOutError:
@@ -236,7 +236,7 @@ def create_control_app(
                 504, error.code, "capture deadline expired", details=error.details
             )
         except CaptureCommandFailedError as error:
-            return _error_response(409, error.code, "device capture failed", details=error.details)
+            return _capture_error_response(error)
         except DeviceDisconnectedError:
             return _error_response(409, "CAPTURE_FAILED", "device capture failed")
         except CommandTimedOutError:
@@ -433,6 +433,14 @@ def _error_response(
             "error": {"code": code, "message": message, **({"details": details} if details else {})}
         },
     )
+
+
+def _capture_error_response(error: CaptureCommandFailedError) -> JSONResponse:
+    if error.code == "CAPTURE_CAPACITY":
+        return _error_response(
+            429, error.code, "capture capacity unavailable", details=error.details
+        )
+    return _error_response(409, error.code, "device capture failed", details=error.details)
 
 
 def _capability_error_response(error: DeviceCapabilityError) -> JSONResponse:

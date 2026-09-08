@@ -322,6 +322,9 @@ and removes an entry on either ACK or deadline. Lost ACKs do not retain camera b
 Control deadline errors distinguish `CAPTURE_COMPLETION_TIMEOUT` (saved image, no valid completion),
 `COMMAND_TIMEOUT` (no command ACK, image or authenticated receipt/upload evidence), and
 `CAPTURE_TIMEOUT` (other deadline expiry). Failures use 409 `CAPTURE_FAILED` with bounded
-`capture_id`, `stage`, `reason`, and `image_saved` details. Cancellation interrupts body reading;
-late uploads and events cannot reopen a terminal transaction. Image retention is independently
+`capture_id`, `stage`, `reason`, and `image_saved` details. When the 1,024 retained transactions
+fill Bridge capacity, both capture and vision requests return 429 `CAPTURE_CAPACITY` before
+dispatching a camera command. New reservations become available as retention expires.
+Cancellation interrupts body reading; late uploads and events cannot reopen a terminal transaction.
+Image retention is independently
 600 seconds by default; deletion never reopens an upload reservation.
