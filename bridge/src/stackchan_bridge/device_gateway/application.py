@@ -957,7 +957,7 @@ def create_device_gateway_app(
                                     },
                                 }
                             )
-                            await websocket.send_text(ack.model_dump_json())
+                            await websocket.send_text(ack.model_dump_json(exclude_none=True))
                         if message.payload.name == "audio.underrun":
                             registry.metrics.audio_underrun_total.inc()
                         elif message.payload.name == "audio.overflow":
