@@ -298,13 +298,13 @@ bool OfficialDeviceCommandTarget::cancelSpeech(const std::string&)
 
 bridge_client::CommandTargetResult OfficialDeviceCommandTarget::startCapture(
     const std::string& captureId,
-    int quality
+    int quality, int timeoutMs
 )
 {
     if (!startCaptureCallback_) {
         return bridge_client::CommandTargetResult::InvalidState;
     }
-    return startCaptureCallback_(captureId, quality);
+    return startCaptureCallback_(captureId, quality, timeoutMs);
 }
 
 }  // namespace stackchan::hermes

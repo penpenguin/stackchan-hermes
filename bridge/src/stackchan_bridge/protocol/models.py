@@ -115,6 +115,7 @@ class HelloPayload(ProtocolModel):
     """Identity, capability, and codec data sent during handshake."""
 
     device_id: DeviceId
+    capture_protocol_version: Literal[2]
     device_name: ShortName
     firmware_version: VersionName
     hardware_model: ShortName
@@ -144,6 +145,7 @@ class HelloAckPayload(ProtocolModel):
     """Protocol and timing values selected by the Bridge."""
 
     connection_id: ProtocolUUID
+    capture_protocol_version: Literal[2]
     selected_protocol_version: Literal[1]
     heartbeat_interval_ms: Annotated[int, Field(ge=1_000, le=60_000)]
     max_command_timeout_ms: Annotated[int, Field(ge=100, le=30_000)]
@@ -288,6 +290,11 @@ class SetAllLedsArguments(CommandArguments):
 class CaptureArguments(CommandArguments):
     capture_id: ProtocolUUID
     quality: Annotated[int, Field(ge=10, le=95)]
+    timeout_ms: Annotated[int, Field(ge=1, le=120_000)]
+
+
+class CancelCaptureArguments(CommandArguments):
+    capture_id: ProtocolUUID
 
 
 class CommandPayloadModel(ProtocolModel):
@@ -366,6 +373,11 @@ class CaptureCommand(CommandPayloadModel):
     args: CaptureArguments
 
 
+class CancelCaptureCommand(CommandPayloadModel):
+    name: Literal["camera.cancel"]
+    args: CancelCaptureArguments
+
+
 class CancelSpeechCommand(CommandPayloadModel):
     name: Literal["speech.cancel"]
     args: EmptyArguments
@@ -386,6 +398,7 @@ CommandPayload = Annotated[
     | SetAllLedsCommand
     | ClearLedsCommand
     | CaptureCommand
+    | CancelCaptureCommand
     | CancelSpeechCommand,
     Field(discriminator="name"),
 ]
@@ -521,6 +534,26 @@ class CameraCompletedData(EventData):
     capture_id: ProtocolUUID
     ok: bool
     error_code: Annotated[ProtocolErrorCode, Field(strict=False)] | None = None
+    sha256: Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")] | None = None
+    size_bytes: Annotated[int, Field(ge=1, le=2_097_152)] | None = None
+
+    @model_validator(mode="after")
+    def require_completion_proof(self) -> CameraCompletedData:
+        if self.ok and (
+            self.sha256 is None or self.size_bytes is None or self.error_code is not None
+        ):
+            raise ValueError("successful capture completion requires image proof")
+        return self
+
+
+class CameraCompletedAckPayload(ProtocolModel):
+    capture_id: ProtocolUUID
+    accepted: bool
+
+
+class CameraCompletedAckMessage(Envelope):
+    type: Literal["camera.completed_ack"]
+    payload: CameraCompletedAckPayload
 
 
 class DeviceFaultData(EventData):
@@ -619,6 +652,7 @@ class EventMessage(Envelope):
 
 ProtocolMessage = Annotated[
     HelloMessage
+    | CameraCompletedAckMessage
     | HelloAckMessage
     | AudioInputStartMessage
     | AudioInputEndMessage

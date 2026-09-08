@@ -94,6 +94,41 @@
       "path": "event-touch-tap.invalid-coordinate.json",
       "schema": "https://stackchan-hermes.local/schemas/event.schema.json",
       "valid": false
+    },
+    {
+      "path": "command-camera-capture.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/command.schema.json",
+      "valid": true
+    },
+    {
+      "path": "command-camera-cancel.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/command.schema.json",
+      "valid": true
+    },
+    {
+      "path": "event-camera-completed.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/event.schema.json",
+      "valid": true
+    },
+    {
+      "path": "control-camera-completed-ack.valid.json",
+      "schema": "https://stackchan-hermes.local/schemas/control.schema.json",
+      "valid": true
+    },
+    {
+      "path": "hello.invalid-capture-version.json",
+      "schema": "https://stackchan-hermes.local/schemas/hello.schema.json",
+      "valid": false
+    },
+    {
+      "path": "command-camera-capture.invalid-timeout.json",
+      "schema": "https://stackchan-hermes.local/schemas/command.schema.json",
+      "valid": false
+    },
+    {
+      "path": "event-camera-completed.invalid-proof.json",
+      "schema": "https://stackchan-hermes.local/schemas/event.schema.json",
+      "valid": false
     }
   ]
 }

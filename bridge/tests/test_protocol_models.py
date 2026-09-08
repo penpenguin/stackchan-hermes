@@ -159,7 +159,11 @@ def test_valid_audio_control_examples_are_accepted() -> None:
         ("led.clear", {}),
         (
             "camera.capture",
-            {"capture_id": "db4d04eb-e319-47bb-896b-cd44bc71088d", "quality": 80},
+            {
+                "timeout_ms": 10000,
+                "capture_id": "db4d04eb-e319-47bb-896b-cd44bc71088d",
+                "quality": 80,
+            },
         ),
         ("speech.cancel", {}),
     ],
@@ -232,7 +236,12 @@ def test_valid_command_result_and_error_examples_are_accepted() -> None:
         ),
         (
             "camera.completed",
-            {"capture_id": "4936d914-cef8-443e-830a-d3c717ccc178", "ok": True},
+            {
+                "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                "size_bytes": 128,
+                "capture_id": "4936d914-cef8-443e-830a-d3c717ccc178",
+                "ok": True,
+            },
         ),
         ("servo.error", {"code": "SERVO_OFFLINE", "message": "servo is unavailable"}),
         ("device.error", {"code": "AUDIO_INIT", "message": "audio setup failed"}),

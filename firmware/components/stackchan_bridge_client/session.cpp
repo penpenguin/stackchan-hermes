@@ -132,6 +132,11 @@ ClientError BridgeClient::initialize()
         }
 
         const std::string text(data, size);
+        std::string acknowledgedCapture;
+        if (parseCameraCompletedAck(text, acknowledgedCapture)) {
+            if (config_.cameraCompletedAcknowledged) { config_.cameraCompletedAcknowledged(acknowledgedCapture); }
+            return;
+        }
         AudioOutputControl audioControl;
         const AudioOutputParseError audioParseError =
             parseAudioOutputControlJson(text, audioControl);
@@ -676,7 +681,7 @@ ClientError BridgeClient::sendTouchTap(int x, int y)
 ClientError BridgeClient::sendCameraCompleted(
     const std::string& captureId,
     bool ok,
-    CameraCompletionError error
+    CameraCompletionError error, const std::string& digest, std::size_t sizeBytes
 )
 {
     const DeviceState currentState = stateMachine_.state();
@@ -692,7 +697,7 @@ ClientError BridgeClient::sendCameraCompleted(
             captureId,
             ok,
             error,
-            message
+            message, digest, sizeBytes
         ) != CameraEventBuildError::None) {
         return ClientError::ProtocolFailure;
     }

@@ -183,12 +183,16 @@ def create_control_app(
             )
         except DeviceCapabilityError as error:
             return _capability_error_response(error)
-        except (DeviceDisconnectedError, CaptureCommandFailedError):
+        except CaptureTimedOutError as error:
+            return _error_response(
+                504, error.code, "capture deadline expired", details=error.details
+            )
+        except CaptureCommandFailedError as error:
+            return _error_response(409, error.code, "device capture failed", details=error.details)
+        except DeviceDisconnectedError:
             return _error_response(409, "CAPTURE_FAILED", "device capture failed")
         except CommandTimedOutError:
             return _error_response(504, "COMMAND_TIMEOUT", "camera command timed out")
-        except CaptureTimedOutError:
-            return _error_response(504, "CAPTURE_TIMEOUT", "capture upload timed out")
         return JSONResponse(
             status_code=201,
             content={
@@ -227,12 +231,16 @@ def create_control_app(
             )
         except DeviceCapabilityError as error:
             return _capability_error_response(error)
-        except (DeviceDisconnectedError, CaptureCommandFailedError):
+        except CaptureTimedOutError as error:
+            return _error_response(
+                504, error.code, "capture deadline expired", details=error.details
+            )
+        except CaptureCommandFailedError as error:
+            return _error_response(409, error.code, "device capture failed", details=error.details)
+        except DeviceDisconnectedError:
             return _error_response(409, "CAPTURE_FAILED", "device capture failed")
         except CommandTimedOutError:
             return _error_response(504, "COMMAND_TIMEOUT", "camera command timed out")
-        except CaptureTimedOutError:
-            return _error_response(504, "CAPTURE_TIMEOUT", "capture upload timed out")
         except StaleTurnError:
             return _error_response(409, "TURN_CANCELLED", "vision turn was cancelled")
         except HermesError:
@@ -416,10 +424,14 @@ def _device_view(connection: DeviceConnection) -> DeviceView:
     )
 
 
-def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
+def _error_response(
+    status_code: int, code: str, message: str, *, details: dict[str, object] | None = None
+) -> JSONResponse:
     return JSONResponse(
         status_code=status_code,
-        content={"error": {"code": code, "message": message}},
+        content={
+            "error": {"code": code, "message": message, **({"details": details} if details else {})}
+        },
     )
 
 

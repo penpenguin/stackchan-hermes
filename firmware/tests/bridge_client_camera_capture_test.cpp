@@ -89,6 +89,7 @@ void testOnlyOneValidatedCaptureCanOwnTheCamera()
     CameraCaptureGate gate;
     CameraCaptureRequest request;
     request.captureId = kCaptureId;
+    request.timeoutMs = 10000;
     request.quality = 80;
 
     expect(gate.tryStart(request) == CameraRequestError::None, "valid capture was rejected");
@@ -109,6 +110,7 @@ void testAcceptedCaptureWaitsForExplicitPostResponseDispatch()
     CameraCaptureGate gate;
     CameraCaptureRequest request;
     request.captureId = kCaptureId;
+    request.timeoutMs = 10000;
     request.quality = 70;
 
     expect(gate.tryStart(request) == CameraRequestError::None, "capture was not reserved");
@@ -130,7 +132,8 @@ void testInvalidCaptureRequestNeverOwnsTheCamera()
     for (const int quality : {9, 96}) {
         CameraCaptureRequest request;
         request.captureId = kCaptureId;
-        request.quality = quality;
+        request.timeoutMs = 10000;
+    request.quality = quality;
         expect(
             gate.tryStart(request) == CameraRequestError::InvalidArgument,
             "invalid quality was accepted"
@@ -139,6 +142,7 @@ void testInvalidCaptureRequestNeverOwnsTheCamera()
     }
     CameraCaptureRequest invalidId;
     invalidId.captureId = "not-a-uuid";
+    invalidId.timeoutMs = 10000;
     invalidId.quality = 80;
     expect(
         gate.tryStart(invalidId) == CameraRequestError::InvalidArgument,
@@ -203,7 +207,7 @@ void testCameraCompletionEventIsOwnedAndSafe()
             kCaptureId,
             true,
             CameraCompletionError::None,
-            output
+            output, std::string(64, '0'), 128
         ) == CameraEventBuildError::None,
         "successful camera event was not built"
     );
@@ -245,7 +249,7 @@ void testCameraCompletionRejectsTimestampOutsideSignedJsonRange()
             kCaptureId,
             true,
             CameraCompletionError::None,
-            output
+            output, std::string(64, '0'), 128
         ) == CameraEventBuildError::InvalidArgument,
         "out-of-range camera event timestamp was accepted"
     );
@@ -275,7 +279,7 @@ void testMultipartUploadStreamsAuthenticatedBoundedJpeg()
     );
     expect(upload.finish() == CameraUploadError::None, "valid JPEG upload did not finish");
 
-    expect(transport.timeoutMs == 10'000, "capture upload timeout is not finite");
+    expect(transport.timeoutMs == 3'000, "capture upload timeout is not finite");
     expect(transport.url == url, "capture upload URL changed");
     expect(
         transport.headers["Authorization"] == "Bearer device-token",
@@ -339,6 +343,10 @@ void testMultipartUploadRejectsOversizeAndInvalidJpeg()
 
 int main()
 {
+    std::string acknowledgedId;
+    const std::string completionAck = R"({"v":1,"type":"camera.completed_ack","message_id":"11111111-1111-4111-8111-111111111111","payload":{"capture_id":"22222222-2222-4222-8222-222222222222","accepted":true}})";
+    expect(!stackchan::bridge_client::parseCameraCompletedAck(completionAck, acknowledgedId), "ack without sent_at_ms was accepted");
+
     testOnlyOneValidatedCaptureCanOwnTheCamera();
     testAcceptedCaptureWaitsForExplicitPostResponseDispatch();
     testInvalidCaptureRequestNeverOwnsTheCamera();

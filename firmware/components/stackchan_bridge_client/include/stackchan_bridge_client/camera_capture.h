@@ -12,6 +12,8 @@ constexpr std::size_t kMaxJpegBytes = 2 * 1024 * 1024;
 struct CameraCaptureRequest {
     std::string captureId;
     int quality = 0;
+    int timeoutMs = 0;
+    std::uint64_t startedMs = 0;
 };
 
 enum class CameraRequestError {
@@ -64,7 +66,8 @@ public:
     CameraUploadError begin(
         const std::string& url,
         const std::string& deviceToken,
-        const std::string& deviceId
+        const std::string& deviceId,
+        int timeoutMs = 3000
     );
     CameraUploadError writeJpegChunk(const std::uint8_t* data, std::size_t size);
     CameraUploadError finish();
@@ -111,13 +114,17 @@ bool resolveCaptureUploadUrl(
     std::string& output
 );
 
+bool parseCameraCompletedAck(const std::string& input, std::string& captureId);
+
 CameraEventBuildError buildCameraCompletedEventJson(
     const EnvelopeMetadata& envelope,
     const std::string& deviceId,
     const std::string& captureId,
     bool ok,
     CameraCompletionError error,
-    std::string& output
+    std::string& output,
+    const std::string& digest = {},
+    std::size_t sizeBytes = 0
 );
 
 }  // namespace stackchan::bridge_client

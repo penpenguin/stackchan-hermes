@@ -38,7 +38,7 @@ public:
     bool write(const std::uint8_t* data, std::size_t size) override
     {
         const char* bytes = size == 0 ? "" : reinterpret_cast<const char*>(data);
-        return http_->Write(bytes, size) >= 0;
+        return http_->Write(bytes, size) > 0;
     }
 
     int statusCode() override

@@ -5,6 +5,7 @@ from __future__ import annotations
 import builtins
 import logging
 from asyncio import (
+    FIRST_COMPLETED,
     CancelledError,
     Future,
     Task,
@@ -14,6 +15,7 @@ from asyncio import (
     sleep,
     timeout,
     to_thread,
+    wait,
     wait_for,
 )
 from collections import deque
@@ -39,6 +41,8 @@ from stackchan_bridge.protocol.models import (
     MAX_AUDIO_PACKET_BYTES,
     AudioInputEndMessage,
     AudioInputStartMessage,
+    CameraCompletedAckMessage,
+    CameraCompletedEvent,
     CommandMessage,
     CommandResultMessage,
     ErrorMessage,
@@ -248,10 +252,12 @@ class _CaptureMultipartParser(MultiPartParser):
         super().on_part_data(data, start, end)
 
 
-async def _read_capture_upload(request: Request, *, max_bytes: int) -> tuple[str, bytes]:
+async def _read_capture_upload(
+    request: Request, *, max_bytes: int, remaining_seconds: float = 10
+) -> tuple[str, bytes]:
     parser = _CaptureMultipartParser(request, max_file_bytes=max_bytes)
     try:
-        async with timeout(_CAPTURE_UPLOAD_TIMEOUT_SECONDS):
+        async with timeout(min(_CAPTURE_UPLOAD_TIMEOUT_SECONDS, remaining_seconds)):
             form = await parser.parse()
             upload = form.get("file")
             if not isinstance(upload, UploadFile):
@@ -594,6 +600,32 @@ def create_device_gateway_app(
         rate_per_second=config.capture_rate_per_minute / 60,
         capacity=config.capture_rate_burst,
     )
+    receipt_rate_limiter = TokenBucketRateLimiter(rate_per_second=1, capacity=4)
+
+    @app.get("/v1/device/captures/{capture_id}/status")
+    async def capture_status(capture_id: UUID, request: Request) -> JSONResponse:
+        device_id, auth_error = await _authenticate_http_device(
+            request, config, registry.metrics, authentication_gate
+        )
+        if auth_error is not None:
+            return auth_error
+        decision = receipt_rate_limiter.acquire(device_id)
+        if not decision.allowed:
+            response = _http_error(
+                429, "CAPTURE_STATUS_RATE_LIMITED", "capture status rate limit exceeded"
+            )
+            response.headers["Retry-After"] = str(decision.retry_after_seconds)
+            return response
+        if capture_store is None:
+            return _http_error(503, "CAPTURE_STORE_UNAVAILABLE", "capture store is unavailable")
+        try:
+            capture_store.observe_device(capture_id, device_id=device_id)
+            return JSONResponse(
+                capture_store.status(capture_id, device_id=device_id),
+                headers={"Cache-Control": "no-store"},
+            )
+        except CaptureValidationError as error:
+            return _http_error(_capture_error_status(error.code), error.code, str(error))
 
     @app.post("/v1/device/captures/{capture_id}")
     async def upload_capture(capture_id: UUID, request: Request) -> JSONResponse:
@@ -605,6 +637,13 @@ def create_device_gateway_app(
         )
         if auth_error is not None:
             return auth_error
+        if capture_store is None:
+            return _http_error(503, "CAPTURE_STORE_UNAVAILABLE", "capture store is unavailable")
+        try:
+            remaining = capture_store.check_upload(capture_id, device_id=device_id)
+            capture_store.observe_device(capture_id, device_id=device_id)
+        except CaptureValidationError as error:
+            return _http_error(_capture_error_status(error.code), error.code, str(error))
         rate_decision = capture_rate_limiter.acquire(device_id)
         if not rate_decision.allowed:
             registry.metrics.capture_failure_total.inc()
@@ -615,12 +654,23 @@ def create_device_gateway_app(
             )
             response.headers["Retry-After"] = str(rate_decision.retry_after_seconds)
             return response
-        if capture_store is None:
-            return _http_error(503, "CAPTURE_STORE_UNAVAILABLE", "capture store is unavailable")
         try:
-            content_type, body = await _read_capture_upload(
-                request, max_bytes=capture_store.max_bytes
+            reading = create_task(
+                _read_capture_upload(
+                    request, max_bytes=capture_store.max_bytes, remaining_seconds=remaining
+                )
             )
+            closed = create_task(capture_store.wait_upload_closed(capture_id, device_id=device_id))
+            try:
+                done, _ = await wait({reading, closed}, return_when=FIRST_COMPLETED)
+                if closed in done:
+                    closed.result()
+                content_type, body = reading.result()
+            finally:
+                for pending in (reading, closed):
+                    pending.cancel()
+                    with suppress(CancelledError, Exception):
+                        await pending
             record = capture_store.save(
                 capture_id,
                 device_id=device_id,
@@ -764,6 +814,7 @@ def create_device_gateway_app(
                     "sent_at_ms": time_ns() // 1_000_000,
                     "payload": {
                         "connection_id": connection_id,
+                        "capture_protocol_version": 2,
                         "selected_protocol_version": selected_version,
                         "heartbeat_interval_ms": config.heartbeat_interval_ms,
                         "max_command_timeout_ms": config.command_timeout_ms,
@@ -871,11 +922,42 @@ def create_device_gateway_app(
                         ):
                             break
                     elif isinstance(message, EventMessage):
-                        if message.device_id != device_id:
+                        if (
+                            message.device_id != device_id
+                            or registry.get_connection(device_id) is not connection
+                        ):
                             await websocket.close(
                                 code=4403, reason="event device identity mismatch"
                             )
                             break
+                        if (
+                            isinstance(message.payload, CameraCompletedEvent)
+                            and capture_store is not None
+                        ):
+                            data = message.payload.data
+                            accepted = capture_store.complete(
+                                data.capture_id,
+                                device_id=device_id,
+                                ok=data.ok,
+                                digest=data.sha256 or "",
+                                size_bytes=data.size_bytes or 0,
+                                reason=data.error_code.value
+                                if data.error_code
+                                else "CAPTURE_FAILED",
+                            )
+                            ack = CameraCompletedAckMessage.model_validate(
+                                {
+                                    "v": 1,
+                                    "type": "camera.completed_ack",
+                                    "message_id": str(uuid4()),
+                                    "sent_at_ms": time_ns() // 1_000_000,
+                                    "payload": {
+                                        "capture_id": str(data.capture_id),
+                                        "accepted": accepted,
+                                    },
+                                }
+                            )
+                            await websocket.send_text(ack.model_dump_json())
                         if message.payload.name == "audio.underrun":
                             registry.metrics.audio_underrun_total.inc()
                         elif message.payload.name == "audio.overflow":
@@ -1052,6 +1134,8 @@ def _capture_error_status(code: str) -> int:
         "CAPTURE_EXPIRED": 410,
         "CAPTURE_OWNERSHIP": 403,
         "CAPTURE_TOO_LARGE": 413,
+        "CAPTURE_CONTENT_MISMATCH": 409,
+        "CAPTURE_CAPACITY": 429,
     }.get(code, 422)
 
 

@@ -17,12 +17,14 @@ public:
     using CancelSpeechCallback = std::function<void()>;
     using StartCaptureCallback = std::function<bridge_client::CommandTargetResult(
         const std::string& captureId,
-        int quality
+        int quality, int timeoutMs
     )>;
 
     OfficialDeviceCommandTarget(Board& board, int ledCount);
 
     void setCancelSpeechCallback(CancelSpeechCallback callback);
+    std::function<bool(const std::string&)> cancelCaptureCallback;
+    bool cancelCapture(const std::string& id) override { return cancelCaptureCallback && cancelCaptureCallback(id); }
     void setStartCaptureCallback(StartCaptureCallback callback);
     void applyBridgeState(bridge_client::DeviceState state);
     void update(std::uint32_t nowMs);
@@ -44,7 +46,7 @@ public:
     bool cancelSpeech(const std::string& turnId) override;
     bridge_client::CommandTargetResult startCapture(
         const std::string& captureId,
-        int quality
+        int quality, int timeoutMs
     ) override;
 
 private:

@@ -9,7 +9,7 @@ namespace stackchan::bridge_client {
 namespace {
 
 constexpr char kMultipartBoundary[] = "----StackChanHermesCapture";
-constexpr int kCaptureUploadTimeoutMs = 10000;
+
 
 bool isValidUuid(const std::string& value)
 {
@@ -97,17 +97,17 @@ CameraMultipartUpload::~CameraMultipartUpload()
 CameraUploadError CameraMultipartUpload::begin(
     const std::string& url,
     const std::string& deviceToken,
-    const std::string& deviceId
+    const std::string& deviceId, int timeoutMs
 )
 {
-    if (active_ || url.empty() || deviceToken.empty() || deviceToken.size() > 512
+    if (timeoutMs < 1 || timeoutMs > 120000 || active_ || url.empty() || deviceToken.empty() || deviceToken.size() > 512
         || !isSafeHeaderValue(deviceToken) || !isValidDeviceId(deviceId)) {
         return CameraUploadError::InvalidArgument;
     }
     jpegBytes_ = 0;
     firstByteCount_ = 0;
     lastByteCount_ = 0;
-    transport_.setTimeoutMs(kCaptureUploadTimeoutMs);
+    transport_.setTimeoutMs(timeoutMs);
     transport_.setHeader("Authorization", "Bearer " + deviceToken);
     transport_.setHeader("X-StackChan-Device-Id", deviceId);
     transport_.setHeader(
@@ -200,7 +200,8 @@ std::size_t CameraMultipartUpload::jpegBytes() const
 
 CameraRequestError CameraCaptureGate::tryStart(const CameraCaptureRequest& request)
 {
-    if (!isValidUuid(request.captureId) || request.quality < 10 || request.quality > 95) {
+    if (!isValidUuid(request.captureId) || request.quality < 10 || request.quality > 95
+        || request.timeoutMs < 1 || request.timeoutMs > 120000) {
         return CameraRequestError::InvalidArgument;
     }
     if (busy_) {
@@ -296,11 +297,13 @@ CameraEventBuildError buildCameraCompletedEventJson(
     const std::string& captureId,
     bool ok,
     CameraCompletionError error,
-    std::string& output
+    std::string& output, const std::string& digest, std::size_t sizeBytes
 )
 {
     output.clear();
     const char* errorCode = completionErrorName(error);
+    const bool validDigest = digest.size() == 64 && digest.find_first_not_of("0123456789abcdef") == std::string::npos;
+    if (ok && (!validDigest || sizeBytes == 0 || sizeBytes > kMaxJpegBytes)) { return CameraEventBuildError::InvalidArgument; }
     if (!isValidUuid(envelope.messageId) || !isValidDeviceId(deviceId)
         || !isValidUuid(captureId)
         || envelope.sentAtMs
@@ -321,6 +324,7 @@ CameraEventBuildError buildCameraCompletedEventJson(
     ArduinoJson::JsonObject data = payload["data"].to<ArduinoJson::JsonObject>();
     data["capture_id"] = captureId;
     data["ok"] = ok;
+    if (ok) { data["sha256"] = digest; data["size_bytes"] = sizeBytes; }
     if (!ok) {
         data["error_code"] = errorCode;
     }
@@ -331,6 +335,24 @@ CameraEventBuildError buildCameraCompletedEventJson(
         return CameraEventBuildError::MessageTooLarge;
     }
     return CameraEventBuildError::None;
+}
+
+bool parseCameraCompletedAck(const std::string& input, std::string& captureId)
+{
+    captureId.clear();
+    if (input.size() > kMaxJsonBytes) { return false; }
+    ArduinoJson::JsonDocument document;
+    if (deserializeJson(document, input, ArduinoJson::DeserializationOption::NestingLimit(8))) { return false; }
+    const char* type = document["type"];
+    const char* id = document["payload"]["capture_id"];
+    const char* messageId = document["message_id"];
+    if (!document["v"].is<int>() || document["v"].as<int>() != 1 || type == nullptr
+        || !document["sent_at_ms"].is<std::uint64_t>()
+        || document["sent_at_ms"].as<std::uint64_t>() > static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::max())
+        || std::string(type) != "camera.completed_ack" || id == nullptr || messageId == nullptr
+        || !isValidUuid(id) || !isValidUuid(messageId) || !document["payload"]["accepted"].is<bool>()) { return false; }
+    captureId = id;
+    return true;
 }
 
 }  // namespace stackchan::bridge_client

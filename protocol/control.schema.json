@@ -17,7 +17,8 @@
             "audio.output.start",
             "audio.output.end",
             "command_result",
-            "error"
+            "error",
+            "camera.completed_ack"
           ]
         },
         "payload": {
@@ -29,13 +30,19 @@
     {
       "if": {
         "properties": {
-          "type": { "const": "hello_ack" }
+          "type": {
+            "const": "hello_ack"
+          }
         },
-        "required": ["type"]
+        "required": [
+          "type"
+        ]
       },
       "then": {
         "properties": {
-          "payload": { "$ref": "#/$defs/helloAckPayload" }
+          "payload": {
+            "$ref": "#/$defs/helloAckPayload"
+          }
         }
       }
     },
@@ -51,76 +58,163 @@
             ]
           }
         },
-        "required": ["type"]
+        "required": [
+          "type"
+        ]
       },
       "then": {
-        "required": ["turn_id", "stream_id"]
+        "required": [
+          "turn_id",
+          "stream_id"
+        ]
       }
     },
     {
       "if": {
-        "properties": { "type": { "const": "audio.input.start" } },
-        "required": ["type"]
+        "properties": {
+          "type": {
+            "const": "audio.input.start"
+          }
+        },
+        "required": [
+          "type"
+        ]
       },
       "then": {
         "properties": {
-          "payload": { "$ref": "#/$defs/audioInputStartPayload" }
+          "payload": {
+            "$ref": "#/$defs/audioInputStartPayload"
+          }
         }
       }
     },
     {
       "if": {
-        "properties": { "type": { "const": "audio.input.end" } },
-        "required": ["type"]
+        "properties": {
+          "type": {
+            "const": "audio.input.end"
+          }
+        },
+        "required": [
+          "type"
+        ]
       },
       "then": {
         "properties": {
-          "payload": { "$ref": "#/$defs/audioInputEndPayload" }
+          "payload": {
+            "$ref": "#/$defs/audioInputEndPayload"
+          }
         }
       }
     },
     {
       "if": {
-        "properties": { "type": { "const": "audio.output.start" } },
-        "required": ["type"]
+        "properties": {
+          "type": {
+            "const": "audio.output.start"
+          }
+        },
+        "required": [
+          "type"
+        ]
       },
       "then": {
         "properties": {
-          "payload": { "$ref": "#/$defs/audioOutputStartPayload" }
+          "payload": {
+            "$ref": "#/$defs/audioOutputStartPayload"
+          }
         }
       }
     },
     {
       "if": {
-        "properties": { "type": { "const": "audio.output.end" } },
-        "required": ["type"]
+        "properties": {
+          "type": {
+            "const": "audio.output.end"
+          }
+        },
+        "required": [
+          "type"
+        ]
       },
       "then": {
         "properties": {
-          "payload": { "$ref": "#/$defs/audioOutputEndPayload" }
+          "payload": {
+            "$ref": "#/$defs/audioOutputEndPayload"
+          }
         }
       }
     },
     {
       "if": {
-        "properties": { "type": { "const": "command_result" } },
-        "required": ["type"]
+        "properties": {
+          "type": {
+            "const": "command_result"
+          }
+        },
+        "required": [
+          "type"
+        ]
       },
       "then": {
-        "required": ["request_id"],
+        "required": [
+          "request_id"
+        ],
         "properties": {
-          "payload": { "$ref": "#/$defs/commandResultPayload" }
+          "payload": {
+            "$ref": "#/$defs/commandResultPayload"
+          }
         }
       }
     },
     {
       "if": {
-        "properties": { "type": { "const": "error" } },
-        "required": ["type"]
+        "properties": {
+          "type": {
+            "const": "error"
+          }
+        },
+        "required": [
+          "type"
+        ]
       },
       "then": {
         "properties": {
-          "payload": { "$ref": "#/$defs/errorPayload" }
+          "payload": {
+            "$ref": "#/$defs/errorPayload"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "camera.completed_ack"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "required": [
+              "capture_id",
+              "accepted"
+            ],
+            "properties": {
+              "capture_id": {
+                "$ref": "common.schema.json#/$defs/uuid"
+              },
+              "accepted": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
         }
       }
     }
@@ -133,7 +227,8 @@
         "selected_protocol_version",
         "heartbeat_interval_ms",
         "max_command_timeout_ms",
-        "server_version"
+        "server_version",
+        "capture_protocol_version"
       ],
       "properties": {
         "connection_id": {
@@ -157,29 +252,59 @@
           "minLength": 1,
           "maxLength": 32,
           "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        },
+        "capture_protocol_version": {
+          "const": 2
         }
       },
       "additionalProperties": true
     },
     "audioFormat": {
       "type": "object",
-      "required": ["codec", "sample_rate", "channels", "frame_ms"],
+      "required": [
+        "codec",
+        "sample_rate",
+        "channels",
+        "frame_ms"
+      ],
       "properties": {
-        "codec": { "const": "opus" },
-        "sample_rate": { "const": 16000 },
-        "channels": { "const": 1 },
-        "frame_ms": { "enum": [20, 40, 60] }
+        "codec": {
+          "const": "opus"
+        },
+        "sample_rate": {
+          "const": 16000
+        },
+        "channels": {
+          "const": 1
+        },
+        "frame_ms": {
+          "enum": [
+            20,
+            40,
+            60
+          ]
+        }
       }
     },
     "audioInputStartPayload": {
       "allOf": [
-        { "$ref": "#/$defs/audioFormat" },
+        {
+          "$ref": "#/$defs/audioFormat"
+        },
         {
           "type": "object",
-          "required": ["trigger"],
+          "required": [
+            "trigger"
+          ],
           "properties": {
             "trigger": {
-              "enum": ["touch", "button", "wakeword", "control_api", "simulator"]
+              "enum": [
+                "touch",
+                "button",
+                "wakeword",
+                "control_api",
+                "simulator"
+              ]
             }
           }
         }
@@ -187,19 +312,31 @@
     },
     "audioInputEndPayload": {
       "type": "object",
-      "required": ["reason"],
+      "required": [
+        "reason"
+      ],
       "properties": {
         "reason": {
-          "enum": ["silence", "max_duration", "user_cancel", "device_error", "disconnect"]
+          "enum": [
+            "silence",
+            "max_duration",
+            "user_cancel",
+            "device_error",
+            "disconnect"
+          ]
         }
       }
     },
     "audioOutputStartPayload": {
       "allOf": [
-        { "$ref": "#/$defs/audioFormat" },
+        {
+          "$ref": "#/$defs/audioFormat"
+        },
         {
           "type": "object",
-          "required": ["expected_duration_ms"],
+          "required": [
+            "expected_duration_ms"
+          ],
           "properties": {
             "expected_duration_ms": {
               "type": "integer",
@@ -212,7 +349,9 @@
     },
     "audioOutputEndPayload": {
       "type": "object",
-      "required": ["reason"],
+      "required": [
+        "reason"
+      ],
       "properties": {
         "reason": {
           "enum": [
@@ -244,9 +383,14 @@
     },
     "errorPayload": {
       "type": "object",
-      "required": ["code", "message"],
+      "required": [
+        "code",
+        "message"
+      ],
       "properties": {
-        "code": { "$ref": "#/$defs/errorCode" },
+        "code": {
+          "$ref": "#/$defs/errorCode"
+        },
         "message": {
           "type": "string",
           "minLength": 1,
@@ -266,9 +410,14 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["ok", "result"],
+          "required": [
+            "ok",
+            "result"
+          ],
           "properties": {
-            "ok": { "const": true },
+            "ok": {
+              "const": true
+            },
             "result": {
               "type": "object",
               "maxProperties": 32
@@ -278,10 +427,17 @@
         },
         {
           "type": "object",
-          "required": ["ok", "error"],
+          "required": [
+            "ok",
+            "error"
+          ],
           "properties": {
-            "ok": { "const": false },
-            "error": { "$ref": "#/$defs/errorPayload" }
+            "ok": {
+              "const": false
+            },
+            "error": {
+              "$ref": "#/$defs/errorPayload"
+            }
           },
           "additionalProperties": false
         }

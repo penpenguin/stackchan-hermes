@@ -35,6 +35,7 @@ async def handshake_server() -> AsyncIterator[tuple[str, list[HelloMessage]]]:
                 "sent_at_ms": 1,
                 "payload": {
                     "connection_id": "79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc",
+                    "capture_protocol_version": 2,
                     "selected_protocol_version": 1,
                     "heartbeat_interval_ms": 15_000,
                     "max_command_timeout_ms": 5_000,
@@ -83,6 +84,7 @@ async def test_simulator_returns_a_correlated_head_command_result() -> None:
                 "sent_at_ms": 1,
                 "payload": {
                     "connection_id": "79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc",
+                    "capture_protocol_version": 2,
                     "selected_protocol_version": 1,
                     "heartbeat_interval_ms": 15_000,
                     "max_command_timeout_ms": 5_000,
@@ -199,6 +201,7 @@ async def test_simulator_sends_touch_battery_and_wifi_events() -> None:
                 "sent_at_ms": 1,
                 "payload": {
                     "connection_id": "79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc",
+                    "capture_protocol_version": 2,
                     "selected_protocol_version": 1,
                     "heartbeat_interval_ms": 15_000,
                     "max_command_timeout_ms": 5_000,
@@ -252,6 +255,7 @@ async def test_simulator_injects_duplicate_fault_frames_after_handshake() -> Non
                     "sent_at_ms": 1,
                     "payload": {
                         "connection_id": "79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc",
+                        "capture_protocol_version": 2,
                         "selected_protocol_version": 1,
                         "heartbeat_interval_ms": 15_000,
                         "max_command_timeout_ms": 5_000,

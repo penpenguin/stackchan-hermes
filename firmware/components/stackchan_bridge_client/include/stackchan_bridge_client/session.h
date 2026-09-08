@@ -52,6 +52,7 @@ struct BridgeClientConfig {
     std::function<EnvelopeMetadata()> envelopeFactory;
     std::function<void()> playbackFlushHandler;
     std::function<void(DeviceState)> stateChanged;
+    std::function<void(const std::string&)> cameraCompletedAcknowledged;
 };
 
 enum class ClientError {
@@ -81,7 +82,8 @@ public:
     ClientError sendCameraCompleted(
         const std::string& captureId,
         bool ok,
-        CameraCompletionError error
+        CameraCompletionError error,
+        const std::string& digest = {}, std::size_t sizeBytes = 0
     );
     ClientError reportAudioDecodeFailure();
     bool popAudioOutputPacket(std::vector<std::uint8_t>& output);

@@ -92,7 +92,7 @@ public:
         return true;
     }
 
-    CommandTargetResult startCapture(const std::string& captureId, int quality) override
+    CommandTargetResult startCapture(const std::string& captureId, int quality, int timeoutMs) override
     {
         lastCaptureId = captureId;
         lastCaptureQuality = quality;
@@ -538,6 +538,7 @@ void testCameraCaptureStartsOnceAndReportsBusy()
     Command command;
     command.name = CommandName::CameraCapture;
     command.arguments.captureId = "c9ef993d-25aa-4f9f-a35d-6441d2f87ee7";
+    command.arguments.captureTimeoutMs = 10000;
     command.arguments.quality = 80;
 
     const auto accepted = executeCommand(command, target);
@@ -573,7 +574,8 @@ void testInvalidCameraCaptureIsRejectedBeforeHal()
         Command command;
         command.name = CommandName::CameraCapture;
         command.arguments.captureId = example.captureId;
-        command.arguments.quality = example.quality;
+        command.arguments.captureTimeoutMs = 10000;
+    command.arguments.quality = example.quality;
         const auto result = executeCommand(command, target);
         expect(!result.ok, "invalid camera capture unexpectedly succeeded");
         expect(

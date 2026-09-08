@@ -141,6 +141,7 @@ async def test_simulator_streams_input_wav_in_real_time_and_records_bridge_outpu
                 "sent_at_ms": 1,
                 "payload": {
                     "connection_id": "79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc",
+                    "capture_protocol_version": 2,
                     "selected_protocol_version": 1,
                     "heartbeat_interval_ms": 15_000,
                     "max_command_timeout_ms": 5_000,
@@ -284,6 +285,7 @@ async def test_simulator_rejects_a_truncated_output_stream(
                 "sent_at_ms": 1,
                 "payload": {
                     "connection_id": "79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc",
+                    "capture_protocol_version": 2,
                     "selected_protocol_version": 1,
                     "heartbeat_interval_ms": 15_000,
                     "max_command_timeout_ms": 5_000,

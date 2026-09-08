@@ -42,6 +42,15 @@ class UploadingCaptureWebSocket:
             content_type="image/jpeg",
             body=generate_synthetic_jpeg(),
         )
+        record = self.store.get(UUID(str(args["capture_id"])))
+        assert record is not None
+        self.store.complete(
+            record.capture_id,
+            device_id="sim-001",
+            ok=True,
+            digest=record.sha256,
+            size_bytes=record.size_bytes,
+        )
         result = CommandResultMessage.model_validate(
             {
                 "v": 1,
@@ -102,6 +111,45 @@ async def test_capture_coordinator_reserves_commands_and_waits_for_upload(tmp_pa
     assert websocket.command.payload.args.quality == 75
     assert websocket.command.payload.args.capture_id == record.capture_id
     assert (record.width, record.height) == (320, 240)
+
+
+@pytest.mark.asyncio
+async def test_missing_command_ack_does_not_override_saved_and_completed_capture(
+    tmp_path: Path,
+) -> None:
+    class MissingAck(UploadingCaptureWebSocket):
+        async def send_text(self, data: str) -> None:
+            command = CommandMessage.model_validate_json(data)
+            if command.payload.name != "camera.capture":
+                return
+            record = self.store.save(
+                command.payload.args.capture_id,
+                device_id="sim-001",
+                content_type="image/jpeg",
+                body=generate_synthetic_jpeg(),
+            )
+            self.store.complete(
+                record.capture_id,
+                device_id="sim-001",
+                ok=True,
+                digest=record.sha256,
+                size_bytes=record.size_bytes,
+            )
+
+    store = CaptureStore(directory=tmp_path, ttl_seconds=600, max_bytes=2097152)
+    registry = DeviceRegistry(command_timeout_seconds=0.01)
+    connection_id = UUID("79e1d2f4-e7d9-4c44-b560-af9ed6b0cacc")
+    ws = MissingAck(registry, connection_id, store)
+    await registry.register(
+        DeviceConnection(
+            connection_id=connection_id,
+            device_id="sim-001",
+            hello=simulator_hello(),
+            websocket=cast(WebSocket, ws),
+        )
+    )
+    record = await CaptureCoordinator(registry, store, timeout_seconds=0.1).take_photo("sim-001")
+    assert store.get(record.capture_id) == record
 
 
 @pytest.mark.asyncio

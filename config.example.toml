@@ -88,6 +88,7 @@ failure_policy = "abort"
 # seed = 1234 # Integer; 0 is also valid.
 
 [captures]
+# One deadline from reservation through upload and Firmware cleanup confirmation.
 directory = ".local/captures"
 ttl_seconds = 600
 max_bytes = 2097152

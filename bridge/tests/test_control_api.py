@@ -106,6 +106,15 @@ class UploadingCaptureWebSocket:
             content_type="image/jpeg",
             body=generate_synthetic_jpeg(),
         )
+        record = self.store.get(UUID(str(args["capture_id"])))
+        assert record is not None
+        self.store.complete(
+            record.capture_id,
+            device_id="sim-001",
+            ok=True,
+            digest=record.sha256,
+            size_bytes=record.size_bytes,
+        )
         result = CommandResultMessage.model_validate(
             {
                 "v": 1,
@@ -189,6 +198,7 @@ def simulator_hello() -> HelloMessage:
             "payload": {
                 "device_id": "sim-001",
                 "device_name": "StackChan Simulator",
+                "capture_protocol_version": 2,
                 "firmware_version": "0.1.0",
                 "hardware_model": "SIMULATOR",
                 "protocol_versions": [1],

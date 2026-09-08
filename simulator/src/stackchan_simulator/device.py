@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from asyncio import sleep as async_sleep
-from asyncio import wait_for
+from asyncio import timeout, wait_for
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import StrEnum
+from hashlib import sha256
 from pathlib import Path
 from time import monotonic, time_ns
 from urllib.parse import urlsplit, urlunsplit
@@ -24,6 +25,7 @@ from stackchan_bridge.protocol.models import (
     AudioInputStartMessage,
     AudioOutputEndMessage,
     AudioOutputStartMessage,
+    CameraCompletedAckMessage,
     CaptureCommand,
     CommandMessage,
     CommandResultMessage,
@@ -121,6 +123,7 @@ class DeviceSimulator:
                 "payload": {
                     "device_id": self._config.device_id,
                     "device_name": self._config.device_name,
+                    "capture_protocol_version": 2,
                     "firmware_version": self._config.firmware_version,
                     "hardware_model": self._config.hardware_model,
                     "protocol_versions": list(self._config.protocol_versions),
@@ -525,19 +528,6 @@ class DeviceSimulator:
                 )
             capture_id = command.payload.args.capture_id
             upload_url = self._capture_upload_url(capture_id)
-            async with httpx.AsyncClient(timeout=10, trust_env=False) as client:
-                response = await client.post(
-                    upload_url,
-                    headers=headers,
-                    files={
-                        "file": (
-                            "capture.jpg",
-                            generate_synthetic_jpeg(),
-                            "image/jpeg",
-                        )
-                    },
-                )
-                response.raise_for_status()
             result = CommandResultMessage.model_validate(
                 {
                     "v": 1,
@@ -552,6 +542,43 @@ class DeviceSimulator:
                 }
             )
             await websocket.send(result.model_dump_json())
+            jpeg = generate_synthetic_jpeg()
+            async with timeout(command.payload.args.timeout_ms / 1000):
+                async with httpx.AsyncClient(timeout=3, trust_env=False) as client:
+                    query_started = monotonic()
+                    receipt = await client.get(upload_url + "/status", headers=headers)
+                    receipt.raise_for_status()
+                    if receipt.json()["state"] != "reserved":
+                        raise ValueError("capture reservation is not accepting uploads")
+                    remaining = receipt.json()["remaining_ms"] / 1000 - (
+                        monotonic() - query_started
+                    )
+                    async with timeout(max(0, remaining)):
+                        response = await client.post(
+                            upload_url,
+                            headers=headers,
+                            files={"file": ("capture.jpg", jpeg, "image/jpeg")},
+                        )
+                        response.raise_for_status()
+                # The HTTP client and JPEG upload resources are released before completion.
+                completed = self.event_message(
+                    "camera.completed",
+                    {
+                        "capture_id": str(capture_id),
+                        "ok": True,
+                        "sha256": sha256(jpeg).hexdigest(),
+                        "size_bytes": len(jpeg),
+                    },
+                )
+                await websocket.send(completed.model_dump_json())
+                receipt_ack = parse_text_frame(await websocket.recv())
+                if (
+                    not isinstance(receipt_ack, CameraCompletedAckMessage)
+                    or receipt_ack.payload.capture_id != capture_id
+                    or not receipt_ack.payload.accepted
+                ):
+                    raise ValueError("Bridge did not acknowledge camera completion")
+
         return command
 
     def _capture_upload_url(self, capture_id: UUID) -> str:

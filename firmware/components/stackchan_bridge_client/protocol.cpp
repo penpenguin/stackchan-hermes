@@ -138,6 +138,7 @@ ProtocolError buildHelloJson(
     document["sent_at_ms"] = envelope.sentAtMs;
 
     JsonObject payload        = document["payload"].to<JsonObject>();
+    payload["capture_protocol_version"] = 2;
     payload["device_id"]      = hello.deviceId;
     payload["device_name"]    = hello.deviceName;
     payload["firmware_version"] = hello.firmwareVersion;
@@ -204,7 +205,8 @@ ProtocolError parseHelloAckJson(const std::string& input, HelloAck& output)
     JsonVariantConst heartbeatValue = payload["heartbeat_interval_ms"];
     JsonVariantConst selectedVersionValue = payload["selected_protocol_version"];
     JsonVariantConst commandTimeoutValue = payload["max_command_timeout_ms"];
-    if (!heartbeatValue.is<std::uint32_t>() || !selectedVersionValue.is<std::uint8_t>()
+    if (!payload["capture_protocol_version"].is<int>() || payload["capture_protocol_version"].as<int>() != 2
+        || !heartbeatValue.is<std::uint32_t>() || !selectedVersionValue.is<std::uint8_t>()
         || !commandTimeoutValue.is<std::uint32_t>()) {
         return ProtocolError::InvalidArgument;
     }

@@ -3,6 +3,8 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include "capture_network.h"
+#include <stackchan_bridge_client/capture_transaction.h>
 
 #include <stackchan_bridge_client/camera_capture.h>
 #include <stackchan_bridge_client/command_executor.h>
@@ -12,12 +14,7 @@ class NetworkInterface;
 
 namespace stackchan::hermes {
 
-struct CameraCaptureCompletion {
-    std::string captureId;
-    bool ok = false;
-    bridge_client::CameraCompletionError error =
-        bridge_client::CameraCompletionError::CaptureFailed;
-};
+using CameraCaptureCompletion = bridge_client::CaptureCompletionNotice;
 
 class OfficialCameraCapture {
 public:
@@ -35,18 +32,15 @@ public:
 
     void setBridgeUrl(std::string bridgeUrl);
     bool available() const;
-    bridge_client::CommandTargetResult start(const std::string& captureId, int quality);
+    bridge_client::CommandTargetResult start(const std::string& captureId, int quality, int timeoutMs);
+    bool cancel(const std::string& captureId);
     void update();
-    bool completion(CameraCaptureCompletion& output) const;
-    void acknowledgeCompletion();
+    bool completion(CameraCaptureCompletion& output);
+    void acknowledgeCompletion(const std::string& captureId);
 
 private:
     void run(bridge_client::CameraCaptureRequest request);
-    bool captureAndUpload(const bridge_client::CameraCaptureRequest& request);
-    bool uploadAttempt(
-        const bridge_client::CameraCaptureRequest& request,
-        const std::string& uploadUrl
-    );
+    bool captureAndUpload(const bridge_client::CameraCaptureRequest& request, CameraCaptureCompletion& result);
 
     Board& board_;
     NetworkInterface& network_;
@@ -58,6 +52,8 @@ private:
     CameraCaptureCompletion completion_;
     bool completionReady_ = false;
     std::thread worker_;
+    bridge_client::CaptureCompletionQueue notifications_;
+    std::shared_ptr<CaptureIoContext> io_;
 };
 
 }  // namespace stackchan::hermes

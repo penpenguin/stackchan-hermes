@@ -4,11 +4,14 @@
 #ifndef CONFIG_IDF_TARGET_ESP32
 #include <lvgl.h>
 #include <thread>
+#include <atomic>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
+#include <esp_heap_caps.h>
 
 #include "camera.h"
 #include "jpg/image_to_jpeg.h"
@@ -43,6 +46,14 @@ public:
     ~StackChanCamera();
 
     virtual bool Capture() override;
+    bool Capture(std::uint64_t deadlineMs, const std::atomic<bool>* cancelled);
+    void ReleaseFrame()
+    {
+        heap_caps_free(frame_.data);
+        frame_.data = nullptr;
+        frame_.len = 0;
+        frame_.format = 0;
+    }
     bool StreamCaptures();
 
     // 翻转控制函数

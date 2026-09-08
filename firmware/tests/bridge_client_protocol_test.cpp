@@ -71,7 +71,7 @@ std::string validHelloAckJson()
         "sent_at_ms": 0,
         "payload": {
             "connection_id": "bdce4ce9-ec1d-4d06-bc26-45cb0474a8b6",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
@@ -150,7 +150,7 @@ void testRejectsProtocolTimestampsOutsideSignedJsonRange()
         "sent_at_ms": 9223372036854775808,
         "payload": {
             "connection_id": "bdce4ce9-ec1d-4d06-bc26-45cb0474a8b6",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
@@ -224,7 +224,7 @@ void testParsesProtocolV1HelloAck()
         "sent_at_ms": 0,
         "payload": {
             "connection_id": "bdce4ce9-ec1d-4d06-bc26-45cb0474a8b6",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
@@ -251,7 +251,7 @@ void testRejectsHelloAckHeartbeatOutsideProtocolV1()
         "sent_at_ms": 0,
         "payload": {
             "connection_id": "bdce4ce9-ec1d-4d06-bc26-45cb0474a8b6",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 999,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
@@ -275,7 +275,7 @@ void testRejectsHelloAckProtocolVersionMismatch()
         "sent_at_ms": 0,
         "payload": {
             "connection_id": "bdce4ce9-ec1d-4d06-bc26-45cb0474a8b6",
-            "selected_protocol_version": 2,
+            "capture_protocol_version": 2, "selected_protocol_version": 2,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
@@ -298,7 +298,7 @@ void testRejectsHelloAckCommandTimeoutOutsideProtocolV1()
         "sent_at_ms": 0,
         "payload": {
             "connection_id": "bdce4ce9-ec1d-4d06-bc26-45cb0474a8b6",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 99,
             "server_version": "0.1.0"
@@ -321,7 +321,7 @@ void testRejectsHelloAckWithInvalidConnectionIdentity()
         "sent_at_ms": 0,
         "payload": {
             "connection_id": "not-a-uuid",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
@@ -344,7 +344,7 @@ void testRejectsHelloAckWithWrongEnvelope()
         "sent_at_ms": 0,
         "payload": {
             "connection_id": "bdce4ce9-ec1d-4d06-bc26-45cb0474a8b6",
-            "selected_protocol_version": 1,
+            "capture_protocol_version": 2, "selected_protocol_version": 1,
             "heartbeat_interval_ms": 15000,
             "max_command_timeout_ms": 5000,
             "server_version": "0.1.0"
