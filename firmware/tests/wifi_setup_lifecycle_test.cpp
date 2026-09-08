@@ -12,8 +12,16 @@ int main()
     auto& wifi = WifiManager::GetInstance();
     {
         TestBoard board;
+        board.ExitWifiConfigMode(); // Skip also works before networking is initialized.
+        assert(!wifi.ap && !wifi.station);
         board.StartNetwork();
-        board.EnterWifiConfigMode();
+        assert(!wifi.ap && !wifi.station); // A late network startup must honor Skip.
+    }
+    wifi.reset();
+    {
+        TestBoard board;
+        board.StartNetwork();
+        // Skip must also close an AP opened by Bridge startup before any Wi-Fi worker exists.
         assert(wifi.ap);
         board.ExitWifiConfigMode();
         assert(!wifi.ap && !board.IsInWifiConfigMode() && !wifi.station);

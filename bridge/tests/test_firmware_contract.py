@@ -935,3 +935,12 @@ def test_firmware_contract_freezes_reconnect_state_and_settings_precedence() -> 
     lowered = contract_text.lower()
     assert "api_key" not in lowered
     assert "password" not in lowered
+
+
+def test_startup_skip_exits_wifi_configuration_before_completing_setup() -> None:
+    source = (FIRMWARE_ROOT / "main/apps/app_setup/workers/startup.cpp").read_text()
+    skip = re.search(r"if \(_page_startup->isSkipClicked\(\)\)\s*\{([^}]+)\}", source)
+    assert skip is not None
+    body = skip.group(1)
+    assert "ExitWifiConfigMode()" in body
+    assert body.index("ExitWifiConfigMode()") < body.index("setSetupComplete()")
