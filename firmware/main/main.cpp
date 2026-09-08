@@ -10,6 +10,7 @@
 #include <apps/apps.h>
 #include <apps/common/toast/toast.h>
 #include <hal/hal.h>
+#include <hal/boot_confirmation.h>
 #include <hal/stackchan_bridge_provisioning.h>
 #include <hal/stackchan_bridge_service.h>
 #include <hal/board/hal_bridge.h>
@@ -56,6 +57,10 @@ extern "C" void app_main(void)
         mclog::error("StackChan Hermes Bridge client did not start");
     }
 #endif
+    const auto confirmation = stackchan::local::confirm_running_image();
+    if (confirmation != ESP_OK) {
+        mclog::error("Running image confirmation failed: {}", esp_err_to_name(confirmation));
+    }
     while (true) {
         GetHAL().feedTheDog();
         GetHAL().updateHeapStatusLog();

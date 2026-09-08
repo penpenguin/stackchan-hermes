@@ -12,6 +12,14 @@ ROOT = Path(__file__).resolve().parents[2]
 FIRMWARE_ROOT = ROOT / "firmware"
 
 
+def test_running_image_is_confirmed_after_local_initialization() -> None:
+    main = (FIRMWARE_ROOT / "main/main.cpp").read_text()
+    confirmation = main.index("stackchan::local::confirm_running_image()")
+    assert main.index("GetHAL().init();") < confirmation
+    assert main.index("GetMooncake().installApp(std::make_unique<AppSetup>());") < confirmation
+    assert confirmation < main.index("while (true)")
+
+
 def test_wifi_setup_destruction_exits_configuration_mode() -> None:
     source = (FIRMWARE_ROOT / "main/apps/app_setup/workers/connectivity.cpp").read_text()
     destructor = re.search(r"WifiSetupWorker::~WifiSetupWorker\(\)\s*\{([^}]+)\}", source)

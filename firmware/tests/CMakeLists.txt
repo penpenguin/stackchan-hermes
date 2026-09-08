@@ -4,6 +4,11 @@ project(stackchan_firmware_tests LANGUAGES CXX)
 
 enable_testing()
 
+add_executable(boot_confirmation_test boot_confirmation_test.cpp)
+target_include_directories(boot_confirmation_test PRIVATE fakes/boot_confirmation ../main)
+target_compile_features(boot_confirmation_test PRIVATE cxx_std_17)
+add_test(NAME boot_confirmation_test COMMAND boot_confirmation_test)
+
 add_executable(device_config_test device_config_test.cpp ../main/hal/board/device_config.cc)
 target_include_directories(device_config_test PRIVATE fakes/settings ../main)
 target_compile_features(device_config_test PRIVATE cxx_std_17)
