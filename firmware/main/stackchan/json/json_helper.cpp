@@ -3,9 +3,10 @@
  *
  * SPDX-License-Identifier: MIT
  */
-#include "json_helper.h"
+#include <stackchan/json/json_helper.h>
 #include <ArduinoJson.hpp>
 #include <mooncake_log.h>
+#include <hal/local_activity.h>
 
 static const char* _tag = "stackchan-json";
 
@@ -20,21 +21,25 @@ static void update_feature(Feature& feature, ArduinoJson::JsonObject& jsonObject
         position.x = jsonObject["x"];
         position.y = jsonObject["y"];
         feature.setPosition(position);
+        hal_bridge::note_activity();
     }
 
     if (jsonObject["rotation"].is<int>()) {
         int rotation = jsonObject["rotation"];
         feature.setRotation(rotation);
+        hal_bridge::note_activity();
     }
 
     if (jsonObject["weight"].is<int>()) {
         int weight = jsonObject["weight"];
         feature.setWeight(weight);
+        hal_bridge::note_activity();
     }
 
     if (jsonObject["size"].is<int>()) {
         int size = jsonObject["size"];
         feature.setSize(size);
+        hal_bridge::note_activity();
     }
 }
 
@@ -77,6 +82,7 @@ static void update_servo(Servo& servo, ArduinoJson::JsonObject& jsonObject)
     if (jsonObject["rotate"].is<int>()) {
         int rotate = jsonObject["rotate"];
         servo.rotate(rotate);
+        hal_bridge::note_activity();
         return;
     }
 
@@ -84,6 +90,7 @@ static void update_servo(Servo& servo, ArduinoJson::JsonObject& jsonObject)
         return;
     }
     int angle = jsonObject["angle"];
+    hal_bridge::note_activity();
 
     // If has speed, move directly
     if (jsonObject["speed"].is<int>()) {
@@ -248,16 +255,20 @@ void update_neon_light_from_json(NeonLight* left, NeonLight* right, const char* 
 
     if (doc["leftRgbDuration"].is<float>()) {
         left->setDuration(doc["leftRgbDuration"].as<float>());
+        hal_bridge::note_activity();
     }
     if (doc["leftRgbColor"].is<std::string>()) {
         left->setColor(doc["leftRgbColor"].as<std::string>());
+        hal_bridge::note_activity();
     }
 
     if (doc["rightRgbDuration"].is<float>()) {
         right->setDuration(doc["rightRgbDuration"].as<float>());
+        hal_bridge::note_activity();
     }
     if (doc["rightRgbColor"].is<std::string>()) {
         right->setColor(doc["rightRgbColor"].as<std::string>());
+        hal_bridge::note_activity();
     }
 }
 

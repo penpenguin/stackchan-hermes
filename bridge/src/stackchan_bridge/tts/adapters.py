@@ -154,6 +154,7 @@ class VoicevoxTtsAdapter:
                 "POST",
                 "/audio_query",
                 params={**params, "text": text},
+                follow_redirects=False,
             ) as query_response:
                 query_response.raise_for_status()
                 query_body = await _read_bounded_response(
@@ -170,6 +171,7 @@ class VoicevoxTtsAdapter:
                 params=params,
                 headers={"Accept": "audio/wav"},
                 json=query,
+                follow_redirects=False,
             ) as synthesis_response:
                 synthesis_response.raise_for_status()
                 if not synthesis_response.headers.get("content-type", "").startswith("audio/wav"):
@@ -240,6 +242,7 @@ async def _synthesize_http_wav(
             endpoint,
             headers=headers,
             json=payload,
+            follow_redirects=False,
         ) as response:
             response.raise_for_status()
             if not response.headers.get("content-type", "").startswith("audio/wav"):

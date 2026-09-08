@@ -1,4 +1,5 @@
 #include "stackchan_bridge_camera.h"
+#include "stackchan_bridge_camera_upload.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -61,53 +62,6 @@ private:
     esp_pthread_cfg_t previous_ = {};
     bool hasPrevious_ = false;
     bool applied_ = false;
-};
-
-class OfficialCameraUploadTransport final : public bridge_client::CameraUploadTransport {
-public:
-    explicit OfficialCameraUploadTransport(std::unique_ptr<Http> http)
-        : http_(std::move(http))
-    {
-    }
-
-    bool valid() const
-    {
-        return http_ != nullptr;
-    }
-
-    void setTimeoutMs(int timeoutMs) override
-    {
-        http_->SetTimeout(timeoutMs);
-    }
-
-    void setHeader(const std::string& name, const std::string& value) override
-    {
-        http_->SetHeader(name, value);
-    }
-
-    bool openPost(const std::string& url) override
-    {
-        return http_->Open("POST", url);
-    }
-
-    bool write(const std::uint8_t* data, std::size_t size) override
-    {
-        const char* bytes = size == 0 ? "" : reinterpret_cast<const char*>(data);
-        return http_->Write(bytes, size) >= 0;
-    }
-
-    int statusCode() override
-    {
-        return http_->GetStatusCode();
-    }
-
-    void close() override
-    {
-        http_->Close();
-    }
-
-private:
-    std::unique_ptr<Http> http_;
 };
 
 #ifndef CONFIG_IDF_TARGET_ESP32

@@ -26,7 +26,7 @@ void AppLauncher::onLauncherOpen()
 
     LvglLockGuard lock;
 
-    if (!_startup_checked && !GetHAL().isAppConfiged()) {
+    if (!_startup_checked && !GetHAL().isSetupComplete()) {
         mclog::tagInfo(getAppInfo().name, "app not configured, start startup worker");
         _startup_worker = std::make_unique<setup_workers::StartupWorker>();
     } else {

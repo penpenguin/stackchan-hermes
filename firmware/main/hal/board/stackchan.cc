@@ -2,9 +2,9 @@
 #include "cores3_audio_codec.h"
 #include "display/lcd_display.h"
 #include "stackchan_display.h"
-#include "application.h"
 #include "config.h"
-#include "power_save_timer.h"
+#include <hal/local_device_policy.h>
+#include <hal/espnow_wifi.h>
 #include "i2c_device.h"
 #include "axp2101.h"
 #include "settings.h"
@@ -311,7 +311,6 @@ private:
 
 class M5StackCoreS3Board : public WifiBoard {
 private:
-    static constexpr int kPowerSaveSleepDelaySeconds = 300;
     static constexpr int kPowerStatePollIntervalMs   = 1000;
 
     i2c_master_bus_handle_t i2c_bus_;
@@ -321,66 +320,34 @@ private:
     LvglDisplay* display_;
     StackChanCamera* camera_;
     esp_timer_handle_t touchpad_timer_;
-    PowerSaveTimer* power_save_timer_;
-    hal_bridge::XiaozhiConfig_t xiaozhi_config_;
-    bool last_power_save_enabled_      = false;
+    hal_bridge::DeviceConfig_t device_config_;
+    stackchan::local::IdlePowerState power_state_ = stackchan::local::IdlePowerState::Awake;
     int64_t last_power_state_check_ms_ = 0;
-
-    bool ShouldEnablePowerSave(bool has_external_power, bool is_discharging) const
-    {
-        return is_discharging || (has_external_power && xiaozhi_config_.allowShutdownWhenCharging);
-    }
-
-    void UpdatePowerSaveEnabled(bool has_external_power, bool is_discharging)
-    {
-        const bool should_enable_power_save = ShouldEnablePowerSave(has_external_power, is_discharging);
-        if (should_enable_power_save == last_power_save_enabled_) {
-            return;
-        }
-
-        ESP_LOGI(TAG, "Power save timer %s: external_power=%d, discharging=%d, allowShutdownWhenCharging=%d",
-                 should_enable_power_save ? "enabled" : "disabled", has_external_power, is_discharging,
-                 xiaozhi_config_.allowShutdownWhenCharging);
-        power_save_timer_->SetEnabled(should_enable_power_save);
-        last_power_save_enabled_ = should_enable_power_save;
-    }
 
     void PollPowerSaveState()
     {
         const int64_t now_ms = esp_timer_get_time() / 1000;
-        if (last_power_state_check_ms_ != 0 && (now_ms - last_power_state_check_ms_) < kPowerStatePollIntervalMs) {
-            return;
-        }
+        if (now_ms - last_power_state_check_ms_ < kPowerStatePollIntervalMs) { return; }
         last_power_state_check_ms_ = now_ms;
-
-        UpdatePowerSaveEnabled(pmic_->IsExternalPowerConnected(), pmic_->IsDischarging());
-    }
-
-    void InitializePowerSaveTimer()
-    {
-        xiaozhi_config_ = hal_bridge::get_xiaozhi_config();
-
-        const int seconds_to_shutdown = xiaozhi_config_.idleShutdownTimeSeconds > 0
-                                            ? static_cast<int>(xiaozhi_config_.idleShutdownTimeSeconds)
-                                            : -1;
-        const int seconds_to_sleep    = seconds_to_shutdown == -1
-                                            ? kPowerSaveSleepDelaySeconds
-                                            : std::min(kPowerSaveSleepDelaySeconds, seconds_to_shutdown);
-
-        ESP_LOGI(TAG, "Init power save timer: sleep=%d s, shutdown=%d s, allow_shutdown_when_charging=%d",
-                 seconds_to_sleep, seconds_to_shutdown, xiaozhi_config_.allowShutdownWhenCharging);
-
-        power_save_timer_ = new PowerSaveTimer(-1, seconds_to_sleep, seconds_to_shutdown);
-        power_save_timer_->OnEnterSleepMode([this]() {
+        const bool enabled = stackchan::local::powerSaveEnabled(
+            pmic_->IsExternalPowerConnected(), pmic_->IsDischarging(),
+            device_config_.allowShutdownWhenCharging);
+        const bool busy = hal_bridge::local_audio_busy();
+        if (busy || !enabled) { hal_bridge::note_activity(); }
+        const auto state = stackchan::local::idlePowerState(
+            hal_bridge::idle_milliseconds() / 1000, device_config_.idleShutdownTimeSeconds,
+            enabled, busy);
+        if (state == power_state_) { return; }
+        power_state_ = state;
+        if (state == stackchan::local::IdlePowerState::Shutdown) {
+            pmic_->PowerOff();
+        } else if (state == stackchan::local::IdlePowerState::Sleeping) {
             GetDisplay()->SetPowerSaveMode(true);
-            // GetBacklight()->SetBrightness(10);
-        });
-        power_save_timer_->OnExitSleepMode([this]() {
+            GetBacklight()->SetBrightness(10);
+        } else {
             GetDisplay()->SetPowerSaveMode(false);
             GetBacklight()->RestoreBrightness();
-        });
-        power_save_timer_->OnShutdownRequest([this]() { pmic_->PowerOff(); });
-        UpdatePowerSaveEnabled(pmic_->IsExternalPowerConnected(), pmic_->IsDischarging());
+        }
     }
 
     void InitializeI2c()
@@ -443,6 +410,7 @@ private:
             return;
         }
         auto& touch_point = ft6336_->GetTouchPoint();
+        if (touch_point.num > 0) { hal_bridge::note_activity(); }
 
         // Update hal touch point
         hal_bridge::set_touch_point(touch_point.num, touch_point.x, touch_point.y);
@@ -587,11 +555,16 @@ private:
     }
 
 public:
+    esp_err_t PrepareEspNow(int channel)
+    {
+        return stackchan::local::prepareEspNowWifi(channel, connect_timer_);
+    }
+
     M5StackCoreS3Board()
     {
         InitializeI2c();
         InitializeAxp2101();
-        InitializePowerSaveTimer();
+        device_config_ = hal_bridge::get_device_config();
         InitializeAw9523();
         I2cDetect();
         InitializeFt6336();
@@ -623,14 +596,8 @@ public:
 
     virtual bool GetBatteryLevel(int& level, bool& charging, bool& discharging) override
     {
-        static bool last_discharging = false;
-        charging                     = pmic_->IsCharging();
-        discharging                  = pmic_->IsDischarging();
-        if (discharging != last_discharging) {
-            power_save_timer_->SetEnabled(discharging);
-            last_discharging = discharging;
-        }
-
+        charging = pmic_->IsCharging();
+        discharging = pmic_->IsDischarging();
         level = pmic_->GetBatteryLevel();
         return true;
     }
@@ -638,7 +605,7 @@ public:
     virtual void SetPowerSaveLevel(PowerSaveLevel level) override
     {
         if (level != PowerSaveLevel::LOW_POWER) {
-            power_save_timer_->WakeUp();
+            hal_bridge::note_activity();
         }
         WifiBoard::SetPowerSaveLevel(level);
     }
@@ -656,6 +623,11 @@ public:
 };
 
 DECLARE_BOARD(M5StackCoreS3Board);
+
+esp_err_t hal_bridge::board_prepare_espnow(int channel)
+{
+    return static_cast<M5StackCoreS3Board&>(Board::GetInstance()).PrepareEspNow(channel);
+}
 
 i2c_master_bus_handle_t hal_bridge::board_get_i2c_bus()
 {
@@ -745,14 +717,4 @@ uint8_t hal_bridge::board_get_speaker_volume()
     }
     const int volume = audio_codec->output_volume();
     return static_cast<uint8_t>(std::clamp(volume, 0, 100));
-}
-
-void hal_bridge::toggle_xiaozhi_chat_state()
-{
-    auto& app = Application::GetInstance();
-    if (app.GetDeviceState() == kDeviceStateStarting) {
-        // EnterWifiConfigMode();
-        return;
-    }
-    app.ToggleChatState();
 }

@@ -19,6 +19,7 @@ fi
 cd firmware
 python3 ./verify_upstream_dependencies.py
 python3 ./verify_managed_components.py
+python3 -m unittest discover -s tests -p '*_test.py' -v
 cmake -S tests -B build-host-tests
 cmake --build build-host-tests --parallel 2
 ctest --test-dir build-host-tests --output-on-failure

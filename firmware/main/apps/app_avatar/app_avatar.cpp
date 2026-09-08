@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include "app_avatar.h"
-#include "view/ws_call.h"
 #include <hal/hal.h>
 #include <mooncake.h>
 #include <mooncake_log.h>
@@ -19,28 +18,6 @@
 using namespace mooncake;
 using namespace smooth_ui_toolkit::lvgl_cpp;
 using namespace stackchan;
-
-#include <string>
-#include <sstream>
-#include <unordered_set>
-
-static bool contains_word(const std::string& text, const std::unordered_set<std::string>& words)
-{
-    auto to_lower = [](std::string s) {
-        std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
-        return s;
-    };
-
-    std::istringstream iss(text);
-    std::string token;
-    while (iss >> token) {
-        token = to_lower(token);
-        if (words.find(token) != words.end()) {
-            return true;
-        }
-    }
-    return false;
-}
 
 AppAvatar::AppAvatar()
 {
@@ -64,24 +41,8 @@ void AppAvatar::onOpen()
 {
     mclog::tagInfo(getAppInfo().name, "on open");
 
-    // Create loading page
-    std::unique_ptr<view::LoadingPage> loading_page;
-    {
-        LvglLockGuard lock;
-        loading_page = std::make_unique<view::LoadingPage>(0xFF6699, 0x431525);
-    }
-
-    // Start avatar service
-    GetHAL().startWebSocketAvatarService([&](std::string_view msg) {
-        LvglLockGuard lock;
-        loading_page->setMessage(msg);
-    });
-    // GetHAL().startBleServer();
-
+    GetHAL().startBleServer();
     LvglLockGuard lock;
-
-    // Destroy loading page
-    loading_page.reset();
 
     // Create default avatar
     auto avatar = std::make_unique<avatar::DefaultAvatar>();
@@ -107,120 +68,6 @@ void AppAvatar::onOpen()
         _ble_motion_data.update_flag = true;
         _ble_motion_data.data_ptr    = (char*)data;
     });
-
-    /* ---------------------------- Websocket events ---------------------------- */
-    // Avatar control
-    GetHAL().onWsAvatarData.connect([&](std::string_view data) {
-        LvglLockGuard lvgl_lock;
-        GetStackChan().updateAvatarFromJson(data.data());
-    });
-
-    // Motion control
-    GetHAL().onWsMotionData.connect([&](std::string_view data) {
-        LvglLockGuard lvgl_lock;
-        check_auto_angle_sync_mode();
-        GetStackChan().updateMotionFromJson(data.data());
-    });
-
-    // Phone call handling
-    GetHAL().onWsCallRequest.connect([&](std::string caller) {
-        if (_ws_call_view_id >= 0) {
-            mclog::tagWarn(getAppInfo().name, "ws call view already exists");
-            return;
-        }
-
-        LvglLockGuard lvgl_lock;
-
-        auto& avatar = GetStackChan().avatar();
-        avatar.setSpeech("");
-        avatar.leftEye().setVisible(false);
-        avatar.rightEye().setVisible(false);
-        avatar.mouth().setVisible(false);
-
-        auto view      = std::make_unique<view::WsCallView>(lv_screen_active(), caller);
-        view->onAccept = []() {
-            auto& avatar = GetStackChan().avatar();
-            avatar.setSpeech("");
-            avatar.leftEye().setVisible(true);
-            avatar.rightEye().setVisible(true);
-            avatar.mouth().setVisible(true);
-
-            GetHAL().onWsCallResponse.emit(true);
-        };
-        view->onDecline = []() {
-            auto& avatar = GetStackChan().avatar();
-            avatar.setSpeech("");
-            avatar.leftEye().setVisible(true);
-            avatar.rightEye().setVisible(true);
-            avatar.mouth().setVisible(true);
-
-            GetHAL().onWsCallResponse.emit(false);
-        };
-        view->onEnd     = []() { GetHAL().onWsCallEnd.emit(WsSignalSource::Local); };
-        view->onDestory = [&]() { _ws_call_view_id = -1; };
-
-        _ws_call_view_id = avatar.addDecorator(std::move(view));
-    });
-
-    GetHAL().onWsCallEnd.connect([&](WsSignalSource source) {
-        if (source != WsSignalSource::Remote) {
-            return;
-        }
-
-        LvglLockGuard lvgl_lock;
-
-        if (_ws_call_view_id < 0) {
-            mclog::tagWarn(getAppInfo().name, "ws call view does not exist");
-            return;
-        }
-
-        auto& avatar = GetStackChan().avatar();
-        avatar.setSpeech("");
-        avatar.leftEye().setVisible(true);
-        avatar.rightEye().setVisible(true);
-        avatar.mouth().setVisible(true);
-
-        avatar.removeDecorator(_ws_call_view_id);
-        _ws_call_view_id = -1;
-    });
-
-    // Text message handling
-    GetHAL().onWsTextMessage.connect([&](const WsTextMessage_t& message) {
-        LvglLockGuard lvgl_lock;
-
-        auto& stackchan = GetStackChan();
-
-        stackchan.addModifier(
-            std::make_unique<TimedSpeechModifier>(fmt::format("{} says: {}", message.name, message.content), 6000));
-        stackchan.addModifier(std::make_unique<SpeakingModifier>(2000));
-
-        // Special handling
-        if (contains_word(message.content, {"hello", "hi"})) {
-            stackchan.addModifier(std::make_unique<TimedEmotionModifier>(avatar::Emotion::Happy, 2000));
-        } else if (contains_word(message.content, {"love"})) {
-            stackchan.addModifier(std::make_unique<TimedEmotionModifier>(avatar::Emotion::Happy, 2000));
-        }
-    });
-
-    GetHAL().onWsDanceData.connect([&](std::string_view data) {
-        LvglLockGuard lvgl_lock;
-        auto sequence = stackchan::animation::parse_sequence_from_json(data.data());
-        if (!sequence.empty()) {
-            if (_dance_modifier_id >= 0) {
-                GetStackChan().removeModifier(_dance_modifier_id);
-            }
-            _dance_modifier_id = GetStackChan().addModifier(std::make_unique<DanceModifier>(sequence));
-        }
-    });
-
-    GetHAL().onWsLog.connect([&](CommonLogLevel level, std::string_view msg) {
-        auto type         = static_cast<view::ToastType>(level);
-        uint32_t duration = type == view::ToastType::Error ? 12000 : 1600;
-        view::pop_a_toast(msg, type, duration);
-    });
-
-    /* ------------------------------ Video window ------------------------------ */
-    _video_window = std::make_unique<view::VideoWindow>(lv_screen_active());
 
     /* ----------------------------- Common widgets ----------------------------- */
     view::create_home_indicator([&]() { close(); }, 0xFF9ABC, 0x431525);
@@ -269,23 +116,15 @@ void AppAvatar::onClose()
         LvglLockGuard lock;
 
         GetStackChan().resetAvatar();
-        _video_window.reset();
 
         GetHAL().onBleAvatarData.clear();
         GetHAL().onBleMotionData.clear();
-
-        GetHAL().onWsAvatarData.clear();
-        GetHAL().onWsMotionData.clear();
-        GetHAL().onWsCallRequest.clear();
-        GetHAL().onWsCallEnd.clear();
-        GetHAL().onWsTextMessage.clear();
-        GetHAL().onWsDanceData.clear();
 
         view::destroy_home_indicator();
         view::destroy_status_bar();
     }
 
-    GetHAL().requestWarmReboot(1);
+    GetHAL().requestWarmReboot("AVATAR");
 }
 
 void AppAvatar::check_auto_angle_sync_mode()

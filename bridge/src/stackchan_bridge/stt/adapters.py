@@ -123,6 +123,7 @@ class GenericHttpSttAdapter:
                 headers=headers,
                 data={"language": self.language},
                 files={"file": ("speech.wav", pcm_to_wav(audio), "audio/wav")},
+                follow_redirects=False,
             ) as response:
                 response.raise_for_status()
                 body = await _read_bounded_response(response)

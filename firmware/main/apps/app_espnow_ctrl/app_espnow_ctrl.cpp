@@ -7,6 +7,7 @@
 #include "view/page_selector.h"
 #include "view/view.h"
 #include <hal/hal.h>
+#include <hal/espnow_control.h>
 #include <mooncake.h>
 #include <mooncake_log.h>
 #include <assets/assets.h>
@@ -159,32 +160,10 @@ void handle_received_data()
 {
     std::lock_guard<std::mutex> lock(_mutex);
 
-    // [target-id (uint8)] [yaw-angle (int16)] [pitch-angle (int16)] [speed (int16)] [laser-enabled (uint8)]
-    // id: 0 for broadcast
-    // yaw: -1280 ~ 1280
-    // pitch: 0 ~ 900
-    // speed: 0 ~ 1000, suggest 600
-    // laser-enabled: 0 = off, 1 = on
-    if (_received_data.size() >= 8) {
-        uint8_t target_id = _received_data[0];
-        if (target_id != 0 && target_id != _receiver_id) {
-            mclog::info("not me, target id: {}", target_id);
-            _received_data.clear();
-            return;
-        }
-
-        int16_t yaw_angle   = static_cast<int16_t>(_received_data[1] | (_received_data[2] << 8));
-        int16_t pitch_angle = static_cast<int16_t>(_received_data[3] | (_received_data[4] << 8));
-        int16_t speed       = static_cast<int16_t>(_received_data[5] | (_received_data[6] << 8));
-        bool laser_enabled  = (_received_data[7] != 0);
-
-        mclog::info("yaw: {}, pitch: {}, speed: {}, laser: {}", yaw_angle, pitch_angle, speed, laser_enabled);
-
-        auto& motion = GetStackChan().motion();
-        motion.moveWithSpeed(yaw_angle, pitch_angle, speed);
-
-        GetHAL().setLaserEnabled(laser_enabled);
-    }
+    local::applyEspNowControlPacket(_received_data, _receiver_id, [](const local::EspNowControlPose& pose) {
+        GetStackChan().motion().moveWithSpeed(pose.yaw, pose.pitch, pose.speed);
+        GetHAL().setLaserEnabled(pose.laser);
+    });
 
     _received_data.clear();
 }
@@ -256,5 +235,5 @@ void AppEspnowControl::onClose()
     view::destroy_home_indicator();
     view::destroy_status_bar();
 
-    GetHAL().requestWarmReboot(2);
+    GetHAL().requestWarmReboot("ESPNOW.REMOTE");
 }

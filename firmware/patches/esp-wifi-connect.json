@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "component": "managed_components/78__esp-wifi-connect",
+  "version": "3.1.2",
+  "license": "MIT",
+  "notice": "LICENSES/texts/35a84cad890590c2aa8421fa48db5d2fb7e5fc938f8f31ca00dc349eb5a3d5b7.txt",
+  "patch_sha256": "b27e061bc15197d2e02b32397fd0e30e55238270f30aeee13be60a870188630a",
+  "files": [
+    {
+      "source": "wifi_configuration_ap.cc",
+      "output": "wifi_configuration_ap.cc",
+      "source_sha256": "05e2d1fe46ce57de433078f287accfc06df771c326a23b9eac894d6657a465c3",
+      "output_sha256": "733d9c02d96110ebfe1cbf09b452d9b404d09cf6c800a0d5d8f6f38390035536"
+    },
+    {
+      "source": "include/wifi_configuration_ap.h",
+      "output": "include/wifi_configuration_ap.h",
+      "source_sha256": "c22f4973abb133e9ea811b662a4ec384f62bc0cebb5501375dd462b57635560e",
+      "output_sha256": "4c1e067fccb658001f012f169c1ab3e611ffd34d10b1ea60811c8d7396840c27"
+    },
+    {
+      "source": "assets/wifi_configuration.html",
+      "output": "assets/wifi_local.html",
+      "source_sha256": "f693d644fa692994526daab366a47bc1aaf4ae8810101f7be36c5bc9462ab9cd",
+      "output_sha256": "8a60808b4adb11b0ddad0dae68d6beb35ce604303db7b620d78ceaa988692073"
+    }
+  ]
+}

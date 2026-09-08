@@ -181,7 +181,7 @@ StackChanAvatarDisplay::StackChanAvatarDisplay(esp_lcd_panel_io_handle_t panel_i
     esp_timer_create(&preview_timer_args, &preview_timer_);
 
     // Create boot logo label if not warm boot
-    if (GetHAL().getWarmRebootTarget() < 0) {
+    if (GetHAL().getWarmRebootTarget().empty()) {
         ESP_LOGI(TAG, "Create boot logo label");
         Lock();
         {
@@ -254,18 +254,6 @@ void StackChanAvatarDisplay::SetupUI()
 
     auto avatar = std::make_unique<DefaultAvatar>();
     avatar->init(lv_screen_active());
-    avatar->getPanel()->onClick().connect([]() {
-        static uint32_t last_toggle_tick = 0;
-        const uint32_t now               = GetHAL().millis();
-        if (last_toggle_tick != 0 && now - last_toggle_tick < 2000) {
-            return;
-        }
-
-        if (hal_bridge::is_xiaozhi_ready()) {
-            last_toggle_tick = now;
-            hal_bridge::toggle_xiaozhi_chat_state();
-        }
-    });
 
     stackchan.attachAvatar(std::move(avatar));
     stackchan.addModifier(std::make_unique<BreathModifier>());
@@ -280,14 +268,7 @@ void StackChanAvatarDisplay::SetupUI()
 
     // GetHAL().startStackChanAutoUpdate(24);
 
-    auto config        = hal_bridge::get_xiaozhi_config();
-    Settings motionSettings("motion", false);
-    idle_motion_level_ = motionSettings.GetInt(
-        "idle_level", config.idleRandomMovementLevel
-    );
-    if (idle_motion_level_ > 3) {
-        idle_motion_level_ = 0;
-    }
+    idle_motion_level_ = hal_bridge::get_device_config().idleRandomMovementLevel;
 
     ESP_LOGI(TAG, "Avatar created and started");
 }
@@ -369,7 +350,6 @@ void StackChanAvatarDisplay::SetEmotion(const char* emotion)
 
         // Return to default pose
         auto& motion = GetStackChan().motion();
-        motion.pitchServo().moveWithSpeed(0, 80);
 
     } else if (strcmp(emotion, "doubtful") == 0) {
         avatar.setEmotion(Emotion::Doubt);
@@ -490,17 +470,6 @@ void StackChanAvatarDisplay::SetTheme(Theme* theme)
 }
 
 #include <hal/board/hal_bridge.h>
-static bool _is_xiaozhi_ready = false;
-static bool _is_xiaozhi_idle  = false;
-bool hal_bridge::is_xiaozhi_ready()
-{
-    return _is_xiaozhi_ready;
-}
-bool hal_bridge::is_xiaozhi_idle()
-{
-    return _is_xiaozhi_idle;
-}
-
 void StackChanAvatarDisplay::SetStatus(const char* status)
 {
     // ESP_LOGE(TAG, "SetStatus: %s", status);
@@ -528,7 +497,6 @@ void StackChanAvatarDisplay::SetStatus(const char* status)
         GetHAL().refreshRgb();
 
     } else if (strcmp(status, Lang::Strings::STANDBY) == 0) {
-        _is_xiaozhi_ready = true;
 
         is_idle = true;
 
@@ -556,7 +524,6 @@ void StackChanAvatarDisplay::SetStatus(const char* status)
             idle_expression_modifier_id_ = stackchan.addModifier(std::make_unique<IdleExpressionModifier>());
         }
 
-        _is_xiaozhi_idle = true;
     } else {
         // Stop idle motion
         ESP_LOGW(TAG, "Stop idle motion");
@@ -573,7 +540,6 @@ void StackChanAvatarDisplay::SetStatus(const char* status)
         //     motion.yawServo().moveWithSpeed(0, 350);
         // }
 
-        _is_xiaozhi_idle = false;
     }
 
     // Clear sleep state

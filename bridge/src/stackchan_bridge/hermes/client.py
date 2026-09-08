@@ -203,6 +203,7 @@ class HermesClient:
             "GET",
             path,
             headers=self._authorization_headers(),
+            follow_redirects=False,
         ) as response:
             _raise_for_status(response)
             body = bytearray()
@@ -296,6 +297,7 @@ class HermesClient:
                     self._config.responses_path,
                     headers=headers,
                     json=body,
+                    follow_redirects=False,
                 ) as response:
                     _raise_for_status(response)
                     completed = False

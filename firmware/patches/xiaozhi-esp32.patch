@@ -1,87 +1,160 @@
-diff --git a/main/application.cc b/main/application.cc
-index d69d43d..3b6f07e 100644
---- a/main/application.cc
-+++ b/main/application.cc
-@@ -610,33 +610,36 @@ void Application::InitializeProtocol() {
- }
- 
- void Application::ShowActivationCode(const std::string& code, const std::string& message) {
--    struct digit_sound {
--        char digit;
--        const std::string_view& sound;
--    };
--    static const std::array<digit_sound, 10> digit_sounds{{
--        digit_sound{'0', Lang::Sounds::OGG_0},
--        digit_sound{'1', Lang::Sounds::OGG_1}, 
--        digit_sound{'2', Lang::Sounds::OGG_2},
--        digit_sound{'3', Lang::Sounds::OGG_3},
--        digit_sound{'4', Lang::Sounds::OGG_4},
--        digit_sound{'5', Lang::Sounds::OGG_5},
--        digit_sound{'6', Lang::Sounds::OGG_6},
--        digit_sound{'7', Lang::Sounds::OGG_7},
--        digit_sound{'8', Lang::Sounds::OGG_8},
--        digit_sound{'9', Lang::Sounds::OGG_9}
--    }};
+diff --git a/main/Kconfig.projbuild b/main/Kconfig.projbuild
+index b4119fc..c69b484 100644
+--- a/main/Kconfig.projbuild
++++ b/main/Kconfig.projbuild
+@@ -1,10 +1,4 @@
+-menu "Xiaozhi Assistant"
 -
--    // This sentence uses 9KB of SRAM, so we need to wait for it to finish
--    Alert(Lang::Strings::ACTIVATION, message.c_str(), "link", Lang::Sounds::OGG_ACTIVATION);
--
--    for (const auto& digit : code) {
--        auto it = std::find_if(digit_sounds.begin(), digit_sounds.end(),
--            [digit](const digit_sound& ds) { return ds.digit == digit; });
--        if (it != digit_sounds.end()) {
--            audio_service_.PlaySound(it->sound);
--        }
--    }
-+    // struct digit_sound {
-+    //     char digit;
-+    //     const std::string_view& sound;
-+    // };
-+    // static const std::array<digit_sound, 10> digit_sounds{{
-+    //     digit_sound{'0', Lang::Sounds::OGG_0},
-+    //     digit_sound{'1', Lang::Sounds::OGG_1}, 
-+    //     digit_sound{'2', Lang::Sounds::OGG_2},
-+    //     digit_sound{'3', Lang::Sounds::OGG_3},
-+    //     digit_sound{'4', Lang::Sounds::OGG_4},
-+    //     digit_sound{'5', Lang::Sounds::OGG_5},
-+    //     digit_sound{'6', Lang::Sounds::OGG_6},
-+    //     digit_sound{'7', Lang::Sounds::OGG_7},
-+    //     digit_sound{'8', Lang::Sounds::OGG_8},
-+    //     digit_sound{'9', Lang::Sounds::OGG_9}
-+    // }};
-+
-+    // // This sentence uses 9KB of SRAM, so we need to wait for it to finish
-+    // Alert(Lang::Strings::ACTIVATION, message.c_str(), "link", Lang::Sounds::OGG_ACTIVATION);
-+
-+    // for (const auto& digit : code) {
-+    //     auto it = std::find_if(digit_sounds.begin(), digit_sounds.end(),
-+    //         [digit](const digit_sound& ds) { return ds.digit == digit; });
-+    //     if (it != digit_sounds.end()) {
-+    //         audio_service_.PlaySound(it->sound);
-+    //     }
-+    // }
-+
-+    auto display = Board::GetInstance().GetDisplay();
-+    display->SetChatMessage("system", "Please bind and set up in the mobile app.");
- }
+-config OTA_URL
+-    string "Default OTA URL"
+-    default "https://api.tenclass.net/xiaozhi/ota/"
+-    help
+-        The application will access this URL to check for new firmwares and server address.
++menu "Local Hardware and Assets"
  
- void Application::Alert(const char* status, const char* message, const char* emotion, const std::string_view& sound) {
+ choice
+     prompt "Flash Assets"
+@@ -700,20 +694,6 @@ choice WAKE_WORD_TYPE
+ 
+ endchoice
+ 
+-config CUSTOM_WAKE_WORD
+-    string "Custom Wake Word"
+-    default "xiao tu dou"
+-    depends on USE_CUSTOM_WAKE_WORD
+-    help
+-        Custom Wake Word, use pinyin for Chinese, separated by spaces
+-
+-config CUSTOM_WAKE_WORD_DISPLAY
+-    string "Custom Wake Word Display"
+-    default "小土豆"
+-    depends on USE_CUSTOM_WAKE_WORD
+-    help
+-        Greeting sent to the server after wake word detection
+-
+ config CUSTOM_WAKE_WORD_THRESHOLD
+     int "Custom Wake Word Threshold (%)"
+     default 20
+@@ -722,13 +702,6 @@ config CUSTOM_WAKE_WORD_THRESHOLD
+     help
+         Custom Wake Word Threshold, range 1-99, the smaller the more sensitive, default 20
+ 
+-config SEND_WAKE_WORD_DATA
+-    bool "Send Wake Word Data"
+-    default y
+-    depends on USE_AFE_WAKE_WORD || USE_CUSTOM_WAKE_WORD
+-    help
+-        Send wake word data to the server as the first message of the conversation and wait for response
+-
+ config WAKE_WORD_DETECTION_IN_LISTENING
+     bool "Enable Wake Word Detection in Listening Mode"
+     default n
+@@ -759,54 +732,10 @@ config USE_DEVICE_AEC
+     help
+         To work properly, device-side AEC requires a clean output reference path from the speaker signal and physical acoustic isolation between the microphone and speaker.
+ 
+-config USE_SERVER_AEC
+-    bool "Enable Server-Side AEC (Unstable)"
+-    default n
+-    depends on USE_AUDIO_PROCESSOR
+-    help
+-        To work perperly, server-side AEC requires server support
+-
+-config USE_AUDIO_DEBUGGER
+-    bool "Enable Audio Debugger"
+-    default n
+-    help
+-        Enable audio debugger, send audio data through UDP to the host machine
+-
+-menu "WiFi Configuration Method"
+-    help
+-        WiFi Configuration Method Selection
+-    config USE_HOTSPOT_WIFI_PROVISIONING
+-        bool "Hotspot"
+-        default y
+-        help
+-            Use WiFi Hotspot to transmit WiFi configuration data
+-    config USE_ACOUSTIC_WIFI_PROVISIONING
+-        bool "Acoustic"
+-        help
+-            Use audio signal to transmit WiFi configuration data
+-
+-    config USE_ESP_BLUFI_WIFI_PROVISIONING
+-        bool "Esp Blufi"
+-        help
+-            Use esp blufi protocol to transmit WiFi configuration data
+-        select BT_ENABLED
+-        select BT_BLE_42_FEATURES_SUPPORTED
+-        select BT_BLE_BLUFI_ENABLE
+-        select MBEDTLS_DHM_C
+-endmenu
+-
+-config AUDIO_DEBUG_UDP_SERVER
+-    string "Audio Debug UDP Server Address"
+-    default "192.168.2.100:8000"
+-    depends on USE_AUDIO_DEBUGGER
+-    help
+-        UDP server address, format: IP:PORT, used to receive audio debugging data
++config USE_HOTSPOT_WIFI_PROVISIONING
++    bool
++    default y
+ 
+-config RECEIVE_CUSTOM_MESSAGE
+-    bool "Enable Custom Message Reception"
+-    default n
+-    help
+-        Enable custom message reception, allow the device to receive custom messages from the server (preferably through the MQTT protocol)
+ 
+ menu "Camera Configuration"
+     depends on !IDF_TARGET_ESP32
 diff --git a/main/assets.cc b/main/assets.cc
-index ad61944..6b84daf 100644
+index ad61944..ab3519f 100644
 --- a/main/assets.cc
 +++ b/main/assets.cc
-@@ -3,8 +3,8 @@
+@@ -1,12 +1,12 @@
+ #include "assets.h"
+ #include "board.h"
  #include "display.h"
- #include "application.h"
+-#include "application.h"
++#include <hal/board/hal_bridge.h>
++#include "audio/audio_service.h"
  #include "lvgl_theme.h"
 -#include "emote_display.h"
 -#include "expression_emote.h"
 +// #include "emote_display.h"
 +// #include "expression_emote.h"
  #if HAVE_LVGL
- #include "display/lcd_display.h"
+-#include "display/lcd_display.h"
  #include <spi_flash_mmap.h>
-@@ -356,72 +356,72 @@ bool Assets::LvglStrategy::Apply(Assets* assets) {
+ #endif
+ 
+@@ -98,8 +98,7 @@ bool Assets::LoadSrmodelsFromIndex(Assets* assets, cJSON* root) {
+             }
+             assets->models_list_ = srmodel_load(static_cast<uint8_t*>(ptr));
+             if (assets->models_list_ != nullptr) {
+-                auto& app = Application::GetInstance();
+-                app.GetAudioService().SetModelsList(assets->models_list_);
++                hal_bridge::local_audio().SetModelsList(assets->models_list_);
+                 if (need_delete_root) {
+                     cJSON_Delete(root);
+                 }
+@@ -340,221 +339,74 @@ bool Assets::LvglStrategy::Apply(Assets* assets) {
+         display->SetTheme(current_theme);
+     }
+ 
+-    // Parse hide_subtitle configuration
+-    cJSON* hide_subtitle = cJSON_GetObjectItem(root, "hide_subtitle");
+-    if (cJSON_IsBool(hide_subtitle)) {
+-        bool hide = cJSON_IsTrue(hide_subtitle);
+-        auto lcd_display = dynamic_cast<LcdDisplay*>(display);
+-        if (lcd_display != nullptr) {
+-            lcd_display->SetHideSubtitle(hide);
+-            ESP_LOGI(TAG, "Set hide_subtitle to %s", hide ? "true" : "false");
+-        }
+-    }
+-    
+     cJSON_Delete(root);
+     return true;
  }
  #endif // HAVE_LVGL
  
@@ -151,6 +224,142 @@ index ad61944..6b84daf 100644
 -    }
 -    return true;
 -}
+-
+-bool Assets::Download(std::string url, std::function<void(int progress, size_t speed)> progress_callback) {
+-    ESP_LOGI(TAG, "Downloading new version of assets from %s", url.c_str());
+-
+-    // 取消当前资源分区的内存映射
+-    UnApplyPartition();
+-
+-    // 下载新的资源文件
+-    auto network = Board::GetInstance().GetNetwork();
+-    auto http = network->CreateHttp(0);
+-    
+-    if (!http->Open("GET", url)) {
+-        ESP_LOGE(TAG, "Failed to open HTTP connection");
+-        return false;
+-    }
+-
+-    if (http->GetStatusCode() != 200) {
+-        ESP_LOGE(TAG, "Failed to get assets, status code: %d", http->GetStatusCode());
+-        return false;
+-    }
+-
+-    size_t content_length = http->GetBodyLength();
+-    if (content_length == 0) {
+-        ESP_LOGE(TAG, "Failed to get content length");
+-        return false;
+-    }
+-
+-    if (content_length > partition_->size) {
+-        ESP_LOGE(TAG, "Assets file size (%u) is larger than partition size (%lu)", content_length, partition_->size);
+-        return false;
+-    }
+-
+-    // 定义扇区大小为4KB（ESP32的标准扇区大小）
+-    const size_t SECTOR_SIZE = esp_partition_get_main_flash_sector_size();
+-    
+-    // 计算需要擦除的扇区数量
+-    size_t sectors_to_erase = (content_length + SECTOR_SIZE - 1) / SECTOR_SIZE; // 向上取整
+-    size_t total_erase_size = sectors_to_erase * SECTOR_SIZE;
+-    
+-    ESP_LOGI(TAG, "Sector size: %u, content length: %u, sectors to erase: %u, total erase size: %u", 
+-             SECTOR_SIZE, content_length, sectors_to_erase, total_erase_size);
+-    
+-    // 写入新的资源文件到分区，一边erase一边写入
+-    char* buffer = (char*)heap_caps_malloc(SECTOR_SIZE, MALLOC_CAP_INTERNAL);
+-    if (buffer == nullptr) {
+-        ESP_LOGE(TAG, "Failed to allocate buffer");
+-        return false;
+-    }
+-    size_t total_written = 0;
+-    size_t recent_written = 0;
+-    size_t current_sector = 0;
+-    auto last_calc_time = esp_timer_get_time();
+-    
+-    while (true) {
+-        int ret = http->Read(buffer, SECTOR_SIZE);
+-        if (ret < 0) {
+-            ESP_LOGE(TAG, "Failed to read HTTP data: %s", esp_err_to_name(ret));
+-            heap_caps_free(buffer);
+-            return false;
+-        }
+-
+-        if (ret == 0) {
+-            break;
+-        }
+-
+-        // 检查是否需要擦除新的扇区
+-        size_t write_end_offset = total_written + ret;
+-        size_t needed_sectors = (write_end_offset + SECTOR_SIZE - 1) / SECTOR_SIZE;
+-        
+-        // 擦除需要的新扇区
+-        while (current_sector < needed_sectors) {
+-            size_t sector_start = current_sector * SECTOR_SIZE;
+-            size_t sector_end = (current_sector + 1) * SECTOR_SIZE;
+-            
+-            // 确保擦除范围不超过分区大小
+-            if (sector_end > partition_->size) {
+-                ESP_LOGE(TAG, "Sector end (%u) exceeds partition size (%lu)", sector_end, partition_->size);
+-                heap_caps_free(buffer);
+-                return false;
+-            }
+-            
+-            ESP_LOGD(TAG, "Erasing sector %u (offset: %u, size: %u)", current_sector, sector_start, SECTOR_SIZE);
+-            esp_err_t err = esp_partition_erase_range(partition_, sector_start, SECTOR_SIZE);
+-            if (err != ESP_OK) {
+-                ESP_LOGE(TAG, "Failed to erase sector %u at offset %u: %s", current_sector, sector_start, esp_err_to_name(err));
+-                heap_caps_free(buffer);
+-                return false;
+-            }
+-            
+-            current_sector++;
+-        }
+-
+-        // 写入数据到分区
+-        esp_err_t err = esp_partition_write(partition_, total_written, buffer, ret);
+-        if (err != ESP_OK) {
+-            ESP_LOGE(TAG, "Failed to write to assets partition at offset %u: %s", total_written, esp_err_to_name(err));
+-            heap_caps_free(buffer);
+-            return false;
+-        }
+-
+-        total_written += ret;
+-        recent_written += ret;
+-
+-        // 计算进度和速度
+-        if (esp_timer_get_time() - last_calc_time >= 1000000 || total_written == content_length || ret == 0) {
+-            size_t progress = total_written * 100 / content_length;
+-            size_t speed = recent_written; // 每秒的字节数
+-            ESP_LOGI(TAG, "Progress: %u%% (%u/%u), Speed: %u B/s, Sectors erased: %u", 
+-                     progress, total_written, content_length, speed, current_sector);
+-            if (progress_callback) {
+-                progress_callback(progress, speed);
+-            }
+-            last_calc_time = esp_timer_get_time();
+-            recent_written = 0; // 重置最近写入的字节数
+-        }
+-    }
+-    
+-    http->Close();
+-    heap_caps_free(buffer);
+-
+-    if (total_written != content_length) {
+-        ESP_LOGE(TAG, "Downloaded size (%u) does not match expected size (%u)", total_written, content_length);
+-        return false;
+-    }
+-
+-    ESP_LOGI(TAG, "Assets download completed, total written: %u bytes, total sectors erased: %u", 
+-             total_written, current_sector);
+-
+-    // 重新初始化资源分区
+-    if (!InitializePartition()) {
+-        ESP_LOGE(TAG, "Failed to re-initialize assets partition");
+-        return false;
+-    }
+-
+-    return true;
+-}
 +// bool Assets::EmoteStrategy::InitializePartition(Assets* assets) {
 +//     assets->partition_valid_ = false;
 +
@@ -217,14 +426,19 @@ index ad61944..6b84daf 100644
 +//     }
 +//     return true;
 +// }
- 
- bool Assets::Download(std::string url, std::function<void(int progress, size_t speed)> progress_callback) {
-     ESP_LOGI(TAG, "Downloading new version of assets from %s", url.c_str());
 diff --git a/main/assets.h b/main/assets.h
-index 3692e0c..7bfbc5c 100644
+index 3692e0c..bef5714 100644
 --- a/main/assets.h
 +++ b/main/assets.h
-@@ -68,13 +68,13 @@ private:
+@@ -28,7 +28,6 @@ public:
+     }
+     ~Assets();
+ 
+-    bool Download(std::string url, std::function<void(int progress, size_t speed)> progress_callback);
+     bool Apply();
+     bool GetAssetData(const std::string& name, void*& ptr, size_t& size);
+ 
+@@ -68,13 +67,13 @@ private:
          bool checksum_valid_ = false;
      };
      
@@ -246,7 +460,7 @@ index 3692e0c..7bfbc5c 100644
      // Strategy instance
      std::unique_ptr<AssetStrategy> strategy_;
 diff --git a/main/audio/audio_service.cc b/main/audio/audio_service.cc
-index 350ac58..497ca34 100644
+index 350ac58..a6d8314 100644
 --- a/main/audio/audio_service.cc
 +++ b/main/audio/audio_service.cc
 @@ -2,6 +2,8 @@
@@ -258,7 +472,21 @@ index 350ac58..497ca34 100644
  #define RATE_CVT_CFG(_src_rate, _dest_rate, _channel)        \
      (esp_ae_rate_cvt_cfg_t)                                  \
      {                                                        \
-@@ -297,6 +299,7 @@ void AudioService::AudioOutputTask() {
+@@ -216,13 +218,6 @@ bool AudioService::ReadAudioData(std::vector<int16_t>& data, int sample_rate, in
+     last_input_time_ = std::chrono::steady_clock::now();
+     debug_statistics_.input_count++;
+ 
+-#if CONFIG_USE_AUDIO_DEBUGGER
+-    // 音频调试：发送原始音频数据
+-    if (audio_debugger_ == nullptr) {
+-        audio_debugger_ = std::make_unique<AudioDebugger>();
+-    }
+-    audio_debugger_->Feed(data);
+-#endif
+ 
+     return true;
+ }
+@@ -297,6 +292,7 @@ void AudioService::AudioOutputTask() {
  
          auto task = std::move(audio_playback_queue_.front());
          audio_playback_queue_.pop_front();
@@ -266,7 +494,7 @@ index 350ac58..497ca34 100644
          audio_queue_cv_.notify_all();
          lock.unlock();
  
-@@ -312,10 +315,13 @@ void AudioService::AudioOutputTask() {
+@@ -312,10 +308,13 @@ void AudioService::AudioOutputTask() {
          last_output_time_ = std::chrono::steady_clock::now();
          debug_statistics_.playback_count++;
  
@@ -281,7 +509,7 @@ index 350ac58..497ca34 100644
              timestamp_queue_.push_back(task->timestamp);
          }
  #endif
-@@ -340,6 +346,7 @@ void AudioService::OpusCodecTask() {
+@@ -340,6 +339,7 @@ void AudioService::OpusCodecTask() {
          if (!audio_decode_queue_.empty() && audio_playback_queue_.size() < MAX_PLAYBACK_TASKS_IN_QUEUE) {
              auto packet = std::move(audio_decode_queue_.front());
              audio_decode_queue_.pop_front();
@@ -289,7 +517,7 @@ index 350ac58..497ca34 100644
              audio_queue_cv_.notify_all();
              lock.unlock();
  
-@@ -377,17 +384,35 @@ void AudioService::OpusCodecTask() {
+@@ -377,17 +377,35 @@ void AudioService::OpusCodecTask() {
                          resampled.resize(actual_output);
                          task->pcm = std::move(resampled);
                      }
@@ -326,7 +554,7 @@ index 350ac58..497ca34 100644
              }
              debug_statistics_.decode_count++;
          }
-@@ -655,13 +680,21 @@ void AudioService::PlaySound(const std::string_view& ogg) {
+@@ -655,13 +673,21 @@ void AudioService::PlaySound(const std::string_view& ogg) {
  
  bool AudioService::IsIdle() {
      std::lock_guard<std::mutex> lock(audio_queue_mutex_);
@@ -350,7 +578,7 @@ index 350ac58..497ca34 100644
      });
  }
  
-@@ -672,6 +705,7 @@ void AudioService::ResetDecoder() {
+@@ -672,6 +698,7 @@ void AudioService::ResetDecoder() {
          esp_opus_dec_reset(opus_decoder_);
      }
      decoder_lock.unlock();
@@ -358,7 +586,7 @@ index 350ac58..497ca34 100644
      timestamp_queue_.clear();
      audio_decode_queue_.clear();
      audio_playback_queue_.clear();
-@@ -679,6 +713,12 @@ void AudioService::ResetDecoder() {
+@@ -679,6 +706,12 @@ void AudioService::ResetDecoder() {
      audio_queue_cv_.notify_all();
  }
  
@@ -372,7 +600,7 @@ index 350ac58..497ca34 100644
      auto now = std::chrono::steady_clock::now();
      auto input_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_input_time_).count();
 diff --git a/main/audio/audio_service.h b/main/audio/audio_service.h
-index 99db546..d63cf59 100644
+index 99db546..85c4bb5 100644
 --- a/main/audio/audio_service.h
 +++ b/main/audio/audio_service.h
 @@ -12,6 +12,7 @@
@@ -383,7 +611,26 @@ index 99db546..d63cf59 100644
  #include "esp_audio_enc.h"
  #include "esp_opus_enc.h"
  #include "esp_opus_dec.h"
-@@ -80,6 +81,7 @@ struct AudioServiceCallbacks {
+@@ -20,9 +21,16 @@
+ 
+ #include "audio_codec.h"
+ #include "audio_processor.h"
+-#include "processors/audio_debugger.h"
+ #include "wake_word.h"
+-#include "protocol.h"
++#include <cstdint>
++#include <vector>
++
++struct AudioStreamPacket {
++    int sample_rate = 0;
++    int frame_duration = 0;
++    uint32_t timestamp = 0;
++    std::vector<uint8_t> payload;
++};
+ #include "ogg_demuxer.h"
+ 
+ /*
+@@ -80,6 +88,7 @@ struct AudioServiceCallbacks {
      std::function<void(const std::string&)> on_wake_word_detected;
      std::function<void(bool)> on_vad_change;
      std::function<void(void)> on_audio_testing_queue_full;
@@ -391,7 +638,7 @@ index 99db546..d63cf59 100644
  };
  
  
-@@ -132,6 +134,7 @@ public:
+@@ -132,6 +141,7 @@ public:
      void PlaySound(const std::string_view& sound);
      bool ReadAudioData(std::vector<int16_t>& data, int sample_rate, int samples);
      void ResetDecoder();
@@ -399,7 +646,15 @@ index 99db546..d63cf59 100644
      void SetModelsList(srmodel_list_t* models_list);
  
  private:
-@@ -155,6 +158,7 @@ private:
+@@ -139,7 +149,6 @@ private:
+     AudioServiceCallbacks callbacks_;
+     std::unique_ptr<AudioProcessor> audio_processor_;
+     std::unique_ptr<WakeWord> wake_word_;
+-    std::unique_ptr<AudioDebugger> audio_debugger_;
+     void* opus_encoder_ = nullptr;
+     void* opus_decoder_ = nullptr;
+     std::mutex decoder_mutex_;
+@@ -155,6 +164,7 @@ private:
      int decoder_sample_rate_ = 0;
      int decoder_duration_ms_ = OPUS_FRAME_DURATION_MS;
      int decoder_frame_size_ = 0;
@@ -407,7 +662,7 @@ index 99db546..d63cf59 100644
      DebugStatistics debug_statistics_;
      srmodel_list_t* models_list_ = nullptr;
  
-@@ -171,6 +175,7 @@ private:
+@@ -171,6 +181,7 @@ private:
      std::deque<std::unique_ptr<AudioStreamPacket>> audio_testing_queue_;
      std::deque<std::unique_ptr<AudioTask>> audio_encode_queue_;
      std::deque<std::unique_ptr<AudioTask>> audio_playback_queue_;
@@ -415,13 +670,175 @@ index 99db546..d63cf59 100644
      // For server AEC
      std::deque<uint32_t> timestamp_queue_;
  
-@@ -192,4 +197,4 @@ private:
+@@ -192,4 +203,4 @@ private:
      void CheckAndUpdateAudioPowerState();
  };
  
 -#endif
 \ No newline at end of file
 +#endif
+diff --git a/main/boards/common/board.cc b/main/boards/common/board.cc
+index 8a2f85b..2443935 100644
+--- a/main/boards/common/board.cc
++++ b/main/boards/common/board.cc
+@@ -2,11 +2,9 @@
+ #include "system_info.h"
+ #include "settings.h"
+ #include "display/display.h"
+-#include "display/oled_display.h"
+ #include "assets/lang_config.h"
+ 
+ #include <esp_log.h>
+-#include <esp_ota_ops.h>
+ #include <esp_chip_info.h>
+ #include <esp_random.h>
+ 
+@@ -66,113 +64,3 @@ Led* Board::GetLed() {
+     static NoLed led;
+     return &led;
+ }
+-
+-std::string Board::GetSystemInfoJson() {
+-    /* 
+-        {
+-            "version": 2,
+-            "flash_size": 4194304,
+-            "psram_size": 0,
+-            "minimum_free_heap_size": 123456,
+-            "mac_address": "00:00:00:00:00:00",
+-            "uuid": "00000000-0000-0000-0000-000000000000",
+-            "chip_model_name": "esp32s3",
+-            "chip_info": {
+-                "model": 1,
+-                "cores": 2,
+-                "revision": 0,
+-                "features": 0
+-            },
+-            "application": {
+-                "name": "my-app",
+-                "version": "1.0.0",
+-                "compile_time": "2021-01-01T00:00:00Z"
+-                "idf_version": "4.2-dev"
+-                "elf_sha256": ""
+-            },
+-            "partition_table": [
+-                "app": {
+-                    "label": "app",
+-                    "type": 1,
+-                    "subtype": 2,
+-                    "address": 0x10000,
+-                    "size": 0x100000
+-                }
+-            ],
+-            "ota": {
+-                "label": "ota_0"
+-            },
+-            "board": {
+-                ...
+-            }
+-        }
+-    */
+-    std::string json = R"({"version":2,"language":")" + std::string(Lang::CODE) + R"(",)";
+-    json += R"("flash_size":)" + std::to_string(SystemInfo::GetFlashSize()) + R"(,)";
+-    json += R"("minimum_free_heap_size":")" + std::to_string(SystemInfo::GetMinimumFreeHeapSize()) + R"(",)";
+-    json += R"("mac_address":")" + SystemInfo::GetMacAddress() + R"(",)";
+-    json += R"("uuid":")" + uuid_ + R"(",)";
+-    json += R"("chip_model_name":")" + SystemInfo::GetChipModelName() + R"(",)";
+-
+-    esp_chip_info_t chip_info;
+-    esp_chip_info(&chip_info);
+-    json += R"("chip_info":{)";
+-    json += R"("model":)" + std::to_string(chip_info.model) + R"(,)";
+-    json += R"("cores":)" + std::to_string(chip_info.cores) + R"(,)";
+-    json += R"("revision":)" + std::to_string(chip_info.revision) + R"(,)";
+-    json += R"("features":)" + std::to_string(chip_info.features) + R"(},)";
+-
+-    auto app_desc = esp_app_get_description();
+-    json += R"("application":{)";
+-    json += R"("name":")" + std::string(app_desc->project_name) + R"(",)";
+-    json += R"("version":")" + std::string(app_desc->version) + R"(",)";
+-    json += R"("compile_time":")" + std::string(app_desc->date) + R"(T)" + std::string(app_desc->time) + R"(Z",)";
+-    json += R"("idf_version":")" + std::string(app_desc->idf_ver) + R"(",)";
+-    char sha256_str[65];
+-    for (int i = 0; i < 32; i++) {
+-        snprintf(sha256_str + i * 2, sizeof(sha256_str) - i * 2, "%02x", app_desc->app_elf_sha256[i]);
+-    }
+-    json += R"("elf_sha256":")" + std::string(sha256_str) + R"(")";
+-    json += R"(},)";
+-
+-    json += R"("partition_table": [)";
+-    esp_partition_iterator_t it = esp_partition_find(ESP_PARTITION_TYPE_ANY, ESP_PARTITION_SUBTYPE_ANY, NULL);
+-    while (it) {
+-        const esp_partition_t *partition = esp_partition_get(it);
+-        json += R"({)";
+-        json += R"("label":")" + std::string(partition->label) + R"(",)";
+-        json += R"("type":)" + std::to_string(partition->type) + R"(,)";
+-        json += R"("subtype":)" + std::to_string(partition->subtype) + R"(,)";
+-        json += R"("address":)" + std::to_string(partition->address) + R"(,)";
+-        json += R"("size":)" + std::to_string(partition->size) + R"(},)";;
+-        it = esp_partition_next(it);
+-    }
+-    json.pop_back(); // Remove the last comma
+-    json += R"(],)";
+-
+-    json += R"("ota":{)";
+-    auto ota_partition = esp_ota_get_running_partition();
+-    json += R"("label":")" + std::string(ota_partition->label) + R"(")";
+-    json += R"(},)";
+-
+-    // Append display info
+-    auto display = GetDisplay();
+-    if (display) {
+-        json += R"("display":{)";
+-        if (dynamic_cast<OledDisplay*>(display)) {
+-            json += R"("monochrome":)" + std::string("true") + R"(,)";
+-        } else {
+-            json += R"("monochrome":)" + std::string("false") + R"(,)";
+-        }
+-        json += R"("width":)" + std::to_string(display->width()) + R"(,)";
+-        json += R"("height":)" + std::to_string(display->height()) + R"(,)";
+-        json.pop_back(); // Remove the last comma
+-    }
+-    json += R"(},)";
+-
+-    json += R"("board":)" + GetBoardJson();
+-
+-    // Close the JSON object
+-    json += R"(})";
+-    return json;
+-}
+diff --git a/main/boards/common/board.h b/main/boards/common/board.h
+index 19d3f2f..0dd02f4 100644
+--- a/main/boards/common/board.h
++++ b/main/boards/common/board.h
+@@ -78,10 +78,7 @@ public:
+     virtual void SetNetworkEventCallback(NetworkEventCallback callback) { (void)callback; }
+     virtual const char* GetNetworkStateIcon() = 0;
+     virtual bool GetBatteryLevel(int &level, bool& charging, bool& discharging);
+-    virtual std::string GetSystemInfoJson();
+     virtual void SetPowerSaveLevel(PowerSaveLevel level) = 0;
+-    virtual std::string GetBoardJson() = 0;
+-    virtual std::string GetDeviceStatusJson() = 0;
+ };
+ 
+ #define DECLARE_BOARD(BOARD_CLASS_NAME) \
+diff --git a/main/boards/common/camera.h b/main/boards/common/camera.h
+index 09a6a3e..174de74 100644
+--- a/main/boards/common/camera.h
++++ b/main/boards/common/camera.h
+@@ -5,12 +5,10 @@
+ 
+ class Camera {
+ public:
+-    virtual void SetExplainUrl(const std::string& url, const std::string& token) = 0;
+     virtual bool Capture() = 0;
+     virtual bool SetHMirror(bool enabled) = 0;
+     virtual bool SetVFlip(bool enabled) = 0;
+     virtual bool SetSwapBytes(bool enabled) { return false; }  // Optional, default no-op
+-    virtual std::string Explain(const std::string& question) = 0;
+ };
+ 
+ #endif // CAMERA_H
 diff --git a/main/boards/common/i2c_device.cc b/main/boards/common/i2c_device.cc
 index 835997d..ea50d51 100644
 --- a/main/boards/common/i2c_device.cc
@@ -448,3 +865,424 @@ index 7bc917b..874b137 100644
  };
  
  #endif // I2C_DEVICE_H
+diff --git a/main/boards/common/wifi_board.cc b/main/boards/common/wifi_board.cc
+index 377685b..e76f8da 100644
+--- a/main/boards/common/wifi_board.cc
++++ b/main/boards/common/wifi_board.cc
+@@ -1,7 +1,7 @@
+ #include "wifi_board.h"
+ 
+ #include "display.h"
+-#include "application.h"
++#include "audio_codec.h"
+ #include "system_info.h"
+ #include "settings.h"
+ #include "assets/lang_config.h"
+@@ -16,10 +16,6 @@
+ #include <wifi_manager.h>
+ #include <wifi_station.h>
+ #include <ssid_manager.h>
+-#include "afsk_demod.h"
+-#ifdef CONFIG_USE_ESP_BLUFI_WIFI_PROVISIONING
+-#include "blufi.h"
+-#endif
+ 
+ static const char *TAG = "WifiBoard";
+ 
+@@ -93,9 +89,11 @@ void WifiBoard::TryWifiConnect() {
+     if (have_ssid) {
+         // Start connection attempt with timeout
+         ESP_LOGI(TAG, "Starting WiFi connection attempt");
+-        esp_timer_start_once(connect_timer_, CONNECT_TIMEOUT_SEC * 1000000ULL);
++        if (allow_config_mode_) {
++            esp_timer_start_once(connect_timer_, CONNECT_TIMEOUT_SEC * 1000000ULL);
++        }
+         WifiManager::GetInstance().StartStation();
+-    } else {
++    } else if (allow_config_mode_) {
+         // No SSID configured, enter config mode
+         // Wait for the board version to be shown
+         vTaskDelay(pdMS_TO_TICKS(1500));
+@@ -108,10 +106,6 @@ void WifiBoard::OnNetworkEvent(NetworkEvent event, const std::string& data) {
+         case NetworkEvent::Connected:
+             // Stop timeout timer
+             esp_timer_stop(connect_timer_);
+-#ifdef CONFIG_USE_ESP_BLUFI_WIFI_PROVISIONING
+-            // make sure blufi resources has been released
+-            Blufi::GetInstance().deinit();
+-#endif
+             in_config_mode_ = false;
+             ESP_LOGI(TAG, "Connected to WiFi: %s", data.c_str());
+             break;
+@@ -150,90 +144,27 @@ void WifiBoard::SetNetworkEventCallback(NetworkEventCallback callback) {
+ 
+ void WifiBoard::OnWifiConnectTimeout(void* arg) {
+     auto* board = static_cast<WifiBoard*>(arg);
++    if (!board->allow_config_mode_) { return; }
+     ESP_LOGW(TAG, "WiFi connection timeout, entering config mode");
+ 
+     WifiManager::GetInstance().StopStation();
+     board->StartWifiConfigMode();
++    // Exit can race a timeout that was already running when its timer was stopped.
++    if (!board->allow_config_mode_) { board->TryWifiConnect(); }
+ }
+ 
+ void WifiBoard::StartWifiConfigMode() {
++    if (!allow_config_mode_) { return; }
+     in_config_mode_ = true;
+-    // Transition to wifi configuring state
+-    Application::GetInstance().SetDeviceState(kDeviceStateWifiConfiguring);
+-#ifdef CONFIG_USE_HOTSPOT_WIFI_PROVISIONING
+-    auto& wifi_manager = WifiManager::GetInstance();
+-
+-    wifi_manager.StartConfigAp();
+-
+-    // Show config prompt after a short delay
+-    Application::GetInstance().Schedule([&wifi_manager]() {
+-        std::string hint = Lang::Strings::CONNECT_TO_HOTSPOT;
+-        hint += wifi_manager.GetApSsid();
+-        hint += Lang::Strings::ACCESS_VIA_BROWSER;
+-        hint += wifi_manager.GetApWebUrl();
+-
+-        Application::GetInstance().Alert(Lang::Strings::WIFI_CONFIG_MODE, hint.c_str(), "gear", Lang::Sounds::OGG_WIFICONFIG);
+-    });
+-#elif CONFIG_USE_ESP_BLUFI_WIFI_PROVISIONING
+-    auto &blufi = Blufi::GetInstance();
+-    // initialize esp-blufi protocol
+-    blufi.init();
+-#endif
+-#if CONFIG_USE_ACOUSTIC_WIFI_PROVISIONING
+-    // Start acoustic provisioning task
+-    auto codec = Board::GetInstance().GetAudioCodec();
+-    int channel = codec ? codec->input_channels() : 1;
+-    ESP_LOGI(TAG, "Starting acoustic WiFi provisioning, channels: %d", channel);
+-
+-    xTaskCreate([](void* arg) {
+-        auto ch = reinterpret_cast<intptr_t>(arg);
+-        auto& app = Application::GetInstance();
+-        auto& wifi = WifiManager::GetInstance();
+-        auto disp = Board::GetInstance().GetDisplay();
+-        audio_wifi_config::ReceiveWifiCredentialsFromAudio(&app, &wifi, disp, ch);
+-        vTaskDelete(NULL);
+-    }, "acoustic_wifi", 4096, reinterpret_cast<void*>(channel), 2, NULL);
+-#endif
++    WifiManager::GetInstance().StartConfigAp();
++    if (!allow_config_mode_) { WifiManager::GetInstance().StopConfigAp(); }
+ }
+ 
+ void WifiBoard::EnterWifiConfigMode() {
+-    ESP_LOGI(TAG, "EnterWifiConfigMode called");
+-    GetDisplay()->ShowNotification(Lang::Strings::ENTERING_WIFI_CONFIG_MODE);
+-
+-    auto& app = Application::GetInstance();
+-    auto state = app.GetDeviceState();
+-
+-    if (state == kDeviceStateSpeaking || state == kDeviceStateListening || state == kDeviceStateIdle) {
+-        // Reset protocol (close audio channel, reset protocol)
+-        Application::GetInstance().ResetProtocol();
+-
+-        xTaskCreate([](void* arg) {
+-            auto* board = static_cast<WifiBoard*>(arg);
+-
+-            // Wait for 1 second to allow speaking to finish gracefully
+-            vTaskDelay(pdMS_TO_TICKS(1000));
+-
+-            // Stop any ongoing connection attempt
+-            esp_timer_stop(board->connect_timer_);
+-            WifiManager::GetInstance().StopStation();
+-
+-            // Enter config mode
+-            board->StartWifiConfigMode();
+-
+-            vTaskDelete(NULL);
+-        }, "wifi_cfg_delay", 4096, this, 2, NULL);
+-        return;
+-    }
+-
+-    if (state != kDeviceStateStarting) {
+-        ESP_LOGE(TAG, "EnterWifiConfigMode called but device state is not starting or speaking, device state: %d", state);
+-        return;
+-    }
+-
+-    // Stop any ongoing connection attempt
++    allow_config_mode_ = true;
++    if (IsInWifiConfigMode()) { return; }
+     esp_timer_stop(connect_timer_);
+     WifiManager::GetInstance().StopStation();
+-
+     StartWifiConfigMode();
+ }
+ 
+@@ -241,6 +172,15 @@ bool WifiBoard::IsInWifiConfigMode() const {
+     return WifiManager::GetInstance().IsConfigMode();
+ }
+ 
++void WifiBoard::ExitWifiConfigMode() {
++    // StopConfigAp emits ConfigModeExit synchronously. Suppress its AP fallback
++    // first, while still allowing a saved station connection to resume.
++    allow_config_mode_ = false;
++    esp_timer_stop(connect_timer_);
++    in_config_mode_ = false;
++    WifiManager::GetInstance().StopConfigAp();
++}
++
+ NetworkInterface* WifiBoard::GetNetwork() {
+     static EspNetwork network;
+     return &network;
+@@ -265,21 +205,7 @@ const char* WifiBoard::GetNetworkStateIcon() {
+     return FONT_AWESOME_WIFI_WEAK;
+ }
+ 
+-std::string WifiBoard::GetBoardJson() {
+-    auto& wifi = WifiManager::GetInstance();
+-    std::string json = R"({"type":")" + std::string(BOARD_TYPE) + R"(",)";
+-    json += R"("name":")" + std::string(BOARD_NAME) + R"(",)";
+-
+-    if (!wifi.IsConfigMode()) {
+-        json += R"("ssid":")" + wifi.GetSsid() + R"(",)";
+-        json += R"("rssi":)" + std::to_string(wifi.GetRssi()) + R"(,)";
+-        json += R"("channel":)" + std::to_string(wifi.GetChannel()) + R"(,)";
+-        json += R"("ip":")" + wifi.GetIpAddress() + R"(",)";
+-    }
+ 
+-    json += R"("mac":")" + SystemInfo::GetMacAddress() + R"("})";
+-    return json;
+-}
+ 
+ void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
+     WifiPowerSaveLevel wifi_level;
+@@ -297,61 +223,3 @@ void WifiBoard::SetPowerSaveLevel(PowerSaveLevel level) {
+     }
+     WifiManager::GetInstance().SetPowerSaveLevel(wifi_level);
+ }
+-
+-std::string WifiBoard::GetDeviceStatusJson() {
+-    auto& board = Board::GetInstance();
+-    auto root = cJSON_CreateObject();
+-
+-    // Audio speaker
+-    auto audio_speaker = cJSON_CreateObject();
+-    if (auto codec = board.GetAudioCodec()) {
+-        cJSON_AddNumberToObject(audio_speaker, "volume", codec->output_volume());
+-    }
+-    cJSON_AddItemToObject(root, "audio_speaker", audio_speaker);
+-
+-    // Screen
+-    auto screen = cJSON_CreateObject();
+-    if (auto backlight = board.GetBacklight()) {
+-        cJSON_AddNumberToObject(screen, "brightness", backlight->brightness());
+-    }
+-    if (auto display = board.GetDisplay(); display && display->height() > 64) {
+-        if (auto theme = display->GetTheme()) {
+-            cJSON_AddStringToObject(screen, "theme", theme->name().c_str());
+-        }
+-    }
+-    cJSON_AddItemToObject(root, "screen", screen);
+-
+-    // Battery
+-    int level = 0;
+-    bool charging = false, discharging = false;
+-    if (board.GetBatteryLevel(level, charging, discharging)) {
+-        auto battery = cJSON_CreateObject();
+-        cJSON_AddNumberToObject(battery, "level", level);
+-        cJSON_AddBoolToObject(battery, "charging", charging);
+-        cJSON_AddItemToObject(root, "battery", battery);
+-    }
+-
+-    // Network
+-    auto& wifi = WifiManager::GetInstance();
+-    auto network = cJSON_CreateObject();
+-    cJSON_AddStringToObject(network, "type", "wifi");
+-    cJSON_AddStringToObject(network, "ssid", wifi.GetSsid().c_str());
+-    int rssi = wifi.GetRssi();
+-    const char* signal = rssi >= -60 ? "strong" : (rssi >= -70 ? "medium" : "weak");
+-    cJSON_AddStringToObject(network, "signal", signal);
+-    cJSON_AddItemToObject(root, "network", network);
+-
+-    // Chip temperature
+-    float temp = 0.0f;
+-    if (board.GetTemperature(temp)) {
+-        auto chip = cJSON_CreateObject();
+-        cJSON_AddNumberToObject(chip, "temperature", temp);
+-        cJSON_AddItemToObject(root, "chip", chip);
+-    }
+-
+-    auto str = cJSON_PrintUnformatted(root);
+-    std::string result(str);
+-    cJSON_free(str);
+-    cJSON_Delete(root);
+-    return result;
+-}
+diff --git a/main/boards/common/wifi_board.h b/main/boards/common/wifi_board.h
+index 7ee973c..5a2719a 100644
+--- a/main/boards/common/wifi_board.h
++++ b/main/boards/common/wifi_board.h
+@@ -5,14 +5,15 @@
+ #include <freertos/FreeRTOS.h>
+ #include <freertos/event_groups.h>
+ #include <esp_timer.h>
++#include <atomic>
+ 
+ class WifiBoard : public Board {
+ protected:
+     esp_timer_handle_t connect_timer_ = nullptr;
+     bool in_config_mode_ = false;
++    std::atomic<bool> allow_config_mode_{true};
+     NetworkEventCallback network_event_callback_ = nullptr;
+ 
+-    virtual std::string GetBoardJson() override;
+ 
+     /**
+      * Handle network event (called from WiFi manager callbacks)
+@@ -53,12 +54,13 @@ public:
+     virtual const char* GetNetworkStateIcon() override;
+     virtual void SetPowerSaveLevel(PowerSaveLevel level) override;
+     virtual AudioCodec* GetAudioCodec() override { return nullptr; }
+-    virtual std::string GetDeviceStatusJson() override;
+     
+     /**
+      * Enter WiFi configuration mode (thread-safe, can be called from any task)
+      */
+     void EnterWifiConfigMode();
++    // Close provisioning until the user explicitly opens it again.
++    void ExitWifiConfigMode();
+     
+     /**
+      * Check if in WiFi config mode
+diff --git a/main/display/display.cc b/main/display/display.cc
+index 50fc1c5..0922722 100644
+--- a/main/display/display.cc
++++ b/main/display/display.cc
+@@ -7,7 +7,6 @@
+ 
+ #include "display.h"
+ #include "board.h"
+-#include "application.h"
+ #include "audio_codec.h"
+ #include "settings.h"
+ #include "assets/lang_config.h"
+diff --git a/main/display/lvgl_display/lvgl_display.cc b/main/display/lvgl_display/lvgl_display.cc
+index 46668dd..ed278fd 100644
+--- a/main/display/lvgl_display/lvgl_display.cc
++++ b/main/display/lvgl_display/lvgl_display.cc
+@@ -7,7 +7,6 @@
+ 
+ #include "lvgl_display.h"
+ #include "board.h"
+-#include "application.h"
+ #include "audio_codec.h"
+ #include "settings.h"
+ #include "assets/lang_config.h"
+@@ -111,111 +110,7 @@ void LvglDisplay::ShowNotification(const char* notification, int duration_ms) {
+ }
+ 
+ void LvglDisplay::UpdateStatusBar(bool update_all) {
+-    auto& app = Application::GetInstance();
+-    auto& board = Board::GetInstance();
+-    auto codec = board.GetAudioCodec();
+-
+-    // Update mute icon
+-    {
+-        DisplayLockGuard lock(this);
+-        if (mute_label_ == nullptr) {
+-            return;
+-        }
+-
+-        // Update icon if mute state changes
+-        if (codec->output_volume() == 0 && !muted_) {
+-            muted_ = true;
+-            lv_label_set_text(mute_label_, FONT_AWESOME_VOLUME_XMARK);
+-        } else if (codec->output_volume() > 0 && muted_) {
+-            muted_ = false;
+-            lv_label_set_text(mute_label_, "");
+-        }
+-    }
+-
+-    // Update time
+-    if (app.GetDeviceState() == kDeviceStateIdle) {
+-        if (last_status_update_time_ + std::chrono::seconds(10) < std::chrono::system_clock::now()) {
+-            // Set status to clock "HH:MM"
+-            time_t now = time(NULL);
+-            struct tm* tm = localtime(&now);
+-            // Check if the we have already set the time
+-            if (tm->tm_year >= 2025 - 1900) {
+-                char time_str[16];
+-                strftime(time_str, sizeof(time_str), "%H:%M", tm);
+-                SetStatus(time_str);
+-            } else {
+-                ESP_LOGW(TAG, "System time is not set, tm_year: %d", tm->tm_year);
+-            }
+-        }
+-    }
+-
+-    esp_pm_lock_acquire(pm_lock_);
+-    // Update battery icon
+-    int battery_level;
+-    bool charging, discharging;
+-    const char* icon = nullptr;
+-    if (board.GetBatteryLevel(battery_level, charging, discharging)) {
+-        if (charging) {
+-            icon = FONT_AWESOME_BATTERY_BOLT;
+-        } else {
+-            const char* levels[] = {
+-                FONT_AWESOME_BATTERY_EMPTY, // 0-19%
+-                FONT_AWESOME_BATTERY_QUARTER,    // 20-39%
+-                FONT_AWESOME_BATTERY_HALF,    // 40-59%
+-                FONT_AWESOME_BATTERY_THREE_QUARTERS,    // 60-79%
+-                FONT_AWESOME_BATTERY_FULL, // 80-99%
+-                FONT_AWESOME_BATTERY_FULL, // 100%
+-            };
+-            icon = levels[battery_level / 20];
+-        }
+-        DisplayLockGuard lock(this);
+-        if (battery_label_ != nullptr && battery_icon_ != icon) {
+-            battery_icon_ = icon;
+-            lv_label_set_text(battery_label_, battery_icon_);
+-        }
+-
+-        // Check low battery popup only when clock tick event is triggered
+-        // Because when initializing, the battery level is not ready yet.
+-        if (low_battery_popup_ != nullptr && !update_all) {
+-            if (strcmp(icon, FONT_AWESOME_BATTERY_EMPTY) == 0 && discharging) {
+-                if (lv_obj_has_flag(low_battery_popup_, LV_OBJ_FLAG_HIDDEN)) { // Show if low battery popup is hidden
+-                    lv_obj_remove_flag(low_battery_popup_, LV_OBJ_FLAG_HIDDEN);
+-                    app.Schedule([&app]() {
+-                        app.PlaySound(Lang::Sounds::OGG_LOW_BATTERY);
+-                    });
+-                }
+-            } else {
+-                // Hide the low battery popup when the battery is not empty
+-                if (!lv_obj_has_flag(low_battery_popup_, LV_OBJ_FLAG_HIDDEN)) { // Hide if low battery popup is shown
+-                    lv_obj_add_flag(low_battery_popup_, LV_OBJ_FLAG_HIDDEN);
+-                }
+-            }
+-        }
+-    }
+-
+-    // Update network icon every 10 seconds
+-    static int seconds_counter = 0;
+-    if (update_all || seconds_counter++ % 10 == 0) {
+-        // Don't read 4G network status during firmware upgrade to avoid occupying UART resources
+-        auto device_state = Application::GetInstance().GetDeviceState();
+-        static const std::vector<DeviceState> allowed_states = {
+-            kDeviceStateIdle,
+-            kDeviceStateStarting,
+-            kDeviceStateWifiConfiguring,
+-            kDeviceStateListening,
+-            kDeviceStateActivating,
+-        };
+-        if (std::find(allowed_states.begin(), allowed_states.end(), device_state) != allowed_states.end()) {
+-            icon = board.GetNetworkStateIcon();
+-            if (network_label_ != nullptr && icon != nullptr && network_icon_ != icon) {
+-                DisplayLockGuard lock(this);
+-                network_icon_ = icon;
+-                lv_label_set_text(network_label_, network_icon_);
+-            }
+-        }
+-    }
+-
+-    esp_pm_lock_release(pm_lock_);
++    // Status is rendered by the local CoreS3 UI.
+ }
+ 
+ void LvglDisplay::SetPreviewImage(std::unique_ptr<LvglImage> image) {

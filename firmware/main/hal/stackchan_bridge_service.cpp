@@ -7,12 +7,14 @@
 #include <utility>
 
 #include <audio/audio_service.h>
+#include "board/hal_bridge.h"
 #include <board.h>
 #include <esp_app_desc.h>
 #include <esp_log.h>
 #include <esp_random.h>
 #include <mooncake.h>
 #include <settings.h>
+#include <wifi_manager.h>
 #include <stackchan_bridge_client/command_executor.h>
 #include <stackchan_bridge_client/audio_safety.h>
 #include <stackchan_bridge_client/hardware_identity.h>
@@ -179,7 +181,8 @@ public:
             if (recording_) {
                 audioService_.EnableVoiceProcessing(false);
             }
-            audioService_.Stop();
+            AudioServiceCallbacks callbacks;
+            audioService_.SetCallbacks(callbacks);
         }
     }
 
@@ -191,7 +194,6 @@ public:
         }
         auto* codec = Board::GetInstance().GetAudioCodec();
         if (codec != nullptr) {
-            audioService_.Initialize(codec);
 #ifdef CONFIG_STACKCHAN_HERMES_TTS_GAIN_PERCENT
             audioService_.SetPlaybackGainPercent(CONFIG_STACKCHAN_HERMES_TTS_GAIN_PERCENT);
 #endif
@@ -205,7 +207,6 @@ public:
                 }
             };
             audioService_.SetCallbacks(callbacks);
-            audioService_.Start();
             audioStarted_ = true;
             commandTarget_.setCancelSpeechCallback([this]() {
                 audioService_.ResetDecoder();
@@ -227,14 +228,14 @@ public:
         return bridge_client::ClientError::None;
     }
 
-    bridge_client::ClientError wifiConnected()
-    {
-        return client_.wifiConnected();
-    }
-
     void onRunning() override
     {
+        if (client_.state() == bridge_client::DeviceState::ConnectingWifi
+            && WifiManager::GetInstance().IsConnected()) {
+            client_.wifiConnected();
+        }
         const std::uint32_t nowMs = GetHAL().millis();
+        if (recording_) { hal_bridge::note_activity(); }
         commandTarget_.update(nowMs);
         client_.update(nowMs);
         cameraCapture_.update();
@@ -342,7 +343,7 @@ private:
     bool touchEnabled_ = true;
     OfficialCameraCapture cameraCapture_;
     OfficialDeviceCommandTarget commandTarget_;
-    AudioService audioService_;
+    AudioService& audioService_ = hal_bridge::local_audio();
     std::mutex decodeFailureMutex_;
     bridge_client::ConsecutiveFailureGate decodeFailureGate_{3};
     std::atomic<bool> decodeFailureRequested_{false};
@@ -377,12 +378,6 @@ bool startStackchanHermesBridgeClient()
         ESP_LOGE(kTag, "Bridge configuration is missing or invalid");
     } else {
         GetHAL().startNetwork(nullptr);
-        const auto connectResult = worker->wifiConnected();
-        if (connectResult != bridge_client::ClientError::None
-            && connectResult != bridge_client::ClientError::TransportFailure) {
-            ESP_LOGE(kTag, "Bridge client could not enter connection state");
-            operational = false;
-        }
     }
 
     const int abilityId = mooncake::GetMooncake().extensionManager()->createAbility(

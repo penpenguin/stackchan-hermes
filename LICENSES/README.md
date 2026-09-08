@@ -1,6 +1,6 @@
 # Third-party license evidence
 
-確認日: 2026-09-07。第三者の著作権表示・許諾文・NOTICE を保存しています。
+確認日: 2026-09-08。第三者の著作権表示・許諾文・NOTICE を保存しています。
 独自コードの MIT は、第三者コード・フォント・画像・モデルの条件を上書きしません。
 Python wheel / sdist と、検証コマンドで作る CoreS3 Firmware ZIP にこの通知集を収録します。
 
@@ -23,6 +23,11 @@ Python wheel / sdist と、検証コマンドで作る CoreS3 Firmware ZIP に�
 Python の宣言は配布物の `METADATA` から取得し、本文がなければ固定版 upstream で
 補完しました。ローカル distribution の記録は元アーカイブ全体のハッシュ再検証とは
 区別します。Python wheel / sdist は第三者パッケージ本体や Firmware を同梱しません。
+
+ローカル CFW 化に伴う Xiaozhi と Wi-Fi 設定の変更パッチは、上記 Git / managed 記録に
+来歴と hash を保存しています。通知は削減せず、配布に含まれなくなった旧アプリ素材・
+SDK archive の元の根拠も保持します。現在の実物の一覧は
+[release 記録](../docs/license-inventory/cores3-release.json) を参照してください。
 
 ## 素材の帰属表示
 

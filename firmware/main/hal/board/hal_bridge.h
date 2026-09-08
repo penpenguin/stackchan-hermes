@@ -5,11 +5,15 @@
  */
 #pragma once
 #include "stackchan_camera.h"
+#include "device_config.h"
+#include <hal/local_activity.h>
 #include <cstdint>
 #include <functional>
 #include <lvgl.h>
 #include <driver/i2c_master.h>
 #include <string_view>
+
+class AudioService;
 
 namespace hal_bridge {
 
@@ -21,15 +25,6 @@ struct TouchPoint_t {
 
 struct Data_t {
     TouchPoint_t touchPoint;
-    bool isXiaozhiMode              = false;
-    bool isXiaozhiModeToggleEnabled = false;
-};
-
-struct XiaozhiConfig_t {
-    uint32_t idleShutdownTimeSeconds = 600;
-    bool allowShutdownWhenCharging   = false;
-    uint8_t idleRandomMovementLevel  = 2;
-    bool startAiAgentOnBoot          = false;
 };
 
 void lock();
@@ -39,20 +34,17 @@ Data_t& get_data();
 void set_touch_point(int num, int x, int y);
 TouchPoint_t get_touch_point();
 
-bool is_xiaozhi_mode();
-void set_xiaozhi_mode(bool mode);
-void toggle_xiaozhi_chat_state();
-
 void disply_lvgl_lock();
 void disply_lvgl_unlock();
 lv_disp_t* display_get_lvgl_display();
 
-void xiaozhi_board_init();
-void start_xiaozhi_app();
-bool is_xiaozhi_ready();
-bool is_xiaozhi_idle();
-XiaozhiConfig_t get_xiaozhi_config();
-void set_xiaozhi_config(const XiaozhiConfig_t& config);
+void board_init();
+esp_err_t board_prepare_espnow(int channel);
+void initialize_local_audio();
+bool app_schedule(std::function<void()> callback);
+void update_local_tasks();
+AudioService& local_audio();
+bool local_audio_busy();
 
 i2c_master_bus_handle_t board_get_i2c_bus();
 StackChanCamera* board_get_camera();
@@ -63,7 +55,6 @@ uint8_t board_get_backlight_brightness();
 void board_set_speaker_volume(uint8_t volume, bool permanent = false);
 uint8_t board_get_speaker_volume();
 
-void app_schedule(std::function<void()> callback);
 void app_play_sound(const std::string_view& sound);
 
 }  // namespace hal_bridge

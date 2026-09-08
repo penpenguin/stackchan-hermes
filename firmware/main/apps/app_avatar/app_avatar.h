@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 #pragma once
-#include "view/video_window.hpp"
 #include <mooncake.h>
 #include <cstdint>
 #include <memory>
@@ -35,11 +34,7 @@ private:
     BleHandlerData_t _ble_avatar_data;
     BleHandlerData_t _ble_motion_data;
 
-    int _ws_call_view_id = -1;
-
     uint32_t _last_motion_cmd_tick = 0;
-
-    std::unique_ptr<view::VideoWindow> _video_window;
 
     bool _screen_clicked_flag = false;
     int _dance_modifier_id    = -1;

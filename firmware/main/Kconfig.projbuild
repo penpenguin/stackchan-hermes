@@ -1,16 +1,3 @@
-menu "StackChan Server"
-
-config STACKCHAN_SERVER_URL
-    string "StackChan server base URL"
-    default "http://47.113.125.164:12800"
-    help
-        Base URL (scheme + host + port, no trailing slash) of the StackChan backend.
-        The HAL composes endpoint paths like /stackChan/device/user,
-        /stackChan/apps and /stackChan/ws from this base. Override in your
-        sdkconfig.defaults.local to point at a self-hosted deployment.
-
-endmenu
-
 menu "StackChan Hermes Bridge"
 
 config STACKCHAN_HERMES_BRIDGE_CLIENT
@@ -96,13 +83,7 @@ config STACKCHAN_HERMES_PLAYBACK_PREROLL_MS
 
 endmenu
 
-menu "Xiaozhi Assistant"
-
-config OTA_URL
-    string "Default OTA URL"
-    default "https://api.tenclass.net/xiaozhi/ota/"
-    help
-        The application will access this URL to check for new firmwares and server address.
+menu "Local Hardware and Assets"
 
 choice
     prompt "Flash Assets"
@@ -801,20 +782,6 @@ choice WAKE_WORD_TYPE
 
 endchoice
 
-config CUSTOM_WAKE_WORD
-    string "Custom Wake Word"
-    default "xiao tu dou"
-    depends on USE_CUSTOM_WAKE_WORD
-    help
-        Custom Wake Word, use pinyin for Chinese, separated by spaces
-
-config CUSTOM_WAKE_WORD_DISPLAY
-    string "Custom Wake Word Display"
-    default "小土豆"
-    depends on USE_CUSTOM_WAKE_WORD
-    help
-        Greeting sent to the server after wake word detection
-
 config CUSTOM_WAKE_WORD_THRESHOLD
     int "Custom Wake Word Threshold (%)"
     default 20
@@ -822,13 +789,6 @@ config CUSTOM_WAKE_WORD_THRESHOLD
     depends on USE_CUSTOM_WAKE_WORD
     help
         Custom Wake Word Threshold, range 1-99, the smaller the more sensitive, default 20
-
-config SEND_WAKE_WORD_DATA
-    bool "Send Wake Word Data"
-    default y
-    depends on USE_AFE_WAKE_WORD || USE_CUSTOM_WAKE_WORD
-    help
-        Send wake word data to the server as the first message of the conversation and wait for response
 
 config WAKE_WORD_DETECTION_IN_LISTENING
     bool "Enable Wake Word Detection in Listening Mode"
@@ -860,54 +820,10 @@ config USE_DEVICE_AEC
     help
         To work properly, device-side AEC requires a clean output reference path from the speaker signal and physical acoustic isolation between the microphone and speaker.
 
-config USE_SERVER_AEC
-    bool "Enable Server-Side AEC (Unstable)"
-    default n
-    depends on USE_AUDIO_PROCESSOR
-    help
-        To work perperly, server-side AEC requires server support
+config USE_HOTSPOT_WIFI_PROVISIONING
+    bool
+    default y
 
-config USE_AUDIO_DEBUGGER
-    bool "Enable Audio Debugger"
-    default n
-    help
-        Enable audio debugger, send audio data through UDP to the host machine
-
-menu "WiFi Configuration Method"
-    help
-        WiFi Configuration Method Selection
-    config USE_HOTSPOT_WIFI_PROVISIONING
-        bool "Hotspot"
-        default y
-        help
-            Use WiFi Hotspot to transmit WiFi configuration data
-    config USE_ACOUSTIC_WIFI_PROVISIONING
-        bool "Acoustic"
-        help
-            Use audio signal to transmit WiFi configuration data
-
-    config USE_ESP_BLUFI_WIFI_PROVISIONING
-        bool "Esp Blufi"
-        help
-            Use esp blufi protocol to transmit WiFi configuration data
-        select BT_ENABLED
-        select BT_BLE_42_FEATURES_SUPPORTED
-        select BT_BLE_BLUFI_ENABLE
-        select MBEDTLS_DHM_C
-endmenu
-
-config AUDIO_DEBUG_UDP_SERVER
-    string "Audio Debug UDP Server Address"
-    default "192.168.2.100:8000"
-    depends on USE_AUDIO_DEBUGGER
-    help
-        UDP server address, format: IP:PORT, used to receive audio debugging data
-
-config RECEIVE_CUSTOM_MESSAGE
-    bool "Enable Custom Message Reception"
-    default n
-    help
-        Enable custom message reception, allow the device to receive custom messages from the server (preferably through the MQTT protocol)
 
 menu "Camera Configuration"
     depends on !IDF_TARGET_ESP32

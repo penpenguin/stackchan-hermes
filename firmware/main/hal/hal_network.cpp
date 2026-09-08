@@ -18,7 +18,6 @@
 #include <atomic>
 
 static std::string _tag           = "Network";
-static bool _is_network_connected = false;
 
 static void time_sync_notification_cb(struct timeval* tv)
 {
@@ -46,77 +45,14 @@ void Hal::startSntp()
 
 void Hal::startNetwork(std::function<void(std::string_view)> onLog)
 {
-    if (_is_network_connected) {
-        mclog::tagInfo(_tag, "network already connected");
-        return;
-    }
-
-    std::atomic<bool> network_connected = false;
-
+    static bool started = false;
+    if (started) { return; }
+    started = true;
     auto& board = Board::GetInstance();
-    mclog::tagInfo(_tag, "start and wait for network connected...");
-
-    board.SetNetworkEventCallback([&network_connected, &onLog](NetworkEvent event, const std::string& data) {
-        switch (event) {
-            case NetworkEvent::Scanning:
-                if (onLog) {
-                    onLog("WiFi scanning...");
-                }
-                break;
-            case NetworkEvent::Connecting: {
-                if (data.empty()) {
-                    if (onLog) {
-                        onLog("WiFi connecting...");
-                    }
-                } else {
-                    if (onLog) {
-                        onLog(fmt::format("Connecting to {} ...", data));
-                    }
-                }
-                break;
-            }
-            case NetworkEvent::Connected: {
-                network_connected = true;
-                break;
-            }
-            case NetworkEvent::Disconnected:
-                break;
-            case NetworkEvent::WifiConfigModeEnter: {
-                auto& wifi_manager = WifiManager::GetInstance();
-                auto msg = fmt::format("Enter WiFi config mode. Hotspot: {}, Config URL: {}", wifi_manager.GetApSsid(),
-                                       wifi_manager.GetApWebUrl());
-                if (onLog) {
-                    onLog(msg);
-                }
-                break;
-            }
-            case NetworkEvent::WifiConfigModeExit:
-                // WiFi config mode exit is handled by WifiBoard internally
-                break;
-            // Cellular modem specific events
-            case NetworkEvent::ModemDetecting:
-                break;
-            case NetworkEvent::ModemErrorNoSim:
-                break;
-            case NetworkEvent::ModemErrorRegDenied:
-                break;
-            case NetworkEvent::ModemErrorInitFailed:
-                break;
-            case NetworkEvent::ModemErrorTimeout:
-                break;
-        }
+    board.SetNetworkEventCallback([](NetworkEvent event, const std::string&) {
+        if (event == NetworkEvent::Connected) { GetHAL().startSntp(); }
     });
     board.StartNetwork();
-
-    while (!network_connected) {
-        GetHAL().delay(500);
-    }
-    mclog::tagInfo(_tag, "network connected");
-    board.SetNetworkEventCallback(nullptr);
-
-    startSntp();
-
-    _is_network_connected = true;
 }
 
 WifiStatus Hal::getWifiStatus()

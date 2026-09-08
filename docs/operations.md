@@ -1,5 +1,10 @@
 # Development and operations setup
 
+The CFW uses local functions and the selected Hermes Bridge. Legacy AI.Agent, EzData, account
+linking, App Center, cloud calls and OTA updates have been removed. Firmware updates use USB;
+on-device Wi-Fi provisioning uses a local hotspot. See [network policy](network-policy.md) for
+endpoint selection, retained settings, redirect handling and the hardware verification boundary.
+
 ## Supported host toolchain
 
 Host-side development requires Python 3.12, `uv`, Git, ffmpeg with Opus support, libopus and

@@ -11,21 +11,17 @@
 #include <nvs_flash.h>
 #include <driver/gpio.h>
 #include <esp_event.h>
-#include <application.h>
+#include <audio/audio_service.h>
+#include <esp_timer.h>
+#include <atomic>
 #include <board.h>
 #include <display.h>
 #include <mutex>
 #include <utility>
 #include <assets.h>
-#include <settings.h>
+#include <hal/local_tasks.h>
 
 static const char* _tag = "HAL_BRIDGE";
-
-static constexpr std::string_view _xiaozhi_config_nvs_ns                           = "xiaozhi";
-static constexpr std::string_view _xiaozhi_config_idle_shutdown_time_key           = "idle_sec";
-static constexpr std::string_view _xiaozhi_config_allow_shutdown_when_charging_key = "ext_pwr";
-static constexpr std::string_view _xiaozhi_config_idle_random_movement_key         = "idle_lv";
-static constexpr std::string_view _xiaozhi_config_start_ai_agent_on_boot_key       = "boot_ai";
 
 namespace hal_bridge {
 
@@ -35,6 +31,17 @@ namespace hal_bridge {
 
 static std::mutex _mutex;
 static Data_t _data;
+static stackchan::local::LocalTasks local_tasks;
+
+bool app_schedule(std::function<void()> callback)
+{
+    return local_tasks.schedule(std::move(callback));
+}
+
+void update_local_tasks()
+{
+    local_tasks.runOne();
+}
 
 void lock()
 {
@@ -65,18 +72,6 @@ TouchPoint_t get_touch_point()
     return _data.touchPoint;
 }
 
-bool is_xiaozhi_mode()
-{
-    std::lock_guard<std::mutex> lock(_mutex);
-    return _data.isXiaozhiMode;
-}
-
-void set_xiaozhi_mode(bool mode)
-{
-    std::lock_guard<std::mutex> lock(_mutex);
-    _data.isXiaozhiMode = mode;
-}
-
 /* -------------------------------------------------------------------------- */
 /*                                   Display                                  */
 /* -------------------------------------------------------------------------- */
@@ -104,58 +99,56 @@ void disply_lvgl_unlock()
 /*                                 Application                                */
 /* -------------------------------------------------------------------------- */
 
-void xiaozhi_board_init()
+void board_init()
 {
     // Init board
     auto& board = Board::GetInstance();
 }
 
-void start_xiaozhi_app()
-{
-    set_xiaozhi_mode(true);
-
-    // Initialize and run the application
-    auto& app = Application::GetInstance();
-    app.Initialize();
-    app.Run();  // This function runs the main event loop and never returns
-}
-
-XiaozhiConfig_t get_xiaozhi_config()
-{
-    XiaozhiConfig_t config;
-
-    Settings settings(_xiaozhi_config_nvs_ns.data(), false);
-    config.idleShutdownTimeSeconds = settings.GetInt(_xiaozhi_config_idle_shutdown_time_key.data(),
-                                                     static_cast<int>(config.idleShutdownTimeSeconds));
-    config.allowShutdownWhenCharging =
-        settings.GetBool(_xiaozhi_config_allow_shutdown_when_charging_key.data(), config.allowShutdownWhenCharging);
-    config.idleRandomMovementLevel =
-        settings.GetInt(_xiaozhi_config_idle_random_movement_key.data(), config.idleRandomMovementLevel);
-    config.startAiAgentOnBoot =
-        settings.GetBool(_xiaozhi_config_start_ai_agent_on_boot_key.data(), config.startAiAgentOnBoot);
-
-    return config;
-}
-
-void set_xiaozhi_config(const XiaozhiConfig_t& config)
-{
-    Settings settings(_xiaozhi_config_nvs_ns.data(), true);
-    settings.SetInt(_xiaozhi_config_idle_shutdown_time_key.data(), config.idleShutdownTimeSeconds);
-    settings.SetBool(_xiaozhi_config_allow_shutdown_when_charging_key.data(), config.allowShutdownWhenCharging);
-    settings.SetInt(_xiaozhi_config_idle_random_movement_key.data(), config.idleRandomMovementLevel);
-    settings.SetBool(_xiaozhi_config_start_ai_agent_on_boot_key.data(), config.startAiAgentOnBoot);
-}
-
 void app_play_sound(const std::string_view& sound)
 {
-    auto& app = Application::GetInstance();
-    app.PlaySound(sound);
+    note_activity();
+    local_audio().PlaySound(sound);
 }
 
-void app_schedule(std::function<void()> callback)
+namespace {
+std::atomic<bool> audio_ready{false};
+std::atomic<uint32_t> last_activity_ms{0};
+}
+
+AudioService& local_audio()
 {
-    auto& app = Application::GetInstance();
-    app.Schedule(std::move(callback));
+    static AudioService service;
+    return service;
+}
+
+void initialize_local_audio()
+{
+    auto* codec = Board::GetInstance().GetAudioCodec();
+    if (codec == nullptr) { return; }
+    auto& service = local_audio();
+    service.Initialize(codec);
+    Assets::GetInstance().Apply();
+    service.Start();
+    audio_ready.store(true);
+    note_activity();
+}
+
+bool local_audio_busy()
+{
+    if (!audio_ready.load()) { return false; }
+    auto& service = local_audio();
+    return !service.IsIdle() || service.IsAudioProcessorRunning();
+}
+
+void note_activity()
+{
+    last_activity_ms.store(static_cast<uint32_t>(esp_timer_get_time() / 1000));
+}
+
+uint32_t idle_milliseconds()
+{
+    return static_cast<uint32_t>(esp_timer_get_time() / 1000) - last_activity_ms.load();
 }
 
 }  // namespace hal_bridge

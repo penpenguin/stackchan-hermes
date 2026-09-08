@@ -1,6 +1,6 @@
 # Third-party notices
 
-確認日: 2026-09-07。独自コードと文書には [MIT License](LICENSE) を適用します。
+確認日: 2026-09-08。独自コードと文書には [MIT License](LICENSE) を適用します。
 以下の第三者コード・依存物・参照実装には、それぞれの元のライセンスが適用されます。
 この一覧は来歴と確認状況の記録であり、各ライセンス全文の代わりや、配布物全体の
 監査完了を示すものではありません。対象別の配布条件と確認結果は
@@ -22,7 +22,7 @@ reviewed patch を lock し、build 前に検証します。参照だけの実�
 | Bosch BMI270 SensorAPI | 上記 snapshot 内 | [BSD-3-Clause](firmware/main/hal/drivers/bmi270/BMI270_SensorAPI/LICENSE), Copyright 2023 Bosch Sensortec GmbH | 取り込み済みのセンサードライバー |
 | ESP-IDF | `v5.5.4` | [Apache-2.0 とコンポーネント固有の条件](https://docs.espressif.com/projects/esp-idf/en/v5.5.4/esp32/COPYRIGHT.html) | 必須 SDK。SDK 内の全ファイルに同一ライセンスが適用されるわけではない |
 | `espressif/mdns` | `1.11.3` in `firmware/dependencies.lock` | Apache-2.0（既存調査記録） | Official managed component used by Firmware Bridge discovery; fetched source is not tracked |
-| `78/esp-ml307` | `3.6.5` / `ab4de7c28c8b8f809eba2f56f38090d57fce984d` in `firmware/dependencies.lock` | [Apache-2.0 の保存済み全文](firmware/components/stackchan_bridge_client/third_party/esp-ml307-LICENSE) | `web_socket.cc` を build 時に変更表示付きの [派生ファイル](firmware/components/stackchan_bridge_client/web_socket.cpp) で置換 |
+| `78/esp-ml307` | `3.6.5` / `ab4de7c28c8b8f809eba2f56f38090d57fce984d` in `firmware/dependencies.lock` | [Apache-2.0 の保存済み全文](firmware/components/stackchan_bridge_client/third_party/esp-ml307-LICENSE) | `web_socket.cc` とネットワーク factory を build 時に変更表示付きの派生ファイルで置換。HTTP/TCP/TLS/WebSocket を残し、MQTT・汎用 UDP・携帯モデムを除外 |
 
 取得型 Git 依存6件の commit・ライセンス記録は
 [upstream-lock.json](firmware/upstream-lock.json)、その概要は
@@ -34,6 +34,13 @@ managed components 60件と ESP-IDF の版は [dependencies.lock](firmware/depen
 不足していた3件の通知を補い、許諾未確認の旧字形を固定版 Noto / Material Icons へ置換しました。
 Montserrat も固定入力から再生成し、[フォント固有の条件・帰属](LICENSES/README.md#素材の帰属表示)
 を保持します。実際の CoreS3 ビルドの SDK・モデル・archive・assets も確認しています。
+
+2026-09-08 のローカル CFW 化では、Xiaozhi の MIT 共有処理から旧クラウド依存を除去し、
+[固定パッチ](firmware/patches/xiaozhi-esp32.patch) と [Git 記録](LICENSES/firmware-git.json)
+を更新しました。`78/esp-wifi-connect@3.1.2` の MIT 設定コード・画面から OTA 設定を除去する
+[パッチ](firmware/patches/esp-wifi-connect.patch) と入力・出力 hash も記録しています。
+既存の MIT 補完根拠は [managed 記録](LICENSES/firmware-managed.json) に保持します。
+旧アプリ素材4件と不要なリンク archive 17件を除外し、新たな依存・ライセンスは追加していません。
 
 ## 参照実装・外部の Hermes
 

@@ -12,6 +12,35 @@ ROOT = Path(__file__).resolve().parents[2]
 FIRMWARE_ROOT = ROOT / "firmware"
 
 
+def test_running_image_is_confirmed_after_local_initialization() -> None:
+    main = (FIRMWARE_ROOT / "main/main.cpp").read_text()
+    confirmation = main.index("stackchan::local::confirm_running_image()")
+    assert main.index("GetHAL().init();") < confirmation
+    assert main.index("GetMooncake().installApp(std::make_unique<AppSetup>());") < confirmation
+    assert confirmation < main.index("while (true)")
+
+
+def test_wifi_setup_destruction_exits_configuration_mode() -> None:
+    source = (FIRMWARE_ROOT / "main/apps/app_setup/workers/connectivity.cpp").read_text()
+    destructor = re.search(r"WifiSetupWorker::~WifiSetupWorker\(\)\s*\{([^}]+)\}", source)
+    assert destructor is not None, "Done and cancellation must release Wi-Fi configuration mode"
+    assert "ExitWifiConfigMode()" in destructor.group(1)
+
+
+def test_espnow_reuses_managed_wifi_instead_of_creating_a_second_event_loop() -> None:
+    espnow = (FIRMWARE_ROOT / "main/hal/hal_espnow.cpp").read_text()
+    board = (FIRMWARE_ROOT / "main/hal/board/stackchan.cc").read_text()
+    assert "esp_event_loop_create_default" not in espnow
+    assert "esp_netif_create_default_wifi_sta" not in espnow
+    assert "board_prepare_espnow(channel)" in espnow
+    assert "prepareEspNowWifi(channel, connect_timer_)" in board
+
+
+def test_espnow_app_uses_the_addressed_control_handler_with_local_activity() -> None:
+    app = (FIRMWARE_ROOT / "main/apps/app_espnow_ctrl/app_espnow_ctrl.cpp").read_text()
+    assert "applyEspNowControlPacket(_received_data, _receiver_id," in app
+
+
 def _file_sha256(path: Path) -> str:
     return sha256(path.read_bytes()).hexdigest()
 
@@ -103,7 +132,7 @@ def test_vendor_snapshot_records_immutable_upstream_and_dependency_provenance() 
     )
     assert xiaozhi["patch"] == "patches/xiaozhi-esp32.patch"
     assert xiaozhi["patched_diff_sha256"] == (
-        "358008a69ede4c2e74b647a48be85050e1593ddb2d4a3465778a8119a0049adf"
+        "748a578868b495ad618e02489c12fde77b00c5e1405a50700af57c24422e7ce8"
     )
 
 
@@ -595,7 +624,7 @@ def test_main_exposes_secret_safe_usb_serial_bridge_provisioning() -> None:
     assert "printf(result.value" not in provisioning
     assert "ESP_LOG" not in provisioning
     assert main.index("startStackchanHermesProvisioningConsole()") < main.index(
-        "if (!skip_mooncake)"
+        "GetMooncake().installApp"
     )
     assert main.index("startStackchanHermesProvisioningConsole()") < main.index(
         "startStackchanHermesBridgeClient()"
@@ -733,7 +762,7 @@ def test_camera_worker_has_a_scoped_stack_budget_for_capture_and_upload() -> Non
     assert re.search(r"PRIV_REQUIRES(?:(?!\)).)*\bpthread\b", main_cmake, re.DOTALL)
 
 
-def test_camera_worker_schedules_shutter_audio_on_the_application_main_task() -> None:
+def test_camera_worker_schedules_shutter_audio_on_the_local_main_task() -> None:
     camera_source = (FIRMWARE_ROOT / "main" / "hal" / "board" / "stackchan_camera.cc").read_text(
         encoding="utf-8"
     )
@@ -747,14 +776,34 @@ def test_camera_worker_schedules_shutter_audio_on_the_application_main_task() ->
         "bool StackChanCamera::StreamCaptures", 1
     )[0]
 
-    assert "void app_schedule(std::function<void()> callback);" in hal_bridge_header
+    assert "bool app_schedule(std::function<void()> callback);" in hal_bridge_header
     assert "hal_bridge::app_schedule([]()" in capture_body
     assert "hal_bridge::app_play_sound(OGG_CAMERA_SHUTTER);" in capture_body
     assert capture_body.index("hal_bridge::app_schedule([]()") < capture_body.index(
         "hal_bridge::app_play_sound(OGG_CAMERA_SHUTTER);"
     )
-    assert "app.Schedule(std::move(callback));" in hal_bridge_source
+    assert "local_tasks.schedule(std::move(callback));" in hal_bridge_source
+    assert "Application::" not in hal_bridge_source
+    assert "service.Initialize(codec);" in hal_bridge_source
+    main = (FIRMWARE_ROOT / "main/main.cpp").read_text()
+    assert "hal_bridge::update_local_tasks();" in main
     assert "hal_bridge::app_play_sound(OGG_CAMERA_SHUTTER);\n\n    for" not in capture_body
+
+
+def test_offline_startup_keeps_local_ui_and_defers_bridge_discovery_until_wifi_is_ready() -> None:
+    main = (FIRMWARE_ROOT / "main/main.cpp").read_text()
+    network = (FIRMWARE_ROOT / "main/hal/hal_network.cpp").read_text()
+    worker = (FIRMWARE_ROOT / "main/hal/stackchan_bridge_service.cpp").read_text()
+    running = worker.split("void onRunning() override", 1)[1].split("private:", 1)[0]
+    start = worker.split("bool startStackchanHermesBridgeClient()", 1)[1]
+    assert "while (!network_connected)" not in network
+    assert "GetMooncake().update();" in main
+    assert "startXiaozhi" not in main
+    assert "skip_mooncake" not in main
+    assert "worker->wifiConnected()" not in start
+    assert "WifiManager::GetInstance().IsConnected()" in running
+    assert "DeviceState::ConnectingWifi" in running
+    assert "client_.wifiConnected()" in running
 
 
 def test_leaving_speaking_always_stops_the_local_mouth_animation() -> None:
@@ -894,3 +943,12 @@ def test_firmware_contract_freezes_reconnect_state_and_settings_precedence() -> 
     lowered = contract_text.lower()
     assert "api_key" not in lowered
     assert "password" not in lowered
+
+
+def test_startup_skip_exits_wifi_configuration_before_completing_setup() -> None:
+    source = (FIRMWARE_ROOT / "main/apps/app_setup/workers/startup.cpp").read_text()
+    skip = re.search(r"if \(_page_startup->isSkipClicked\(\)\)\s*\{([^}]+)\}", source)
+    assert skip is not None
+    body = skip.group(1)
+    assert "ExitWifiConfigMode()" in body
+    assert body.index("ExitWifiConfigMode()") < body.index("setSetupComplete()")

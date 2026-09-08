@@ -8,6 +8,7 @@
 #include <assets/assets.h>
 #include <functional>
 #include <hal/hal.h>
+#include <hal/local_device_policy.h>
 #include <cstdint>
 #include <vector>
 
@@ -441,17 +442,16 @@ void LauncherView::init(std::vector<mooncake::AppProps_t> appPorps)
     int base_offset_rounds = _center_copy_index * appPorps.size();
     int default_start_x    = base_offset_rounds * _icon_gap;
 
-    // If warm boot was requested
-    if (GetHAL().getWarmRebootTarget() >= 0) {
-        auto app_index = GetHAL().getWarmRebootTarget();
-        mclog::tagInfo(_tag, "warm boot was requested, app index: {}", app_index);
-        app_index = uitk::clamp(app_index, 0, static_cast<int>(appPorps.size()) - 1);
-
-        // Restore to center set
-        restore_icon_pos_x = (base_offset_rounds + app_index) * _icon_gap;
-        need_restore       = true;
-        GetHAL().clearWarmRebootRequest();
+    std::vector<std::string> installed_names;
+    for (const auto& props : appPorps) {
+        installed_names.push_back(props.info.name);
     }
+    const int app_index = stackchan::local::restoreAppIndex(GetHAL().getWarmRebootTarget(), installed_names);
+    if (app_index >= 0) {
+        restore_icon_pos_x = (base_offset_rounds + app_index) * _icon_gap;
+        need_restore = true;
+    }
+    GetHAL().clearWarmRebootRequest();
 
     if (_last_clicked_icon_pos_x != -1) {
         // Just restore where they left off, it should be in a valid range

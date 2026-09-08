@@ -48,8 +48,8 @@ fixed before the baseline build.
 
 ## Integrated local overlay
 
-The vendor snapshot remains pinned. Project behavior is isolated in
-`components/stackchan_bridge_client/` and the smallest app/HAL integration points. The reviewed
+The vendor snapshot remains pinned. Bridge protocol behavior is isolated in
+`components/stackchan_bridge_client/`, with the local app/HAL changes described below. The reviewed
 xiaozhi patch now also exposes bounded decode-result and playback-gain hooks needed by the
 project-owned audio service; its exact diff SHA is locked. The integrated lock contains 60 managed
 components plus IDF after adding official `espressif/mdns==1.11.3`.
@@ -90,6 +90,47 @@ identity, selected archives and the five distributable CoreS3 images. It can bun
 with their notices. Font provenance, applicable terms and the build evidence are documented in
 [`release-fonts/README.md`](release-fonts/README.md) and the
 [distribution review](../docs/license-audit.md). This build has not been tested on hardware.
+
+## Local CFW and cloud removal
+
+On 2026-09-08, the project removed legacy AI.Agent, EzData, account linking, App Center,
+cloud Avatar/calls, image-recognition uploads and OTA from the imported main sources.
+Updates use USB. Local display, BLE, ESP-NOW, dance, Wi-Fi setup, audio, camera and Bridge
+protocol v1 remain. Local audio ownership, scheduled sounds, power saving and app-name reboot
+selection no longer depend on the Xiaozhi application. Legacy cloud settings are not read.
+
+The source list now explicitly selects shared hardware/audio/display code. Xiaozhi Application,
+MQTT/audio protocols, cloud MCP, OTA, diagnostic audio upload and runtime asset downloading are
+excluded. The revised [MIT patch](patches/xiaozhi-esp32.patch) also removes their dependencies
+from shared sources; its exact diff digest is checked by [upstream-lock.json](upstream-lock.json).
+The fixed Git commits are unchanged. The patch is stored as a verbatim upstream diff, including
+original whitespace on context/deleted lines; added source lines pass the whitespace check.
+The Wi-Fi board patch also closes provisioning on setup completion/cancellation, resumes saved
+station connections and suppresses AP fallback until setup is explicitly reopened. A host C++
+test compiles the exact patched board sources with deterministic Wi-Fi/timer fakes to cover
+offline exit, saved/pending/connected stations, delayed timeouts and repeated setup entry.
+
+The pinned `78/esp-wifi-connect@3.1.2` MIT configuration page and API formerly retained `ota_url`.
+[The local patch](patches/esp-wifi-connect.patch) removes that field, its NVS reads/writes and
+page controls. [Its manifest](patches/esp-wifi-connect.json) records source/output hashes and the
+existing license evidence (the MIT text was supplemented from a later upstream commit).
+`tools/prepare_local_wifi.py` validates and stages only these files in the build directory;
+the managed cache and its lock hash stay unchanged.
+
+The Apache-2.0 `78/esp-ml307@3.6.5` network factory is replaced by
+[a marked derivative](components/stackchan_bridge_client/esp_network.cpp) returning no MQTT/UDP
+transport. Only its HTTP/TCP/TLS and reviewed WebSocket sources are compiled; MQTT and cellular
+modem sources are excluded, and no MQTT sender is linked. The managed license record identifies
+the original file and derivative by SHA-256. DNS, DHCP and SNTP use the SDK networking stack.
+
+The release gate checks compile commands, demangled ELF symbols, legacy configuration strings
+and the staged Wi-Fi source/page hashes. Host C++ tests cover discovery, offline/failed Bridge
+sessions, local power/reboot/tasks and the actual locked HTTP transport's redirect behavior.
+Python tests cover all Hermes/STT/TTS HTTP calls with an injected redirect-enabled client.
+[Network policy](../docs/network-policy.md) records destinations and local setup.
+[The release record](../docs/license-inventory/cores3-release.json) identifies the verified
+binaries, assets and linked archives; compiler timestamps still make hashes build-specific.
+No flash, physical local-feature test or device packet capture was performed for this change.
 
 ## K151 motion safety profile
 

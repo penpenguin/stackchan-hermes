@@ -8,6 +8,8 @@
 #include <mooncake_log.h>
 #include <assets/assets.h>
 #include <hal/hal.h>
+#include <board.h>
+#include <wifi_board.h>
 
 using namespace smooth_ui_toolkit::lvgl_cpp;
 using namespace setup_workers;
@@ -64,6 +66,8 @@ void StartupWorker::update()
     if (_page_startup) {
         if (_page_startup->isSkipClicked()) {
             mclog::tagInfo(_tag, "startup skipped");
+            static_cast<WifiBoard&>(Board::GetInstance()).ExitWifiConfigMode();
+            GetHAL().setSetupComplete();
             _is_done = true;
         } else if (_page_startup->isStartClicked()) {
             _page_startup.reset();
@@ -86,7 +90,8 @@ void StartupWorker::update()
         if (_worker_wifi->isDone()) {
             _worker_wifi.reset();
             mclog::tagInfo(_tag, "startup back");
-            _page_startup = std::make_unique<PageStartup>();
+            GetHAL().setSetupComplete();
+            _is_done = true;
         }
     }
 }

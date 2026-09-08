@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "checked_on": "2026-09-07",
+  "checked_on": "2026-09-08",
   "repositories": [
     {
       "name": "Forairaaaaa/mooncake",
@@ -70,7 +70,12 @@
           "source": "https://raw.githubusercontent.com/78/xiaozhi-esp32/e77dedb1309153bb63fed285772962c920c97dd4/main/display/lvgl_display/gif/LICENSE.txt"
         }
       ],
-      "git_tree_sha": "e77dedb1309153bb63fed285772962c920c97dd4"
+      "git_tree_sha": "e77dedb1309153bb63fed285772962c920c97dd4",
+      "local_changes": {
+        "patch": "firmware/patches/xiaozhi-esp32.patch",
+        "sha256": "748a578868b495ad618e02489c12fde77b00c5e1405a50700af57c24422e7ce8",
+        "description": "Preserve shared audio, display and CoreS3 hardware; remove cloud application dependencies, image explanation interface, asset download, telemetry builders and audio debugger. Close Wi-Fi provisioning on setup exit and suppress automatic AP reopening while preserving saved station connections. Cloud app/protocol/MCP/OTA units are excluded by main/CMakeLists.txt."
+      }
     },
     {
       "name": "bblanchon/ArduinoJson",

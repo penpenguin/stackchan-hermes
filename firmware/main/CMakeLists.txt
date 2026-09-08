@@ -1,7 +1,11 @@
 # Define xiaozhi source directory
 set(XIAOZHI_MAIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../xiaozhi-esp32/main")
 
-file(GLOB_RECURSE STACK_CHAN_SOURCES
+set(STACK_CHAN_GLOB_OPTIONS)
+if(NOT CMAKE_SCRIPT_MODE_FILE)
+    set(STACK_CHAN_GLOB_OPTIONS CONFIGURE_DEPENDS)
+endif()
+file(GLOB_RECURSE STACK_CHAN_SOURCES ${STACK_CHAN_GLOB_OPTIONS}
     "apps/*.c"
     "apps/*.cc"
     "apps/*.cpp"
@@ -20,73 +24,40 @@ set(STACK_CHAN_INCLUDE_DIRS
 )
 list(APPEND STACK_CHAN_SOURCES main.cpp)
 
-# Define source files
-set(SOURCES "audio/audio_codec.cc"
-            "audio/audio_service.cc"
-            "audio/demuxer/ogg_demuxer.cc"
-            "audio/codecs/no_audio_codec.cc"
-            "audio/codecs/box_audio_codec.cc"
-            "audio/codecs/es8311_audio_codec.cc"
-            "audio/codecs/es8374_audio_codec.cc"
-            "audio/codecs/es8388_audio_codec.cc"
-            "audio/codecs/es8389_audio_codec.cc"
-            "audio/codecs/dummy_audio_codec.cc"
-            "audio/processors/audio_debugger.cc"
-            "led/single_led.cc"
-            "led/circular_strip.cc"
-            "led/gpio_led.cc"
-            "display/display.cc"
-            "display/lcd_display.cc"
-            "display/oled_display.cc"
-            "display/lvgl_display/lvgl_display.cc"
-            # "display/emote_display.cc"
-            "display/lvgl_display/emoji_collection.cc"
-            "display/lvgl_display/lvgl_theme.cc"
-            "display/lvgl_display/lvgl_font.cc"
-            "display/lvgl_display/lvgl_image.cc"
-            "display/lvgl_display/gif/lvgl_gif.cc"
-            "display/lvgl_display/gif/gifdec.c"
-            "display/lvgl_display/jpg/image_to_jpeg.cpp"
-            "display/lvgl_display/jpg/jpeg_to_image.c"
-            "protocols/protocol.cc"
-            "protocols/mqtt_protocol.cc"
-            "protocols/websocket_protocol.cc"
-            "mcp_server.cc"
-            "system_info.cc"
-            "application.cc"
-            "ota.cc"
-            "settings.cc"
-            "device_state_machine.cc"
-            "assets.cc"
-            # "main.cc"
-            )
+# Shared local-only upstream implementation. Legacy cloud units are never compiled.
+set(SOURCES
+    "audio/audio_codec.cc"
+    "audio/audio_service.cc"
+    "audio/demuxer/ogg_demuxer.cc"
+    "display/display.cc"
+    "display/lvgl_display/lvgl_display.cc"
+    "display/lvgl_display/emoji_collection.cc"
+    "display/lvgl_display/lvgl_theme.cc"
+    "display/lvgl_display/lvgl_font.cc"
+    "display/lvgl_display/lvgl_image.cc"
+    "display/lvgl_display/gif/lvgl_gif.cc"
+    "display/lvgl_display/gif/gifdec.c"
+    "display/lvgl_display/jpg/image_to_jpeg.cpp"
+    "display/lvgl_display/jpg/jpeg_to_image.c"
+    "system_info.cc"
+    "settings.cc"
+    "assets.cc"
+)
 
 # Transform relative paths to absolute paths from xiaozhi-esp32/main
 list(TRANSFORM SOURCES PREPEND "${XIAOZHI_MAIN_DIR}/")
 
-set(INCLUDE_DIRS "." "display" "display/lvgl_display" "display/lvgl_display/jpg" "audio" "audio/demuxer" "protocols")
+set(INCLUDE_DIRS "." "display" "display/lvgl_display" "display/lvgl_display/jpg" "audio" "audio/demuxer")
 # Transform include dirs to absolute paths from xiaozhi-esp32/main
 list(TRANSFORM INCLUDE_DIRS PREPEND "${XIAOZHI_MAIN_DIR}/")
 
-# Add board common files
+# Shared CoreS3 hardware and local Wi-Fi provisioning.
 list(APPEND SOURCES
     "${XIAOZHI_MAIN_DIR}/boards/common/board.cc"
     "${XIAOZHI_MAIN_DIR}/boards/common/wifi_board.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/ml307_board.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/nt26_board.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/dual_network_board.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/adc_battery_monitor.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/afsk_demod.cc"
     "${XIAOZHI_MAIN_DIR}/boards/common/axp2101.cc"
     "${XIAOZHI_MAIN_DIR}/boards/common/backlight.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/button.cc"
     "${XIAOZHI_MAIN_DIR}/boards/common/i2c_device.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/knob.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/power_save_timer.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/press_to_talk_mcp_tool.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/sleep_timer.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/sy6970.cc"
-    "${XIAOZHI_MAIN_DIR}/boards/common/system_reset.cc"
     ${STACK_CHAN_SOURCES}
 )
 list(APPEND INCLUDE_DIRS ${XIAOZHI_MAIN_DIR}/boards/common ${STACK_CHAN_INCLUDE_DIRS})
@@ -120,18 +91,6 @@ if(CONFIG_BOARD_TYPE_M5STACK_STACK_CHAN)
     set(DEFAULT_EMOJI_COLLECTION twemoji_64)
 endif()
 
-if(MANUFACTURER)
-    file(GLOB BOARD_SOURCES
-        ${XIAOZHI_MAIN_DIR}/boards/${MANUFACTURER}/${BOARD_TYPE}/*.cc
-        ${XIAOZHI_MAIN_DIR}/boards/${MANUFACTURER}/${BOARD_TYPE}/*.c
-    )
-else()
-    file(GLOB BOARD_SOURCES
-        ${XIAOZHI_MAIN_DIR}/boards/${BOARD_TYPE}/*.cc
-        ${XIAOZHI_MAIN_DIR}/boards/${BOARD_TYPE}/*.c
-    )
-endif()
-list(APPEND SOURCES ${BOARD_SOURCES})
 
 # Select audio processor according to Kconfig
 if(CONFIG_USE_AUDIO_PROCESSOR)
@@ -146,10 +105,6 @@ else()
     list(APPEND SOURCES "${XIAOZHI_MAIN_DIR}/audio/wake_words/esp_wake_word.cc")
 endif()
 
-# Auto Select Additional Sources
-if (CONFIG_USE_ESP_BLUFI_WIFI_PROVISIONING)
-    list(APPEND SOURCES "boards/common/blufi.cpp")
-endif ()
 # Select language directory according to Kconfig
 if(CONFIG_LANGUAGE_ZH_CN)
     set(LANG_DIR "zh-CN")
@@ -263,32 +218,6 @@ file(GLOB COMMON_SOUNDS
     assets/sfx/*.ogg
 )
 
-# If target chip is ESP32, exclude specific files to avoid build errors
-if(CONFIG_IDF_TARGET_ESP32)
-    list(REMOVE_ITEM SOURCES "audio/codecs/box_audio_codec.cc"
-                             "audio/codecs/es8388_audio_codec.cc"
-                             "audio/codecs/es8389_audio_codec.cc"
-                             "led/gpio_led.cc"
-                             "display/lvgl_display/jpg/image_to_jpeg.cpp"
-                             "display/lvgl_display/jpg/jpeg_to_image.c"
-                             "boards/common/nt26_board.cc"
-                             "boards/common/ml307_board.cc"
-                             "boards/common/dual_network_board.cc"
-                             )
-endif()
-
-# Include EspVideo if target is ESP32S3 or ESP32P4
-if(CONFIG_IDF_TARGET_ESP32S3 OR CONFIG_IDF_TARGET_ESP32P4)
-    list(APPEND SOURCES "${XIAOZHI_MAIN_DIR}/boards/common/esp_video.cc"
-                        "${XIAOZHI_MAIN_DIR}/boards/common/rndis_board.cc"
-                        )
-endif()
-
-# Include Esp32Camera if target is ESP32S3
-if(CONFIG_IDF_TARGET_ESP32S3)
-    list(APPEND SOURCES "${XIAOZHI_MAIN_DIR}/boards/common/esp32_camera.cc")
-endif()
-
 idf_component_register(SRCS ${SOURCES}
                     EMBED_FILES ${LANG_SOUNDS} ${COMMON_SOUNDS}
                     INCLUDE_DIRS ${INCLUDE_DIRS}
@@ -321,6 +250,61 @@ idf_component_register(SRCS ${SOURCES}
                         espressif__mdns
                     )
 
+# The pinned esp-now component wraps these SDK log functions. Keep its wrappers
+# reachable even when the application has no earlier esp_log_write reference.
+target_link_libraries(${COMPONENT_LIB} INTERFACE
+    "-Wl,-u,__wrap_esp_log_write"
+    "-Wl,-u,__wrap_esp_log_writev"
+)
+
+# Replace the OTA settings code/page in the pinned Wi-Fi provisioning component.
+# Keep the managed cache intact; verify both sides of the patch on every configure.
+find_component_by_pattern("^78__esp-wifi-connect$" WIFI_COMPONENT WIFI_COMPONENT_PATH)
+if(NOT WIFI_COMPONENT)
+    message(FATAL_ERROR "Pinned Wi-Fi provisioning component was not resolved")
+endif()
+idf_build_get_property(LOCAL_BUILD_DIR BUILD_DIR)
+set(LOCAL_WIFI_DIR "${LOCAL_BUILD_DIR}/local-wifi")
+execute_process(
+    COMMAND "${PYTHON}" "${CMAKE_CURRENT_SOURCE_DIR}/../tools/prepare_local_wifi.py" "${LOCAL_WIFI_DIR}"
+    RESULT_VARIABLE LOCAL_WIFI_PATCH_RESULT
+)
+if(NOT LOCAL_WIFI_PATCH_RESULT EQUAL 0)
+    message(FATAL_ERROR "Local Wi-Fi patch verification failed")
+endif()
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/../patches/esp-wifi-connect.patch"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../patches/esp-wifi-connect.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../tools/prepare_local_wifi.py"
+)
+idf_component_get_property(WIFI_LIB ${WIFI_COMPONENT} COMPONENT_LIB)
+get_target_property(WIFI_SOURCES ${WIFI_LIB} SOURCES)
+set(LOCAL_WIFI_SOURCES "")
+set(WIFI_SOURCE_REMOVED FALSE)
+set(WIFI_PAGE_REMOVED FALSE)
+foreach(WIFI_SOURCE IN LISTS WIFI_SOURCES)
+    get_filename_component(WIFI_SOURCE_NAME "${WIFI_SOURCE}" NAME)
+    if(WIFI_SOURCE_NAME STREQUAL "wifi_configuration_ap.cc")
+        set(WIFI_SOURCE_REMOVED TRUE)
+    elseif(WIFI_SOURCE_NAME STREQUAL "wifi_configuration.html.S")
+        set(WIFI_PAGE_REMOVED TRUE)
+    else()
+        list(APPEND LOCAL_WIFI_SOURCES "${WIFI_SOURCE}")
+    endif()
+endforeach()
+if(NOT WIFI_SOURCE_REMOVED OR NOT WIFI_PAGE_REMOVED)
+    message(FATAL_ERROR "Pinned Wi-Fi provisioning source layout changed")
+endif()
+list(APPEND LOCAL_WIFI_SOURCES "${LOCAL_WIFI_DIR}/wifi_configuration_ap.cc")
+set_property(TARGET ${WIFI_LIB} PROPERTY SOURCES "${LOCAL_WIFI_SOURCES}")
+target_include_directories(${WIFI_LIB} BEFORE PUBLIC "${LOCAL_WIFI_DIR}/include")
+target_add_binary_data(${WIFI_LIB} "${LOCAL_WIFI_DIR}/assets/wifi_local.html" TEXT
+    RENAME_TO "wifi_configuration_html")
+set_source_files_properties("${LOCAL_BUILD_DIR}/wifi_local.html.S"
+    TARGET_DIRECTORY ${WIFI_LIB} PROPERTIES GENERATED TRUE)
+add_custom_target(local_wifi_page DEPENDS "${LOCAL_BUILD_DIR}/wifi_local.html.S")
+add_dependencies(${WIFI_LIB} local_wifi_page)
+
 # Use target_compile_definitions to define BOARD_TYPE, BOARD_NAME
 # If BOARD_NAME is empty, use BOARD_TYPE
 if(NOT BOARD_NAME)
@@ -332,8 +316,8 @@ target_compile_definitions(${COMPONENT_LIB}
                     )
 
 # The pinned esp-ml307 WebSocket parser does not enforce SetReceiveBufferSize while
-# accumulating frames. Replace only that Apache-2.0 translation unit with the reviewed,
-# bounded derivative kept in our tracked component.
+# accumulating frames. Use the reviewed bounded derivative and a Bridge-only factory.
+# MQTT, generic UDP and cellular-modem implementations are not compiled.
 find_component_by_pattern("^78__esp-ml307$" ESP_ML307_COMPONENT ESP_ML307_COMPONENT_PATH)
 if(NOT ESP_ML307_COMPONENT)
     message(FATAL_ERROR "Pinned esp-ml307 component was not resolved")
@@ -351,7 +335,7 @@ foreach(ESP_ML307_SOURCE IN LISTS ESP_ML307_SOURCES)
     )
     if(ESP_ML307_SOURCE_ABSOLUTE STREQUAL "${ESP_ML307_COMPONENT_PATH}/src/web_socket.cc")
         set(ESP_ML307_WEBSOCKET_REMOVED TRUE)
-    else()
+    elseif(ESP_ML307_SOURCE_ABSOLUTE MATCHES "/src/(esp/esp_(tcp|ssl)|http_client)\\.cc$")
         list(APPEND ESP_ML307_FILTERED_SOURCES "${ESP_ML307_SOURCE}")
     endif()
 endforeach()
@@ -359,6 +343,7 @@ if(NOT ESP_ML307_WEBSOCKET_REMOVED)
     message(FATAL_ERROR "Pinned esp-ml307 WebSocket source layout changed")
 endif()
 list(APPEND ESP_ML307_FILTERED_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/esp_network.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/web_socket.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/websocket_pong.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../components/stackchan_bridge_client/websocket_handshake.cpp"
@@ -477,6 +462,11 @@ function(build_default_assets_bin)
     if(DEFAULT_ASSETS_EXTRA_FILES)
         list(APPEND BUILD_ARGS "--extra_files" "${DEFAULT_ASSETS_EXTRA_FILES}")
     endif()
+
+    # Track membership too: removing a cloud icon must invalidate an existing bundle.
+    file(GLOB EXTRA_ASSET_FILES CONFIGURE_DEPENDS "${DEFAULT_ASSETS_EXTRA_FILES}/*")
+    set(ASSET_INPUT_LIST "${CMAKE_BINARY_DIR}/asset-inputs.txt")
+    file(GENERATE OUTPUT "${ASSET_INPUT_LIST}" CONTENT "${EXTRA_ASSET_FILES}\n")
     
     list(APPEND BUILD_ARGS "--esp_sr_model_path" "${ESP_SR_MODEL_PATH}")
     list(APPEND BUILD_ARGS "--xiaozhi_fonts_path" "${XIAOZHI_FONTS_PATH}")
@@ -489,6 +479,8 @@ function(build_default_assets_bin)
             ${SDKCONFIG}
             ${XIAOZHI_MAIN_DIR}/../scripts/build_default_assets.py
             ${STACKCHAN_RELEASE_FONTS}/cbin/font_stackchan_common_20_4.bin
+            ${EXTRA_ASSET_FILES}
+            ${ASSET_INPUT_LIST}
         COMMENT "Building default assets.bin based on configuration"
         VERBATIM
     )
