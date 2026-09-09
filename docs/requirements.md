@@ -243,16 +243,18 @@ the source contract.
 - **Status:** Complete for deterministic host behavior and live text/Skill streaming. Measured live
   completion latencies were 2,721 ms, 5,665 ms and 8,590 ms.
 
-## MCP-001 — Separate safe stdio server and ten tools
+## MCP-001 — Separate safe stdio server and twelve tools
 
 - **Reason:** Hermes controls intentional actions without direct device/network coupling.
 - **Input:** validated MCP arguments and loopback Control API responses.
-- **Output:** status/photo/head/home/expression/LED/text/volume/cancel/touch tools.
+- **Output:** status/photo/head/home/expression/LED/text/volume/cancel/touch/speak/speech-status tools.
 - **Normal:** tools return bounded typed results/ImageContent where supported.
 - **Abnormal:** disconnected/capability/invalid response returns safe ToolError, never crashes.
-- **Acceptance:** ten tools, stdio/no-stdout, loopback URL and photo fallback tests pass.
+- **Acceptance:** twelve tools, stdio/no-stdout, loopback URL and photo fallback tests pass.
+  Direct speech accepts up to 1,000 characters asynchronously, rejects busy devices, and exposes
+  bounded status history with cancellation, failure, reconnection and shutdown coverage.
 - **Implementation:** `mcp_server/*`, `examples/hermes-config.yaml`.
-- **Tests:** `test_mcp_server.py`, `test_mcp_control_client.py`, package tests.
+- **Tests:** `test_mcp_server.py`, `test_mcp_control_client.py`, speech service/API/integration and package tests.
 - **Status:** Complete for the project stdio server. Live Hermes Skill discovery and explicit
   `skill_view` use are Green; live ingestion of this project's MCP server remains unverified.
 

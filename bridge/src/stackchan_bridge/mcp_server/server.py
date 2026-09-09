@@ -13,6 +13,8 @@ from mcp.types import ImageContent, TextContent
 from pydantic import BaseModel, ConfigDict, Field
 
 from stackchan_bridge.motion import K151_MOTION_SAFETY
+from stackchan_bridge.protocol.models import DeviceId
+from stackchan_bridge.speech_models import SpeechText
 
 
 class StackChanControl(Protocol):
@@ -28,6 +30,10 @@ class StackChanControl(Protocol):
     ) -> dict[str, Any]: ...
 
     async def cancel_speech(self, device_id: str, *, turn_id: str) -> dict[str, Any]: ...
+
+    async def speak(self, device_id: str, *, text: str) -> dict[str, Any]: ...
+
+    async def get_speech_status(self, device_id: str, *, turn_id: str) -> dict[str, Any]: ...
 
     async def get_touch_state(self, device_id: str) -> dict[str, Any]: ...
 
@@ -236,6 +242,31 @@ def create_mcp_server(control: StackChanControl) -> MCPServer[None]:
         volume: Annotated[int, Field(ge=0, le=100)],
     ) -> dict[str, Any]:
         return await control.command(device_id, "audio.set_volume", {"volume": volume})
+
+    @server.tool()
+    async def stackchan_speak(device_id: DeviceId, text: SpeechText) -> dict[str, Any]:
+        """Speak up to 1000 characters verbatim using the Bridge's configured voice.
+
+        Returns ACCEPTED and turn_id immediately, before synthesis or playback completes.
+        Rejects with TURN_BUSY during any active voice, vision, or speech turn, including
+        a voice conversation awaiting this tool. Use stackchan_get_speech_status to check
+        completion or failure, and stackchan_cancel_speech to stop the returned turn_id.
+        """
+        return await control.speak(device_id, text=text)
+
+    @server.tool()
+    async def stackchan_get_speech_status(device_id: DeviceId, turn_id: str) -> dict[str, Any]:
+        """Check a direct speech request, including its terminal state and error_code.
+
+        Completion means Bridge streaming and playback grace time ended. Results remain
+        available after device disconnect; history holds at most 128 completed requests
+        for 10 minutes and is lost on Bridge restart.
+        """
+        try:
+            validated_turn_id = str(UUID(turn_id))
+        except ValueError as error:
+            raise ToolError("INVALID_ARGUMENT: turn_id must be a UUID") from error
+        return await control.get_speech_status(device_id, turn_id=validated_turn_id)
 
     @server.tool()
     async def stackchan_cancel_speech(device_id: str, turn_id: str) -> dict[str, Any]:

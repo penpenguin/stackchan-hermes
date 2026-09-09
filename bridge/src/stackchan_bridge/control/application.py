@@ -30,7 +30,8 @@ from stackchan_bridge.device_gateway.application import (
 from stackchan_bridge.hermes.errors import HermesError
 from stackchan_bridge.motion import MotionSafetyError
 from stackchan_bridge.observability.metrics import BridgeMetrics
-from stackchan_bridge.protocol.models import EventPayload
+from stackchan_bridge.protocol.models import DeviceId, EventPayload
+from stackchan_bridge.speech_models import SpeechRequest, SpeechStatus
 from stackchan_bridge.tts.errors import TtsError
 from stackchan_bridge.turns.coordinator import (
     StaleTurnError,
@@ -40,12 +41,19 @@ from stackchan_bridge.turns.coordinator import (
     TurnState,
 )
 from stackchan_bridge.turns.service import VoiceTurnError
+from stackchan_bridge.turns.speech import SpeechNotFoundError, SpeechUnavailableError
 
 ReadinessProbe = Callable[[], Awaitable[bool]]
 
 
 class VisionTurnRunner(Protocol):
     async def run(self, device_id: str, *, question: str, quality: int = 80) -> Turn: ...
+
+
+class SpeechTurnRunner(Protocol):
+    async def start(self, device_id: str, *, text: str) -> SpeechStatus: ...
+
+    def get(self, device_id: str, turn_id: UUID) -> SpeechStatus: ...
 
 
 class ConversationResetter(Protocol):
@@ -115,6 +123,7 @@ def create_control_app(
     capture_coordinator: CaptureCoordinator | None = None,
     turn_coordinator: TurnCoordinator | None = None,
     vision_turn_service: VisionTurnRunner | None = None,
+    speech_turn_service: SpeechTurnRunner | None = None,
     conversation_resetter: ConversationResetter | None = None,
     touch_state: TouchStateReader | None = None,
 ) -> FastAPI:
@@ -127,6 +136,7 @@ def create_control_app(
     app.state.capture_coordinator = capture_coordinator
     app.state.turn_coordinator = turn_coordinator
     app.state.vision_turn_service = vision_turn_service
+    app.state.speech_turn_service = speech_turn_service
     app.state.conversation_resetter = conversation_resetter
     app.state.touch_state = touch_state
     app.state.device_registry = registry
@@ -369,6 +379,38 @@ def create_control_app(
         return JSONResponse(
             content={"request_id": str(result.request_id), **payload},
         )
+
+    @app.post(
+        "/v1/control/devices/{device_id}/speech", status_code=202, response_model=SpeechStatus
+    )
+    async def start_speech(
+        device_id: DeviceId, request: SpeechRequest
+    ) -> SpeechStatus | JSONResponse:
+        if speech_turn_service is None:
+            return _error_response(503, "SPEECH_UNAVAILABLE", "speech service is unavailable")
+        try:
+            return await speech_turn_service.start(device_id, text=request.text)
+        except SpeechUnavailableError:
+            return _error_response(503, "SPEECH_UNAVAILABLE", "speech service is unavailable")
+        except TurnBusyError:
+            return _error_response(409, "TURN_BUSY", "device already has an active turn")
+        except DeviceNotConnectedError:
+            return _error_response(404, "DEVICE_NOT_CONNECTED", "device is not connected")
+        except DeviceDisconnectedError:
+            return _error_response(409, "DEVICE_NOT_CONNECTED", "device disconnected")
+        except DeviceCapabilityError as error:
+            return _capability_error_response(error)
+        except StaleTurnError:
+            return _error_response(409, "TURN_CANCELLED", "speech turn was cancelled")
+
+    @app.get("/v1/control/devices/{device_id}/speech/{turn_id}", response_model=SpeechStatus)
+    async def get_speech_status(device_id: DeviceId, turn_id: UUID) -> SpeechStatus | JSONResponse:
+        if speech_turn_service is None:
+            return _error_response(503, "SPEECH_UNAVAILABLE", "speech service is unavailable")
+        try:
+            return speech_turn_service.get(device_id, turn_id)
+        except SpeechNotFoundError:
+            return _error_response(404, "SPEECH_NOT_FOUND", "speech result is not retained")
 
     @app.post("/v1/control/devices/{device_id}/speech/cancel")
     async def cancel_speech(device_id: str, request: CancelSpeechRequest) -> JSONResponse:

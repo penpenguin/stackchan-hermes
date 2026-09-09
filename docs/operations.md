@@ -176,6 +176,44 @@ When a device already has 16 commands awaiting results, Control API command, cap
 requests return HTTP 429 / `COMMAND_QUEUE_FULL` without queuing another command. Defer retries
 until pending commands finish or time out; existing work is retained and a freed slot is reusable.
 
+## Direct speech from MCP
+
+`stackchan_speak(device_id, text)` starts background speech using the configured Bridge TTS
+adapter, voice, speed and audio gain. This path calls neither STT nor Hermes; normal Bridge startup
+configuration still applies. Input is plain text of 1–1,000 characters after trimming outer
+whitespace. Blank text and oversized input are rejected. Text is split at sentence/newline
+boundaries where possible using `tts.segment_max_characters`, without conversation truncation or
+Markdown removal. `tts.max_segments` and `tts.response_max_characters` apply to conversational
+answers, not direct speech. Segments are synthesized and played one at a time; any failure stops
+the remaining segments, including when conversational `failure_policy` is `play_completed`.
+
+| Operation | Control API | Result |
+| --- | --- | --- |
+| Start | `POST /v1/control/devices/{device_id}/speech` with `{"text":"作業が完了しました。"}` | HTTP 202 with `turn_id`, `state: "ACCEPTED"` |
+| Check | `GET /v1/control/devices/{device_id}/speech/{turn_id}` | HTTP 200 with `turn_id`, `state`, `error_code` |
+| Cancel | Existing `POST /v1/control/devices/{device_id}/speech/cancel` with `{"turn_id":"<UUID>"}` | Existing owned-turn cancellation result |
+
+Use `stackchan_get_speech_status(device_id, turn_id)` to check a direct speech request. States are
+`ACCEPTED`, `RUNNING`, `COMPLETED`, `CANCELLED`, and `FAILED`. Acceptance is not playback success.
+`COMPLETED` means the existing `AudioOutputStreamer` finished sending audio and waiting for the
+playback grace interval; it is not a physical speaker completion acknowledgement. The job continues
+after its HTTP/MCP request ends. Explicit cancellation and touch barge-in produce `CANCELLED`;
+TTS failure/timeout, disconnect/replacement, and device decode errors produce `FAILED`, with a safe
+code such as `TTS_FAILED`, `TTS_TIMEOUT`, `DEVICE_NOT_CONNECTED`, or `AUDIO_DECODE_ERROR`.
+
+Any active voice, vision or direct speech turn causes HTTP 409 / `TURN_BUSY`. This includes a
+StackChan voice conversation awaiting Hermes or its tools. Requests are not queued or retried
+automatically. Unconnected devices return 404 / `DEVICE_NOT_CONNECTED`; missing speaker capability
+returns 409 / `CAPABILITY_UNAVAILABLE`; unavailable/shutting-down speech service returns
+503 / `SPEECH_UNAVAILABLE`. Use the existing cancel tool with the returned `turn_id` to stop work.
+
+Results remain queryable after device disconnect. Completed, cancelled and failed records share
+a global in-memory history of at most 128 entries, expiring 10 minutes after termination; the
+oldest terminal entries are evicted when full. Active entries are not evicted. Missing, expired,
+other-device or pre-restart IDs return 404 / `SPEECH_NOT_FOUND`. Speech text and audio are not
+retained in this history or written to logs. Bridge shutdown stops and joins the background jobs
+before closing provider clients.
+
 ## Device token and Hermes/MCP configuration
 
 Generate a token once, copy only the derived hash to TOML, and provision the raw token only to the

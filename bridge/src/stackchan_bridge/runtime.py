@@ -62,6 +62,7 @@ from stackchan_bridge.turns.notifications import (
     DeviceTurnProgressNotifier,
 )
 from stackchan_bridge.turns.service import VoiceTurnService
+from stackchan_bridge.turns.speech import SpeechTurnService
 from stackchan_bridge.turns.vision import VisionTurnService
 
 _LOGGER = logging.getLogger(__name__)
@@ -79,6 +80,7 @@ class BridgeRuntime:
     vision_turn_service: VisionTurnService
     turn_coordinator: TurnCoordinator
     voice_turn_service: VoiceTurnService
+    speech_turn_service: SpeechTurnService
     failure_notifier: DeviceTurnFailureNotifier
     progress_notifier: DeviceTurnProgressNotifier
     audio_input_handler: VoiceAudioInputHandler
@@ -92,6 +94,7 @@ class BridgeRuntime:
     metrics: BridgeMetrics
 
     async def aclose(self) -> None:
+        await self.speech_turn_service.aclose()
         await asyncio.gather(
             self.hermes_http_client.aclose(),
             *(client.aclose() for client in self.provider_http_clients),
@@ -256,6 +259,15 @@ def build_runtime(
         metrics=metrics,
         progress_notifier=progress_notifier,
     )
+    speech_turn_service = SpeechTurnService(
+        registry=registry,
+        coordinator=turn_coordinator,
+        adapter=tts_adapter,
+        player=output_streamer,
+        timeout_seconds=settings.tts.timeout_seconds,
+        segment_max_characters=settings.tts.segment_max_characters,
+        metrics=metrics,
+    )
     control = create_control_app(
         registry,
         readiness_checks={
@@ -271,6 +283,7 @@ def build_runtime(
         capture_coordinator=capture_coordinator,
         turn_coordinator=turn_coordinator,
         vision_turn_service=vision_turn_service,
+        speech_turn_service=speech_turn_service,
         conversation_resetter=hermes,
         touch_state=event_handler,
     )
@@ -286,6 +299,7 @@ def build_runtime(
         vision_turn_service=vision_turn_service,
         turn_coordinator=turn_coordinator,
         voice_turn_service=voice_service,
+        speech_turn_service=speech_turn_service,
         failure_notifier=failure_notifier,
         progress_notifier=progress_notifier,
         audio_input_handler=audio_input_handler,

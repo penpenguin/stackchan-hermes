@@ -4,7 +4,7 @@ M5Stack 公式 StackChan（CoreS3）を HermesAgent の「目・耳・口・身�
 Firmware・Python Bridge・Device Simulator・MCP server をまとめた専用リポジトリです。
 
 Host 側には、認証付き Device Gateway、Control API、Opus/VAD/STT/Hermes/TTS の音声ターン、
-撮影と vision、10 個の stdio MCP tool、Simulator/Mock Hermes、health/metrics/doctor、
+撮影と vision、12 個の stdio MCP tool、Simulator/Mock Hermes、health/metrics/doctor、
 再接続・fault injection、運用例を実装しています。Firmware は固定済みの公式 vendor snapshot に、
 独立した Bridge client、公式 HAL adapter、NVS/USB provisioning、mDNS、音声、カメラ、表示を
 統合しています。
@@ -253,6 +253,19 @@ Hermes が stdio 経由で `stackchan-mcp` を起動するため、通常は MCP
 この stdio MCP は Control API に接続するため、Bridge 用 `.env` の読み込みは不要です。
 Hermes が別ホストにある場合は、そこで Bridge のコードと実行環境を用意し、Control API も
 SSH 転送などで Hermes 側の loopback から到達できるようにします。
+
+待機中のスタックチャンには `stackchan_speak(device_id, text)` で任意の文章を発話させられます。
+最大1,000文字を省略せず分割して読み上げ、音声・話速には Bridge の TTS 設定を使います。
+録音・応答生成・発話中は `TURN_BUSY` になります。スタックチャン自身の通常会話が
+Hermes の返答を待っている間も使用中なので、通知や別のチャットからの呼びかけに使います。
+
+1. `stackchan_speak(device_id="stackchan-001", text="作業が完了しました。")` を呼びます。
+2. すぐ返る `turn_id` を使い、`stackchan_get_speech_status(device_id, turn_id)` で結果を確認します。
+3. 停止する場合は `stackchan_cancel_speech(device_id, turn_id)` を呼びます。
+
+`ACCEPTED` は受付完了です。実行結果は `COMPLETED`・`CANCELLED`・`FAILED` で確認し、
+失敗時には `error_code` を参照します。結果は終了から10分、最大128件のメモリ履歴です。
+詳しい API と完了判定は [発話の運用手順](docs/operations.md#direct-speech-from-mcp) を参照してください。
 
 ### 常駐運用と開発時の検証
 

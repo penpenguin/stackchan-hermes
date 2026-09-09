@@ -41,6 +41,9 @@ access are outside the boundary.
 
 - Microphone: 16 kHz mono PCM → FW Opus encoder → raw WebSocket binary packet → Bridge decode.
 - Speech: Hermes SSE text → bounded Japanese segments → TTS PCM/WAV → Opus → raw binary packet.
+- Direct speech: MCP text → loopback speech API → owned background turn → complete plain-text
+  segments → configured TTS → Opus. Acceptance is immediate; status history and existing turn
+  cancellation cover the background job. Active conversations reject direct speech with `TURN_BUSY`.
 - Camera: authenticated command → JPEG → authenticated multipart upload → bounded TTL store →
   one-time `input_image` data URL when calling Hermes.
 - Commands: Hermes MCP → stdio server → loopback Control API → validated device command; Bridge

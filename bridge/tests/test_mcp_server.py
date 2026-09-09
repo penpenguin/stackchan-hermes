@@ -12,6 +12,14 @@ class FakeControlClient:
         self.commands: list[tuple[str, str, dict[str, object], str | None]] = []
         self.speech_cancellations: list[tuple[str, str]] = []
         self.touch_requests: list[str] = []
+        self.speeches: list[tuple[str, str]] = []
+
+    async def speak(self, device_id: str, *, text: str) -> dict[str, Any]:
+        self.speeches.append((device_id, text))
+        return {"turn_id": "0819e40d-71f3-4d44-9a31-928358122a83", "state": "ACCEPTED"}
+
+    async def get_speech_status(self, device_id: str, *, turn_id: str) -> dict[str, Any]:
+        return {"turn_id": turn_id, "state": "COMPLETED", "error_code": None}
 
     async def get_device(self, device_id: str) -> dict[str, Any]:
         if device_id == "offline":
@@ -143,6 +151,8 @@ async def test_mcp_server_registers_safe_tools_and_maps_head_command() -> None:
         "stackchan_set_volume",
         "stackchan_cancel_speech",
         "stackchan_get_touch_state",
+        "stackchan_speak",
+        "stackchan_get_speech_status",
     }
     assert control.commands == [
         (
@@ -157,6 +167,53 @@ async def test_mcp_server_registers_safe_tools_and_maps_head_command() -> None:
         "ok": True,
         "result": {"yaw": 15.0, "pitch": 40.0, "speed": 30},
     }
+
+
+@pytest.mark.asyncio
+async def test_mcp_speech_tools_expose_bounded_text_and_return_background_status() -> None:
+    control = FakeControlClient()
+    server = create_mcp_server(control)
+    tools = {tool.name: tool for tool in await server.list_tools()}
+    assert tools["stackchan_speak"].input_schema["properties"]["text"]["maxLength"] == 1000
+    result = await server.call_tool(
+        "stackchan_speak", {"device_id": "sim-001", "text": " 通知です。 "}
+    )
+    assert result.structured_content["state"] == "ACCEPTED"
+    assert control.speeches == [("sim-001", "通知です。")]
+    status = await server.call_tool(
+        "stackchan_get_speech_status",
+        {
+            "device_id": "sim-001",
+            "turn_id": result.structured_content["turn_id"],
+        },
+    )
+    assert status.structured_content["state"] == "COMPLETED"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "arguments",
+    [
+        {"device_id": "sim-001", "text": " \n"},
+        {"device_id": "sim-001", "text": "あ" * 1001},
+        {"device_id": "../bad", "text": "通知"},
+    ],
+    ids=["blank", "too-long", "invalid-device"],
+)
+async def test_mcp_rejects_invalid_speech_before_control_call(arguments: dict[str, object]) -> None:
+    control = FakeControlClient()
+    server = create_mcp_server(control)
+    with pytest.raises((ToolError, ValueError)):
+        await server.call_tool("stackchan_speak", arguments)
+    assert control.speeches == []
+
+
+@pytest.mark.asyncio
+async def test_mcp_rejects_invalid_speech_status_turn() -> None:
+    with pytest.raises((ToolError, ValueError)):
+        await create_mcp_server(FakeControlClient()).call_tool(
+            "stackchan_get_speech_status", {"device_id": "sim-001", "turn_id": "bad"}
+        )
 
 
 @pytest.mark.asyncio
