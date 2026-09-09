@@ -312,7 +312,7 @@ Hermes の返答を待っている間も使用中なので、通知や別のチ�
   最下層でも遮断します。解除 build、flash、物理動作はそれぞれ事前検証と明示承認を要します。
 - debug 音声保存は既定無効です。有効時は 0600 WAV と TTL purge を使い、明示警告します。
 
-完成条件は [`Goal.md`](Goal.md)、進捗は [`docs/progress.md`](docs/progress.md)、
+要件・受入条件は [`docs/requirements.md`](docs/requirements.md)、進捗は [`docs/progress.md`](docs/progress.md)、
 実機の検証記録は [`docs/hardware-test-report.md`](docs/hardware-test-report.md)、
 自動検証の記録は [`docs/verification-report.md`](docs/verification-report.md)、
 要求と実装の対応は [`docs/traceability.md`](docs/traceability.md) を参照してください。

@@ -1634,16 +1634,6 @@ def test_documents_record_attended_machine_valid_home_and_complete_hw04() -> Non
     assert "Complete (K151 physical motion, 2026-09-03)" in implementation_plan
 
 
-def test_goal_defers_the_temporary_hyper_v_firewall_cleanup_until_final_cleanup() -> None:
-    goal = (ROOT / "Goal.md").read_text(encoding="utf-8")
-
-    assert "連続した実機検証中は各シナリオ後に削除しない" in goal
-    assert "Goal 全体の終了時に一度だけ削除する" in goal
-    assert "StackChanHermesBridge8765" in goal
-    assert "規則数が0件" in goal
-    assert "DefaultInboundAction=Block" in goal
-
-
 def test_protocol_status_reflects_physical_transport_evidence() -> None:
     protocol = (ROOT / "docs" / "protocol-v1.md").read_text(encoding="utf-8")
 
