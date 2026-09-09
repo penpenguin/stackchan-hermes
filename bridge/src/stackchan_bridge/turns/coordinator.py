@@ -115,7 +115,10 @@ class TurnCoordinator:
         *,
         trigger: TurnTrigger,
         turn_id: UUID | None = None,
+        initial_state: TurnState = TurnState.CAPTURING,
     ) -> Turn:
+        if initial_state not in {TurnState.CAPTURING, TurnState.SYNTHESIZING}:
+            raise ValueError("initial state must be CAPTURING or SYNTHESIZING")
         async with self._lock:
             if device_id in self._active:
                 raise TurnBusyError(f"device already has an active turn: {device_id}")
@@ -127,6 +130,7 @@ class TurnCoordinator:
                 device_id=device_id,
                 started_at=self._clock(),
                 trigger=trigger,
+                state=initial_state,
                 conversation_name=f"stackchan:{device_id}",
             )
             self._active[device_id] = turn

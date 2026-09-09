@@ -12,6 +12,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import TypeAdapter, ValidationError
 
 from stackchan_bridge.protocol.models import DeviceId
+from stackchan_bridge.speech_models import SpeechRequest
 
 _DEVICE_ID_ADAPTER: TypeAdapter[str] = TypeAdapter(DeviceId)
 _SAFE_ERROR_CODE = re.compile(r"^[A-Z0-9][A-Z0-9_]{0,63}$")
@@ -61,6 +62,31 @@ class ControlApiClient:
             f"/v1/control/devices/{selected_device}/speech/cancel",
             json={"turn_id": selected_turn_id},
             read_timeout_seconds=_COMMAND_READ_TIMEOUT_SECONDS,
+        )
+        return _response_object(response)
+
+    async def speak(self, device_id: str, *, text: str) -> dict[str, Any]:
+        selected_device = _validate_device_id(device_id)
+        try:
+            request = SpeechRequest(text=text)
+        except ValidationError as error:
+            raise ToolError("INVALID_ARGUMENT") from error
+        response = await self._request(
+            "POST",
+            f"/v1/control/devices/{selected_device}/speech",
+            json=request.model_dump(),
+        )
+        return _response_object(response)
+
+    async def get_speech_status(self, device_id: str, *, turn_id: str) -> dict[str, Any]:
+        selected_device = _validate_device_id(device_id)
+        try:
+            selected_turn_id = str(UUID(turn_id))
+        except ValueError as error:
+            raise ToolError("INVALID_TURN_ID") from error
+        response = await self._request(
+            "GET",
+            f"/v1/control/devices/{selected_device}/speech/{selected_turn_id}",
         )
         return _response_object(response)
 

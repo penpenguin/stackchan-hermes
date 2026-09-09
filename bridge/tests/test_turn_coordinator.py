@@ -24,6 +24,29 @@ class RecordingCancellationHook:
 
 
 @pytest.mark.asyncio
+async def test_speech_turn_starts_without_capturing_and_is_immediately_cancellable() -> None:
+    coordinator = TurnCoordinator()
+    turn = await coordinator.begin(
+        "sim-001", trigger=TurnTrigger.CONTROL_API, initial_state=TurnState.SYNTHESIZING
+    )
+    assert turn.state is TurnState.SYNTHESIZING
+    with pytest.raises(TurnBusyError):
+        await coordinator.begin("sim-001", trigger=TurnTrigger.TOUCH)
+    assert await coordinator.cancel_turn("sim-001", turn.turn_id, reason="CONTROL_API_CANCEL")
+    assert coordinator.current("sim-001") is None
+
+
+@pytest.mark.asyncio
+async def test_turn_cannot_start_in_a_terminal_state() -> None:
+    coordinator = TurnCoordinator()
+    with pytest.raises(ValueError, match="initial state"):
+        await coordinator.begin(
+            "sim-001", trigger=TurnTrigger.CONTROL_API, initial_state=TurnState.COMPLETED
+        )
+    assert coordinator.current("sim-001") is None
+
+
+@pytest.mark.asyncio
 async def test_turn_coordinator_cancels_owned_work_and_rejects_stale_results() -> None:
     metrics = BridgeMetrics()
     hook = RecordingCancellationHook()

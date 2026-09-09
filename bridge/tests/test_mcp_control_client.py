@@ -7,6 +7,45 @@ from stackchan_bridge.mcp_server.control_client import ControlApiClient
 
 
 @pytest.mark.asyncio
+async def test_speech_client_maps_async_start_status_and_safe_errors() -> None:
+    turn_id = "0819e40d-71f3-4d44-9a31-928358122a83"
+    calls = []
+
+    async def handle(request: httpx.Request) -> httpx.Response:
+        calls.append(request)
+        assert request.extensions["timeout"]["read"] == 10
+        if "busy" in request.url.path:
+            return httpx.Response(
+                409, json={"error": {"code": "TURN_BUSY", "message": "private text"}}
+            )
+        if request.method == "POST":
+            assert request.url.path == "/v1/control/devices/sim-001/speech"
+            assert await request.aread() == '{"text":"通知です。"}'.encode()
+            return httpx.Response(202, json={"turn_id": turn_id, "state": "ACCEPTED"})
+        assert request.url.path == f"/v1/control/devices/sim-001/speech/{turn_id}"
+        return httpx.Response(
+            200, json={"turn_id": turn_id, "state": "FAILED", "error_code": "TTS_FAILED"}
+        )
+
+    control = ControlApiClient("http://127.0.0.1:8766", transport=httpx.MockTransport(handle))
+    assert (await control.speak("sim-001", text="通知です。"))["state"] == "ACCEPTED"
+    assert (await control.get_speech_status("sim-001", turn_id=turn_id))[
+        "error_code"
+    ] == "TTS_FAILED"
+    with pytest.raises(ToolError, match="TURN_BUSY") as error:
+        await control.speak("busy", text="通知")
+    assert "private text" not in str(error.value)
+    for invalid_device in ["../bad", "bad!id"]:
+        with pytest.raises(ToolError, match="INVALID_DEVICE_ID"):
+            await control.speak(invalid_device, text="通知")
+    with pytest.raises(ToolError, match="INVALID_TURN_ID"):
+        await control.get_speech_status("sim-001", turn_id="../bad")
+    with pytest.raises(ToolError, match="INVALID_ARGUMENT"):
+        await control.speak("sim-001", text=" \n")
+    assert len(calls) == 3
+
+
+@pytest.mark.asyncio
 async def test_mcp_control_client_maps_commands_captures_and_safe_errors() -> None:
     private_message = "private-control-diagnostic"
     read_timeouts: dict[str, float | None] = {}
