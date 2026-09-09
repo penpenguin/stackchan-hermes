@@ -71,7 +71,7 @@ class GenericHttpWavTtsAdapter:
     client: httpx.AsyncClient = field(repr=False)
     endpoint: str
     api_key: SecretStr | None = field(default=None, repr=False)
-    gain: float = 0.65
+    gain: float = 1.0
     leading_silence_ms: int = 0
     trailing_silence_ms: int = 0
 
@@ -98,7 +98,7 @@ class OpenAICompatibleTtsAdapter:
     voice: str
     speed: float = 1.0
     api_key: SecretStr | None = field(default=None, repr=False)
-    gain: float = 0.65
+    gain: float = 1.0
     leading_silence_ms: int = 0
     trailing_silence_ms: int = 0
     irodori_caption: str | None = None
@@ -137,7 +137,7 @@ class OpenAICompatibleTtsAdapter:
 class VoicevoxTtsAdapter:
     client: httpx.AsyncClient = field(repr=False)
     speaker: int = 1
-    gain: float = 0.65
+    gain: float = 1.0
     leading_silence_ms: int = 0
     trailing_silence_ms: int = 0
 

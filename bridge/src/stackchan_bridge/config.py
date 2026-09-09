@@ -109,7 +109,7 @@ class AudioSettings(BaseModel):
     max_recording_ms: int = Field(default=15_000, ge=1_000, le=15_000)
     tts_preroll_ms: int = Field(default=500, ge=0, le=5_000)
     tts_postroll_ms: int = Field(default=100, ge=0, le=5_000)
-    tts_gain: float = Field(default=0.65, ge=0, le=2)
+    tts_gain: float = Field(default=1.0, ge=0, le=2)
     debug_save_enabled: bool = False
     debug_directory: Path = Path(".local/debug-audio")
     debug_ttl_seconds: int = Field(default=3_600, ge=60, le=86_400)
