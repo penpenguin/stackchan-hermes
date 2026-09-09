@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from asyncio import CancelledError, Event
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from io import BytesIO
 from wave import open as open_wave
 
@@ -14,11 +14,56 @@ from stackchan_bridge.audio.types import PcmAudio
 from stackchan_bridge.tts.adapters import (
     GenericHttpWavTtsAdapter,
     MockTtsAdapter,
+    OpenAICompatibleTtsAdapter,
+    TtsAdapter,
     TtsResult,
     VoicevoxTtsAdapter,
     synthesize_with_timeout,
 )
 from stackchan_bridge.tts.errors import TtsProviderError, TtsTimeoutError
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "factory",
+    [
+        pytest.param(
+            lambda client: GenericHttpWavTtsAdapter(client, endpoint="/synthesize"),
+            id="http-wav",
+        ),
+        pytest.param(
+            lambda client: OpenAICompatibleTtsAdapter(
+                client, endpoint="/v1/audio/speech", model="irodori-tts", voice="sample"
+            ),
+            id="openai",
+        ),
+        pytest.param(lambda client: VoicevoxTtsAdapter(client), id="voicevox"),
+    ],
+)
+async def test_tts_default_gain_preserves_provider_amplitude(
+    factory: Callable[[httpx.AsyncClient], TtsAdapter],
+) -> None:
+    samples = np.tile(np.array([12_000, -12_000], dtype="<i2"), 480)
+    wav_buffer = BytesIO()
+    with open_wave(wav_buffer, "wb") as wav_file:
+        wav_file.setnchannels(1)
+        wav_file.setsampwidth(2)
+        wav_file.setframerate(16_000)
+        wav_file.writeframes(samples.tobytes())
+
+    async def handle(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/audio_query":
+            return httpx.Response(200, json={"speedScale": 1.0})
+        return httpx.Response(
+            200, content=wav_buffer.getvalue(), headers={"Content-Type": "audio/wav"}
+        )
+
+    async with httpx.AsyncClient(
+        transport=httpx.MockTransport(handle), base_url="http://127.0.0.1:50021"
+    ) as client:
+        result = await factory(client).synthesize("こんにちは")
+
+    np.testing.assert_allclose(np.frombuffer(result.audio.pcm, dtype="<i2"), samples, atol=1)
 
 
 @pytest.mark.asyncio

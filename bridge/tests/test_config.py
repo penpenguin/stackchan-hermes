@@ -9,6 +9,12 @@ from stackchan_bridge.config import load_settings
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def test_default_audio_gain_does_not_attenuate_tts() -> None:
+    settings = load_settings(environment={})
+
+    assert settings.audio.tts_gain == 1.0
+
+
 def test_config_priority_is_cli_then_environment_then_toml_then_defaults(
     tmp_path: Path,
 ) -> None:
@@ -57,6 +63,7 @@ def test_config_example_is_a_complete_runtime_configuration() -> None:
     assert settings.audio.frame_ms == 60
     assert settings.audio.tts_preroll_ms == 500
     assert settings.audio.tts_postroll_ms == 100
+    assert settings.audio.tts_gain == 1.0
     assert settings.audio.debug_save_enabled is False
     assert settings.audio.debug_directory == Path(".local/debug-audio")
     assert settings.audio.debug_ttl_seconds == 3_600

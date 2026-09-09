@@ -33,7 +33,7 @@ frame_ms = 60
 max_recording_ms = 15000
 tts_preroll_ms = 500
 tts_postroll_ms = 100
-tts_gain = 0.65
+tts_gain = 1.0
 # WARNING: microphone audio is private; enable only for short-lived local diagnostics.
 debug_save_enabled = false
 debug_directory = ".local/debug-audio"

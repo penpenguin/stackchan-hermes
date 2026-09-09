@@ -99,7 +99,8 @@ Wi-Fi-loss recovery confirmed; CAM-002 live physical vision turn is PASS; final 
   deterministically aborted with `ESP_ERR_NVS_KEY_TOO_LONG`: the physical NVS key
   `discovery_enabled` exceeded ESP-IDF's 15-byte key limit. A new failing contract test captured
   that limit. Commit `a6c882e` shortened both the write and read side to physical key
-  `bridge.discovery`; the original logical requirement remains recorded in `Goal.md`.
+  `bridge.discovery`; this stores the Bridge discovery-enabled setting required by
+  [FW-002](requirements.md#fw-002--hardware-abstraction-settings-state-and-local-presentation).
 - The complete gate then passed with 328 host tests and 18/18 Firmware CTest targets. The retained
   3,918,272-byte app at that checkpoint was reflashed only at `ota_0@0x20000`; bootloader,
   partition table, NVS and assets were not written. Both esptool's post-write hash and a read-only
