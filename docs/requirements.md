@@ -448,7 +448,8 @@ This register records the maintained requirements and acceptance criteria.
 ## DOC-001 — Documentation, ADR and end-to-end traceability
 
 - **Reason:** Requirements, decisions, verification and known limits must remain auditable.
-- **Input:** Goal, implementation, test/gate output and external evidence.
+- **Input:** [Requirements register](requirements.md), implementation, test/gate output and
+  external evidence.
 - **Output:** architecture/protocol/state/security/operations/hardware/progress/report/traceability.
 - **Normal:** every registered requirement maps to implementation/test/result.
 - **Abnormal:** unavailable evidence is marked NOT RUN/blocked, never implied PASS.
