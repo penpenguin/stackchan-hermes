@@ -16,6 +16,9 @@ extern "C" {
 
 /* Console */
 int scli_init(void);
+/* Discard pending replies before publishing any prompt for a new pairing request. */
+void scli_prepare_key(void);
+/* Preserve replies received since preparation, including those before this wait. */
 int scli_receive_key(int *key);
 
 /** Misc. */

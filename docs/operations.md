@@ -342,7 +342,22 @@ idf.py -B build-hermes-usb-console \
   -D "SDKCONFIG_DEFAULTS=$PWD/sdkconfig.defaults;$PWD/sdkconfig.hermes.defaults" build
 ```
 
-After a safe physical boot, the serial REPL accepts validated NVS updates such as these. Persistent
+The local console starts once before the launcher. Hermes provisioning and BLE pairing use the
+same REPL and the console transport selected by ESP-IDF (USB Serial/JTAG in the release profile).
+AVATAR and DANCE reuse this console; they do not open a separate UART0 input task. When BLE
+requests pairing input, enter `key Y`, `key N`, or `key <passkey>` on this connection. The existing
+30-second pairing-input timeout and default Just Works pairing configuration are unchanged.
+Each pairing request discards pending replies before printing its challenge or input instructions.
+Input entered before a request (including a late reply after an earlier timeout) cannot answer
+the next request. Replies arriving immediately after the prompt are preserved until received.
+
+With Hermes USB provisioning enabled the prompt remains `hermes-config>`. Disabling provisioning
+or the entire Bridge client retains the BLE console with the prompt `stackchan>` and omits the
+`stackchan-hermes` command. Console startup failures are logged without aborting the launcher;
+the startup result is retained until reboot, so opening an app cannot retry a partial console
+initialization. A firmware configuration without a console transport reports it as unavailable.
+
+After a safe physical boot, the shared serial REPL accepts validated NVS updates such as these. Persistent
 command history is disabled and command results never print the token, but ESP-IDF linenoise can
 echo characters typed into the terminal. Disable terminal/session logging or use a
 response-suppressing serial utility for `set-token`; never send it through a recorded monitor.

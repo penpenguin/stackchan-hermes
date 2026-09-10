@@ -11,7 +11,7 @@
 #include <apps/common/toast/toast.h>
 #include <hal/hal.h>
 #include <hal/boot_confirmation.h>
-#include <hal/stackchan_bridge_provisioning.h>
+#include <hal/local_console.h>
 #include <hal/stackchan_bridge_service.h>
 #include <hal/board/hal_bridge.h>
 #include <apps/common/common.h>
@@ -33,11 +33,10 @@ extern "C" void app_main(void)
     ui_hal::on_delay([](uint32_t ms) { GetHAL().delay(ms); });
     ui_hal::on_get_tick([]() { return GetHAL().millis(); });
 
-#if CONFIG_STACKCHAN_HERMES_USB_PROVISIONING
-    if (!stackchan::hermes::startStackchanHermesProvisioningConsole()) {
-        mclog::error("StackChan Hermes provisioning console did not start");
+    const auto consoleResult = stackchan::local::startLocalConsole();
+    if (consoleResult != ESP_OK) {
+        mclog::error("StackChan local console did not start: {}", esp_err_to_name(consoleResult));
     }
-#endif
 
     GetMooncake().installApp(std::make_unique<AppLauncher>());
     GetMooncake().installApp(std::make_unique<AppAvatar>());

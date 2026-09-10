@@ -1,8 +1,81 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(stackchan_firmware_tests LANGUAGES CXX)
+project(stackchan_firmware_tests LANGUAGES C CXX)
 
 enable_testing()
+
+# Compile the production console and BLE CLI with deterministic SDK/RTOS fakes.
+set(CONSOLE_TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/console")
+foreach(header esp_err.h esp_log.h esp_console.h sdkconfig.h linenoise/linenoise.h
+        freertos/FreeRTOS.h freertos/task.h freertos/queue.h driver/uart.h nimble/ble.h modlog/modlog.h)
+    get_filename_component(header_dir "${CONSOLE_TEST_DIR}/${header}" DIRECTORY)
+    file(MAKE_DIRECTORY "${header_dir}")
+    file(WRITE "${CONSOLE_TEST_DIR}/${header}" "#include \"console_fakes.h\"\n")
+endforeach()
+# Exercise the production PASSKEY_ACTION branch, including prompt/receive order.
+# Preserve its Apache-2.0 notice in the generated test translation unit.
+set(BLEPRPH_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/../main/hal/utils/bleprph/bleprph.c")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${BLEPRPH_SOURCE}")
+file(READ "${BLEPRPH_SOURCE}" bleprph_source)
+string(FIND "${bleprph_source}" "*/" license_end)
+math(EXPR license_length "${license_end} + 2")
+string(SUBSTRING "${bleprph_source}" 0 ${license_length} bleprph_license)
+string(FIND "${bleprph_source}" "        case BLE_GAP_EVENT_PASSKEY_ACTION:" pairing_start)
+string(FIND "${bleprph_source}" "        case BLE_GAP_EVENT_AUTHORIZE:" pairing_end)
+if(pairing_start LESS 0 OR pairing_end LESS pairing_start)
+    message(FATAL_ERROR "Cannot locate the production BLE pairing branch")
+endif()
+math(EXPR pairing_length "${pairing_end} - ${pairing_start}")
+string(SUBSTRING "${bleprph_source}" ${pairing_start} ${pairing_length} pairing_case)
+file(WRITE "${CONSOLE_TEST_DIR}/ble_pairing.c" "${bleprph_license}
+#include <inttypes.h>
+#include \"console_fakes.h\"
+#include <hal/utils/bleprph/nimble_peripheral_utils/esp_peripheral.h>
+int test_ble_passkey_event(struct ble_gap_event *event) {
+    int rc;
+    switch (event->type) {
+${pairing_case}
+        default: return ESP_FAIL;
+    }
+}
+")
+function(add_console_test target backend bridge provisioning)
+    add_executable(${target} local_console_test.cpp
+        "${CONSOLE_TEST_DIR}/ble_pairing.c"
+        ../main/hal/local_console.cpp
+        ../main/hal/stackchan_bridge_provisioning.cpp
+        ../main/hal/utils/bleprph/nimble_peripheral_utils/scli.c
+        ../components/stackchan_bridge_client/provisioning.cpp
+        ../components/stackchan_bridge_client/settings.cpp)
+    target_include_directories(${target} PRIVATE "${CONSOLE_TEST_DIR}" fakes/console
+        ../main ../components/stackchan_bridge_client/include)
+    target_compile_features(${target} PRIVATE cxx_std_17)
+    target_compile_options(${target} PRIVATE -UNDEBUG)
+    target_compile_definitions(${target} PRIVATE
+        CONFIG_STACKCHAN_HERMES_BRIDGE_CLIENT=${bridge}
+        CONFIG_STACKCHAN_HERMES_USB_PROVISIONING=${provisioning})
+    if(NOT backend STREQUAL "NONE")
+        target_compile_definitions(${target} PRIVATE CONFIG_ESP_CONSOLE_${backend}=1)
+    endif()
+endfunction()
+add_console_test(local_console_test USB_SERIAL_JTAG 1 1)
+add_test(NAME local_console_test COMMAND local_console_test)
+foreach(scenario keys full null uninitialized provisioning stale pairing_prompt)
+    add_test(NAME local_console_${scenario}_test COMMAND local_console_test ${scenario})
+endforeach()
+foreach(stage create queue key stackchan-hermes start)
+    add_test(NAME local_console_failure_${stage}_test COMMAND local_console_test failure ${stage})
+endforeach()
+add_console_test(local_console_no_provisioning_test USB_SERIAL_JTAG 1 0)
+add_console_test(local_console_no_hermes_test UART_DEFAULT 0 0)
+add_console_test(local_console_cdc_test USB_CDC 1 1)
+add_console_test(local_console_uart_test UART_CUSTOM 1 1)
+add_console_test(local_console_unsupported_test NONE 0 0)
+foreach(target local_console_no_provisioning_test local_console_no_hermes_test
+        local_console_cdc_test local_console_uart_test)
+    add_test(NAME ${target} COMMAND ${target} keys)
+endforeach()
+add_test(NAME local_console_unsupported_test COMMAND local_console_unsupported_test unsupported)
 
 add_executable(boot_confirmation_test boot_confirmation_test.cpp)
 target_include_directories(boot_confirmation_test PRIVATE fakes/boot_confirmation ../main)

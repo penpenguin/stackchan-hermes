@@ -1,7 +1,9 @@
 #pragma once
 
+#include <esp_err.h>
+
 namespace stackchan::hermes {
 
-bool startStackchanHermesProvisioningConsole();
+esp_err_t registerStackchanHermesProvisioningCommands();
 
 }  // namespace stackchan::hermes
