@@ -19,7 +19,8 @@ config STACKCHAN_HERMES_USB_PROVISIONING
     depends on STACKCHAN_HERMES_BRIDGE_CLIENT
     default y
     help
-        Start a local ESP-IDF serial console command named stackchan-hermes. It can update the
+        Register stackchan-hermes on the shared local console alongside BLE pairing input.
+        Disabling this option keeps the local BLE console available. The command can update the
         Bridge URL and device token in NVS without rebuilding the Firmware. Command history is
         disabled and command results never print credential values. Reboot to apply changes.
 

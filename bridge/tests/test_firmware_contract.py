@@ -605,10 +605,14 @@ def test_main_exposes_secret_safe_usb_serial_bridge_provisioning() -> None:
     provisioning = (FIRMWARE_ROOT / "main" / "hal" / "stackchan_bridge_provisioning.cpp").read_text(
         encoding="utf-8"
     )
+    console = (FIRMWARE_ROOT / "main" / "hal" / "local_console.cpp").read_text(encoding="utf-8")
+    ble = (FIRMWARE_ROOT / "main" / "hal" / "utils" / "bleprph" / "bleprph.c").read_text(
+        encoding="utf-8"
+    )
 
     assert "config STACKCHAN_HERMES_USB_PROVISIONING" in kconfig
     assert "esp_console_cmd_register" in provisioning
-    assert "esp_console_start_repl" in provisioning
+    assert "esp_console_start_repl" in console
     assert 'command.command = "stackchan-hermes"' in provisioning
     for namespace in ("device", "bridge", "audio", "display", "motion", "touch"):
         assert f'Settings settings("{namespace}", true)' in provisioning
@@ -618,17 +622,15 @@ def test_main_exposes_secret_safe_usb_serial_bridge_provisioning() -> None:
         assert f'SetInt("{key}", result.numericValue)' in provisioning
     assert 'SetBool("discovery", result.boolValue)' in provisioning
     assert 'SetBool("enabled", result.boolValue)' in provisioning
-    assert "replConfig.history_save_path = nullptr" in provisioning
-    assert "replConfig.max_history_len = 1" in provisioning
+    assert "replConfig.history_save_path = nullptr" in console
+    assert "replConfig.max_history_len = 1" in console
     assert "linenoiseHistoryFree();" in provisioning
     assert "printf(result.value" not in provisioning
     assert "ESP_LOG" not in provisioning
-    assert main.index("startStackchanHermesProvisioningConsole()") < main.index(
-        "GetMooncake().installApp"
-    )
-    assert main.index("startStackchanHermesProvisioningConsole()") < main.index(
-        "startStackchanHermesBridgeClient()"
-    )
+    assert main.index("startLocalConsole()") < main.index("GetMooncake().installApp")
+    assert main.index("startLocalConsole()") < main.index("startStackchanHermesBridgeClient()")
+    assert "CONFIG_STACKCHAN_HERMES_USB_PROVISIONING" not in main
+    assert "scli_init()" not in ble
 
 
 def test_attended_wifi_cycle_is_one_shot_bounded_and_release_disabled() -> None:

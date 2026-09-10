@@ -10,7 +10,13 @@ cmake --build firmware/build-host-tests
 ctest --test-dir firmware/build-host-tests --output-on-failure
 ```
 
-The current suite has 24 CTest targets. Platform and physical acceptance continues with:
+The shared-console tests compile the production C/C++ console, BLE input and Hermes provisioning
+sources with SDK/RTOS/NVS fakes. They cover one-time startup, command registration before input
+starts, pairing input and timeouts, queue/registration/startup failures, and the USB Serial/JTAG,
+USB CDC and UART configurations with provisioning or the whole Bridge disabled. These tests do
+not exercise the real NimBLE stack or LVGL app transitions.
+
+Platform and physical acceptance continues with:
 
 - ESP-IDF Unity/pytest-embedded tests for platform integration;
 - explicitly recorded hardware smoke tests for physical I/O.

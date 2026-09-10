@@ -134,7 +134,6 @@ def test_hardware_documents_record_the_no_touch_input_safety_finding() -> None:
     traceability = (ROOT / "docs" / "traceability.md").read_text(encoding="utf-8")
     requirements = (ROOT / "docs" / "requirements.md").read_text(encoding="utf-8")
     implementation_plan = (ROOT / "docs" / "implementation-plan.md").read_text(encoding="utf-8")
-    firmware_tests = (ROOT / "firmware" / "tests" / "README.md").read_text(encoding="utf-8")
 
     assert "no-touch volume comparison" in hardware_setup
     assert "## No-touch volume comparison and input-safety finding" in hardware_report
@@ -156,7 +155,6 @@ def test_hardware_documents_record_the_no_touch_input_safety_finding() -> None:
     assert "no-touch false activation correction is physically Green" in requirements
     assert "Twenty-four host C++ tests" in implementation_plan
     assert "24 host C++ tests" in requirements
-    assert "24 CTest targets" in firmware_tests
 
 
 def test_hardware_documents_record_the_retained_head_touch_candidate() -> None:

@@ -704,12 +704,6 @@ void ble_prph_init(bool use_alt_uuid)
 
     nimble_port_freertos_init(bleprph_host_task);
 
-    /* Initialize command line interface to accept input from user */
-    rc = scli_init();
-    if (rc != ESP_OK) {
-        ESP_LOGE(tag, "scli_init() failed");
-    }
-
 #if MYNEWT_VAL(BLE_EATT_CHAN_NUM) > 0
     bearers = 0;
     for (int i = 0; i < MYNEWT_VAL(BLE_EATT_CHAN_NUM); i++) {

@@ -17,8 +17,6 @@
 namespace stackchan::hermes {
 namespace {
 
-constexpr char kPrompt[] = "hermes-config>";
-esp_console_repl_t* provisioningRepl = nullptr;
 #if CONFIG_STACKCHAN_HERMES_ATTENDED_WIFI_CYCLE
 bool wifiCycleUsed = false;
 #endif
@@ -131,48 +129,13 @@ int handleProvisioningCommand(int argumentCount, char** arguments)
 
 }  // namespace
 
-bool startStackchanHermesProvisioningConsole()
+esp_err_t registerStackchanHermesProvisioningCommands()
 {
-    if (provisioningRepl != nullptr) {
-        return true;
-    }
-
     esp_console_cmd_t command{};
     command.command = "stackchan-hermes";
     command.help = "Provision validated StackChan Hermes runtime settings in NVS";
     command.func = handleProvisioningCommand;
-    if (esp_console_cmd_register(&command) != ESP_OK) {
-        return false;
-    }
-
-    esp_console_repl_config_t replConfig = ESP_CONSOLE_REPL_CONFIG_DEFAULT();
-    replConfig.prompt = kPrompt;
-    replConfig.max_cmdline_length = 640;
-    replConfig.history_save_path = nullptr;
-    replConfig.max_history_len = 1;
-
-#if defined(CONFIG_ESP_CONSOLE_UART_DEFAULT) || defined(CONFIG_ESP_CONSOLE_UART_CUSTOM)
-    esp_console_dev_uart_config_t deviceConfig = ESP_CONSOLE_DEV_UART_CONFIG_DEFAULT();
-    if (esp_console_new_repl_uart(&deviceConfig, &replConfig, &provisioningRepl) != ESP_OK) {
-        return false;
-    }
-#elif defined(CONFIG_ESP_CONSOLE_USB_CDC)
-    esp_console_dev_usb_cdc_config_t deviceConfig = ESP_CONSOLE_DEV_CDC_CONFIG_DEFAULT();
-    if (esp_console_new_repl_usb_cdc(&deviceConfig, &replConfig, &provisioningRepl) != ESP_OK) {
-        return false;
-    }
-#elif defined(CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG)
-    esp_console_dev_usb_serial_jtag_config_t deviceConfig =
-        ESP_CONSOLE_DEV_USB_SERIAL_JTAG_CONFIG_DEFAULT();
-    if (esp_console_new_repl_usb_serial_jtag(&deviceConfig, &replConfig, &provisioningRepl)
-        != ESP_OK) {
-        return false;
-    }
-#else
-    return false;
-#endif
-
-    return esp_console_start_repl(provisioningRepl) == ESP_OK;
+    return esp_console_cmd_register(&command);
 }
 
 }  // namespace stackchan::hermes
