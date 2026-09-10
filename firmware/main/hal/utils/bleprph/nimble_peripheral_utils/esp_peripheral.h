@@ -16,6 +16,7 @@ extern "C" {
 
 /* Console */
 int scli_init(void);
+/* Discard pending replies, then wait for input for the current pairing request. */
 int scli_receive_key(int *key);
 
 /** Misc. */

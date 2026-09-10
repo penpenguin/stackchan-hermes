@@ -52,6 +52,8 @@ int scli_receive_key(int *console_key)
     if (cli_handle == NULL || console_key == NULL) {
         return pdFALSE;
     }
+    /* A reply entered before this request must never answer a new pairing. */
+    xQueueReset(cli_handle);
     return xQueueReceive(cli_handle, console_key, BLE_RX_TIMEOUT);
 }
 

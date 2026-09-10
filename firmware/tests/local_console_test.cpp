@@ -7,10 +7,12 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include <functional>
 #include <map>
 #include <optional>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace {
@@ -29,6 +31,7 @@ unsigned commandRegisters = 0;
 unsigned historyClears = 0;
 TickType_t receiveTimeout = 0;
 std::optional<int> queuedKey;
+std::function<void()> onReceive;
 std::map<std::string, esp_console_cmd_t> commands;
 esp_console_repl_t repl{};
 esp_console_repl_config_t replConfig{};
@@ -128,9 +131,16 @@ int xQueueSend(QueueHandle_t handle, const void *value, TickType_t timeout) {
     queuedKey = *static_cast<const int *>(value);
     return pdPASS;
 }
+int xQueueReset(QueueHandle_t handle) {
+    assert(handle == &queuedKey);
+    queuedKey.reset();
+    return pdPASS;
+}
 int xQueueReceive(QueueHandle_t handle, void *value, TickType_t timeout) {
     assert(handle == &queuedKey && value != nullptr);
     receiveTimeout = timeout;
+    // Simulate serial input arriving while the pairing request is waiting.
+    if (timeout != 0 && onReceive) std::exchange(onReceive, {})();
     if (!queuedKey) return pdFALSE;
     *static_cast<int *>(value) = *queuedKey;
     queuedKey.reset();
@@ -214,10 +224,23 @@ int main(int argc, char **argv) {
     assert(transport == "jtag");
 #endif
 
-    if (scenario == "keys") {
+    if (scenario == "stale") {
+        // Input before pairing, including a late reply after timeout, must not
+        // approve, reject, or supply a passkey for the next pairing request.
+        for (const auto& input : {"Y", "N", "123456"}) {
+            assert(runCommand(std::string("key ") + input) == 0);
+            int value = -1;
+            assert(scli_receive_key(&value) == pdFALSE);
+            assert(value == -1 && receiveTimeout == pdMS_TO_TICKS(30000));
+        }
+        assert(runCommand("key Y") == 0);
+        onReceive = [] { assert(runCommand("key N") == 0); };
+        int value = -1;
+        assert(scli_receive_key(&value) == pdPASS && value == 0);
+    } else if (scenario == "keys") {
         for (const auto& [input, expected] : std::vector<std::pair<std::string, int>>{
                 {"Y", 1}, {"Yes", 1}, {"N", 0}, {"No", 0}, {"y", 1}, {"no", 0}, {"123456", 123456}}) {
-            assert(runCommand("key " + input) == 0);
+            onReceive = [&] { assert(runCommand("key " + input) == 0); };
             int value = -1;
             assert(scli_receive_key(&value) == pdPASS && value == expected);
         }
@@ -227,11 +250,13 @@ int main(int argc, char **argv) {
         assert(historyClears == 7);
         assert(logOutput.empty());
     } else if (scenario == "full") {
-        assert(runCommand("key Y") == 0);
-        assert(runCommand("key N") != 0);
+        onReceive = [] {
+            assert(runCommand("key Y") == 0);
+            assert(runCommand("key N") != 0);
+        };
         int value = -1;
         assert(scli_receive_key(&value) == pdPASS && value == 1);
-        assert(runCommand("key N") == 0);
+        onReceive = [] { assert(runCommand("key N") == 0); };
         assert(scli_receive_key(&value) == pdPASS && value == 0);
     } else if (scenario == "null") {
         assert(scli_receive_key(nullptr) == pdFALSE);
@@ -243,7 +268,7 @@ int main(int argc, char **argv) {
         assert(runCommand("stackchan-hermes set-brightness 101") != 0);
         assert((Settings::integers.at({"display", "brightness"}) == 42));
         assert(historyClears == 3 && logOutput.empty());
-        assert(runCommand("key Y") == 0);
+        onReceive = [] { assert(runCommand("key Y") == 0); };
         int value = -1;
         assert(scli_receive_key(&value) == pdPASS && value == 1);
     } else {

@@ -36,6 +36,7 @@ void vTaskDelete(TaskHandle_t);
 void vTaskDelay(TickType_t);
 int eTaskGetState(TaskHandle_t);
 QueueHandle_t xQueueCreate(unsigned, unsigned);
+int xQueueReset(QueueHandle_t);
 int xQueueSend(QueueHandle_t, const void *, TickType_t);
 int xQueueReceive(QueueHandle_t, void *, TickType_t);
 void vQueueDelete(QueueHandle_t);
