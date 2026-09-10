@@ -457,6 +457,7 @@ static int bleprph_gap_event(struct ble_gap_event *event, void *arg)
             return BLE_GAP_REPEAT_PAIRING_RETRY;
 
         case BLE_GAP_EVENT_PASSKEY_ACTION:
+            scli_prepare_key();
             ESP_LOGI(tag, "PASSKEY_ACTION_EVENT started");
             struct ble_sm_io pkey = {0};
             int key               = 0;

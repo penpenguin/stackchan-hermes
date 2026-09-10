@@ -32,6 +32,8 @@ unsigned historyClears = 0;
 TickType_t receiveTimeout = 0;
 std::optional<int> queuedKey;
 std::function<void()> onReceive;
+std::function<void(const std::string&)> onLog;
+std::optional<ble_sm_io> pairingResponse;
 std::map<std::string, esp_console_cmd_t> commands;
 esp_console_repl_t repl{};
 esp_console_repl_config_t replConfig{};
@@ -54,6 +56,12 @@ void test_log(const char *format, ...) {
     std::vsnprintf(buffer, sizeof(buffer), format, args);
     logOutput += buffer;
     va_end(args);
+    if (onLog) onLog(buffer);
+}
+int ble_sm_inject_io(uint16_t connection, struct ble_sm_io *response) {
+    assert(connection == 42);
+    pairingResponse = *response;
+    return 0;
 }
 esp_err_t esp_console_init(const esp_console_config_t *) {
     ++initCalls;
@@ -170,6 +178,7 @@ int runCommand(const std::string& line) {
 int main(int argc, char **argv) {
     const std::string scenario = argc > 1 ? argv[1] : "startup";
     if (scenario == "uninitialized") {
+        scli_prepare_key();
         int value = 99;
         assert(scli_receive_key(&value) == pdFALSE);
         assert(scli_receive_key(nullptr) == pdFALSE);
@@ -224,19 +233,61 @@ int main(int argc, char **argv) {
     assert(transport == "jtag");
 #endif
 
-    if (scenario == "stale") {
+    if (scenario == "pairing_prompt") {
+        const auto checkPrompt = [](int action, const std::string& prompt,
+                                    const std::string& input, int expected) {
+            ble_gap_event event{};
+            event.type = BLE_GAP_EVENT_PASSKEY_ACTION;
+            event.passkey.conn_handle = 42;
+            event.passkey.params.action = action;
+            event.passkey.params.numcmp = 654321;
+            bool replied = false;
+            onLog = [&](const std::string& line) {
+                if (line.find(prompt) != std::string::npos) {
+                    replied = true;
+                    assert(runCommand("key " + input) == 0);
+                }
+            };
+            pairingResponse.reset();
+            logOutput.clear();
+            assert(test_ble_passkey_event(&event) == 0);
+            onLog = {};
+            assert(replied && pairingResponse && pairingResponse->action == action);
+            const auto received = action == BLE_SM_IOACT_NUMCMP
+                ? pairingResponse->numcmp_accept : pairingResponse->passkey;
+            assert(received == static_cast<unsigned>(expected));
+            assert(logOutput.find("Timeout!") == std::string::npos);
+        };
+        // A reply can arrive on another core as soon as the challenge is printed,
+        // before the BLE callback reaches the blocking receive.
+        checkPrompt(BLE_SM_IOACT_NUMCMP, "Passkey on device's display", "Y", 1);
+        checkPrompt(BLE_SM_IOACT_NUMCMP, "format -> key Y", "N", 0);
+        checkPrompt(BLE_SM_IOACT_INPUT, "Enter the passkey through console", "123456", 123456);
+    } else if (scenario == "stale") {
         // Input before pairing, including a late reply after timeout, must not
         // approve, reject, or supply a passkey for the next pairing request.
-        for (const auto& input : {"Y", "N", "123456"}) {
-            assert(runCommand(std::string("key ") + input) == 0);
-            int value = -1;
-            assert(scli_receive_key(&value) == pdFALSE);
-            assert(value == -1 && receiveTimeout == pdMS_TO_TICKS(30000));
+        ble_gap_event event{};
+        event.type = BLE_GAP_EVENT_PASSKEY_ACTION;
+        event.passkey.conn_handle = 42;
+        for (const auto action : {BLE_SM_IOACT_INPUT, BLE_SM_IOACT_NUMCMP}) {
+            event.passkey.params.action = action;
+            for (const auto& input : {"Y", "N", "123456"}) {
+                assert(runCommand(std::string("key ") + input) == 0);
+                logOutput.clear();
+                pairingResponse.reset();
+                assert(test_ble_passkey_event(&event) == 0);
+                assert(pairingResponse && pairingResponse->action == action);
+                assert(pairingResponse->passkey == 0 && pairingResponse->numcmp_accept == 0);
+                assert(logOutput.find("Timeout!") != std::string::npos);
+                assert(receiveTimeout == pdMS_TO_TICKS(30000));
+            }
         }
         assert(runCommand("key Y") == 0);
         onReceive = [] { assert(runCommand("key N") == 0); };
-        int value = -1;
-        assert(scli_receive_key(&value) == pdPASS && value == 0);
+        logOutput.clear();
+        assert(test_ble_passkey_event(&event) == 0);
+        assert(pairingResponse->numcmp_accept == 0);
+        assert(logOutput.find("Timeout!") == std::string::npos);
     } else if (scenario == "keys") {
         for (const auto& [input, expected] : std::vector<std::pair<std::string, int>>{
                 {"Y", 1}, {"Yes", 1}, {"N", 0}, {"No", 0}, {"y", 1}, {"no", 0}, {"123456", 123456}}) {

@@ -14,7 +14,10 @@ The shared-console tests compile the production C/C++ console, BLE input and Her
 sources with SDK/RTOS/NVS fakes. They cover one-time startup, command registration before input
 starts, pairing input and timeouts, queue/registration/startup failures, and the USB Serial/JTAG,
 USB CDC and UART configurations with provisioning or the whole Bridge disabled. These tests do
-not exercise the real NimBLE stack or LVGL app transitions.
+not exercise the real NimBLE stack or LVGL app transitions. The build also extracts the production
+BLE `PASSKEY_ACTION` branch (retaining its license notice) and compiles it with NimBLE fakes. Prompt
+callbacks inject immediate replies to verify that stale input is cleared before the challenge is
+printed and that a reply arriving before the blocking receive is retained.
 
 Platform and physical acceptance continues with:
 

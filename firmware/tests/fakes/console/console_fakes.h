@@ -79,6 +79,27 @@ esp_err_t esp_console_run(const char *, int *);
 void linenoiseHistoryFree(void);
 struct os_mbuf;
 
+#define BLE_GAP_EVENT_PASSKEY_ACTION 1
+#define BLE_SM_IOACT_DISP 1
+#define BLE_SM_IOACT_NUMCMP 2
+#define BLE_SM_IOACT_OOB 3
+#define BLE_SM_IOACT_INPUT 4
+struct ble_gap_event {
+    int type;
+    struct {
+        uint16_t conn_handle;
+        struct { int action; uint32_t numcmp; } params;
+    } passkey;
+};
+struct ble_sm_io {
+    int action;
+    uint32_t passkey;
+    int numcmp_accept;
+    uint8_t oob[16];
+};
+int ble_sm_inject_io(uint16_t, struct ble_sm_io *);
+int test_ble_passkey_event(struct ble_gap_event *);
+
 #ifdef __cplusplus
 }
 #endif

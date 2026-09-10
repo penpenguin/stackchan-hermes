@@ -47,13 +47,18 @@ static int enter_passkey_handler(int argc, char *argv[])
     return xQueueSend(cli_handle, &key, 0) == pdPASS ? 0 : -1;
 }
 
+void scli_prepare_key(void)
+{
+    if (cli_handle != NULL) {
+        xQueueReset(cli_handle);
+    }
+}
+
 int scli_receive_key(int *console_key)
 {
     if (cli_handle == NULL || console_key == NULL) {
         return pdFALSE;
     }
-    /* A reply entered before this request must never answer a new pairing. */
-    xQueueReset(cli_handle);
     return xQueueReceive(cli_handle, console_key, BLE_RX_TIMEOUT);
 }
 

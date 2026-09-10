@@ -12,8 +12,36 @@ foreach(header esp_err.h esp_log.h esp_console.h sdkconfig.h linenoise/linenoise
     file(MAKE_DIRECTORY "${header_dir}")
     file(WRITE "${CONSOLE_TEST_DIR}/${header}" "#include \"console_fakes.h\"\n")
 endforeach()
+# Exercise the production PASSKEY_ACTION branch, including prompt/receive order.
+# Preserve its Apache-2.0 notice in the generated test translation unit.
+set(BLEPRPH_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/../main/hal/utils/bleprph/bleprph.c")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${BLEPRPH_SOURCE}")
+file(READ "${BLEPRPH_SOURCE}" bleprph_source)
+string(FIND "${bleprph_source}" "*/" license_end)
+math(EXPR license_length "${license_end} + 2")
+string(SUBSTRING "${bleprph_source}" 0 ${license_length} bleprph_license)
+string(FIND "${bleprph_source}" "        case BLE_GAP_EVENT_PASSKEY_ACTION:" pairing_start)
+string(FIND "${bleprph_source}" "        case BLE_GAP_EVENT_AUTHORIZE:" pairing_end)
+if(pairing_start LESS 0 OR pairing_end LESS pairing_start)
+    message(FATAL_ERROR "Cannot locate the production BLE pairing branch")
+endif()
+math(EXPR pairing_length "${pairing_end} - ${pairing_start}")
+string(SUBSTRING "${bleprph_source}" ${pairing_start} ${pairing_length} pairing_case)
+file(WRITE "${CONSOLE_TEST_DIR}/ble_pairing.c" "${bleprph_license}
+#include <inttypes.h>
+#include \"console_fakes.h\"
+#include <hal/utils/bleprph/nimble_peripheral_utils/esp_peripheral.h>
+int test_ble_passkey_event(struct ble_gap_event *event) {
+    int rc;
+    switch (event->type) {
+${pairing_case}
+        default: return ESP_FAIL;
+    }
+}
+")
 function(add_console_test target backend bridge provisioning)
     add_executable(${target} local_console_test.cpp
+        "${CONSOLE_TEST_DIR}/ble_pairing.c"
         ../main/hal/local_console.cpp
         ../main/hal/stackchan_bridge_provisioning.cpp
         ../main/hal/utils/bleprph/nimble_peripheral_utils/scli.c
@@ -32,7 +60,7 @@ function(add_console_test target backend bridge provisioning)
 endfunction()
 add_console_test(local_console_test USB_SERIAL_JTAG 1 1)
 add_test(NAME local_console_test COMMAND local_console_test)
-foreach(scenario keys full null uninitialized provisioning stale)
+foreach(scenario keys full null uninitialized provisioning stale pairing_prompt)
     add_test(NAME local_console_${scenario}_test COMMAND local_console_test ${scenario})
 endforeach()
 foreach(stage create queue key stackchan-hermes start)
