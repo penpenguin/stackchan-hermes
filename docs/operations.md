@@ -8,7 +8,7 @@ endpoint selection, retained settings, redirect handling and the hardware verifi
 ## Supported host toolchain
 
 Host-side development requires Python 3.12, `uv`, Git, ffmpeg with Opus support, libopus and
-libsndfile. Firmware verification additionally requires ESP-IDF v5.5.4 and its matching CMake,
+libsndfile. Firmware verification additionally requires ESP-IDF v5.5.6 and its matching CMake,
 Ninja, compiler and esptool dependencies. WSL2 is supported for attended USB and LAN verification,
 but is not required for host-only tests. Exact versions and availability observed during acceptance
 belong in `verification-report.md`, not in this reusable setup guide.
@@ -33,12 +33,12 @@ uv sync --locked --extra stt-local
 
 ## ESP-IDF activation and reproducible prerequisite
 
-Official StackChan currently requires ESP-IDF v5.5.4. The official Espressif Linux guide lists
+The Hermes firmware uses ESP-IDF v5.5.6. The official Espressif Linux guide lists
 Git, wget, flex, bison, gperf, Python/venv, CMake, Ninja, ccache, libffi, libssl, dfu-util, and
 libusb as prerequisites. This repository does not run `apt`, Homebrew, or profile edits.
 
-Use an isolated ESP-IDF v5.5.4 checkout at the reviewed commit
-`735507283d5b2f9fb363a1901172dbd9e847945d`. Activate it only in the Firmware shell, replacing
+Use an isolated ESP-IDF v5.5.6 checkout at the reviewed commit
+`880a203ae603d08a94d06aa01e0d6761958e5e9e`. Activate it only in the Firmware shell, replacing
 `<idf-root>` with that checkout path:
 
 ```bash
@@ -48,7 +48,7 @@ Use an isolated ESP-IDF v5.5.4 checkout at the reviewed commit
 For a new host, the equivalent official isolated setup is:
 
 ```bash
-git clone -b v5.5.4 --recursive https://github.com/espressif/esp-idf.git <idf-root>
+git clone -b v5.5.6 --recursive https://github.com/espressif/esp-idf.git <idf-root>
 cd <idf-root>
 ./install.sh esp32s3
 . ./export.sh

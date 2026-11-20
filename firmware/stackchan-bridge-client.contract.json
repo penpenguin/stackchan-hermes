@@ -1,7 +1,7 @@
 {
   "version": 1,
   "upstream_pin_document": "firmware/UPSTREAM.md",
-  "required_esp_idf": "v5.5.4",
+  "required_esp_idf": "v5.5.6",
   "transport": {
     "websocket_path": "/v1/device/ws",
     "capture_upload_path": "/v1/device/captures/{capture_id}",

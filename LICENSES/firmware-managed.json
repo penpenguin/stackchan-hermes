@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "checked_on": "2026-09-08",
-  "lock_sha256": "676b3fdbf3cbcf0e600b34422e79e64a9bb2d4b29fa56da431829a37fe06bb87",
-  "scope": "All 60 locked managed components, cached source contents validated with idf-component-manager 2.5.0. Does not establish which files a final firmware links.",
+  "checked_on": "2026-11-20",
+  "lock_sha256": "790319e71e17d9bacd477031b40d61ade9c49e08f1bed7d40c6beea471446da8",
+  "scope": "All 60 locked managed components, cached source contents validated with idf-component-manager 2.5.2. Does not establish which files a final firmware links.",
   "components": [
     {
       "name": "78/esp-ml307",

@@ -201,7 +201,7 @@ ready にならないため、接続先・API key・capabilities を確認して
 
 ### 6. Firmware を準備して StackChan を接続する
 
-実機には M5Stack StackChan / CoreS3（K151）と ESP-IDF v5.5.4 を使用します。
+実機には M5Stack StackChan / CoreS3（K151）と ESP-IDF v5.5.6 を使用します。
 [ESP-IDF の導入・有効化](docs/operations.md#esp-idf-activation-and-reproducible-prerequisite) と
 [Firmware の手順](firmware/README.md) を確認し、Firmware 用ターミナルで依存を取得・検証します。
 `/absolute/path/to/esp-idf` は自分の ESP-IDF 配置先に置き換えてください。

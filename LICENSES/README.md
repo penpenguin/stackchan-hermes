@@ -1,6 +1,6 @@
 # Third-party license evidence
 
-確認日: 2026-09-08。第三者の著作権表示・許諾文・NOTICE を保存しています。
+更新日: 2026-11-20。第三者の著作権表示・許諾文・NOTICE を保存しています。
 独自コードの MIT は、第三者コード・フォント・画像・モデルの条件を上書きしません。
 Python wheel / sdist と、検証コマンドで作る CoreS3 Firmware ZIP にこの通知集を収録します。
 
@@ -12,13 +12,13 @@ Python wheel / sdist と、検証コマンドで作る CoreS3 Firmware ZIP に�
 | [firmware-managed.json](firmware-managed.json) | 固定 content hash と照合した managed components 60件と通知の補完根拠 |
 | [firmware-git.json](firmware-git.json) | 固定 commit で取得する Git 依存6件 |
 | [firmware-fonts.json](firmware-fonts.json) | 置換フォントの固定入力、著作権表示、適用条件、生成物のハッシュ |
-| [firmware-sdk.json](firmware-sdk.json) | ESP-IDF v5.5.4、ツールチェーンのランタイム、コンパイルした SDK ソースの通知、実際に選択された archive |
+| [firmware-sdk.json](firmware-sdk.json) | ESP-IDF v5.5.6、ツールチェーンのランタイム、コンパイルした SDK ソースの通知、実際に選択された archive |
 | [firmware-supplemental.json](firmware-supplemental.json) | vendor / Twemoji の補足通知、素材のハッシュ、配布から除外した旧フォントの調査記録 |
 
 `notices` の `original_path` は元の配布物中の名前、`text` はリポジトリルートからの
 保存先、`sha256` は原文バイト列のハッシュです。同じ本文は `texts/<sha256>.txt` に
 重複を除いて保存しています。`source` に公開取得元、補った本文にはその根拠を記録します。
-全文・通知の保存ファイルは243件です。通知には未リンク・任意・開発依存のものも含みます。
+全文・通知の保存ファイルは245件です。通知には未リンク・任意・開発依存のものも含みます。
 
 Python の宣言は配布物の `METADATA` から取得し、本文がなければ固定版 upstream で
 補完しました。ローカル distribution の記録は元アーカイブ全体のハッシュ再検証とは

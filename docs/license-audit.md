@@ -1,6 +1,6 @@
 # 配布物のライセンス確認記録
 
-確認日: 2026-09-08。独自部分は [MIT](../LICENSE) です。
+更新日: 2026-11-20。独自部分は [MIT](../LICENSE) です。
 ソース、第三者パッケージ本体を含めない Python wheel / sdist、M5Stack CoreS3
 （ESP32-S3）向け Firmware ZIP を対象に、発見したフォント・通知・最終構成の問題を
 解消しました。配布時は `LICENSE`、`THIRD_PARTY_NOTICES.md`、`LICENSES/` を保持します。
@@ -14,7 +14,7 @@
 | Python wheel / sdist | MIT メタデータと通知を同梱。第三者パッケージ本体、Firmware、ローカル環境を収録しない。sdist からの再ビルドも検証 |
 | Firmware 依存 | managed components 60件の content hash、Git 依存6件の固定 commit / 既存パッチを照合。全件の通知を保存。[一覧](license-inventory/firmware.md) |
 | フォント | 取得元・版・許諾の明らかな入力から文字9,561字・アイコン135個・見出しを生成。旧字形のコンパイルと収録を禁止 |
-| SDK / ランタイム | ESP-IDF v5.5.4 の固定 commit、個別通知、従来監査の SDK ソース1,013件の先頭通知を保持し、ローカル CFW で選択された archive 119件を記録 |
+| SDK / ランタイム | ESP-IDF v5.5.6 の固定 commit、SDK ソース1,099件の先頭通知、CoreS3 のリンクで選択された archive 119件を確認。旧版の通知と新版での追加・変更分を保存 |
 | Firmware の実物 | app / bootloader の map、assets 38件、WakeNet モデル3ファイル、配布する5画像を検証。[構成・ハッシュ](license-inventory/cores3-release.json) |
 
 2026-09-08 の更新では、従来クラウド・OTA の削除によりリンク archive が136件から119件へ、
@@ -65,7 +65,7 @@ UART とフォントの宣言はそれぞれ
 
 ### 実際にリンク・収録された内容
 
-[SDK 記録](../LICENSES/firmware-sdk.json) に個別通知46件と archive 119件を保存しました。
+[SDK 記録](../LICENSES/firmware-sdk.json) に個別通知47件と archive 119件を保存しました。
 ESP-IDF のルートライセンスだけでなく、Wi-Fi / Bluetooth / PHY、Xtensa libhal、
 newlib、GCC / libstdc++ の条件を含みます。GCC / libstdc++ は GPL-3.0 と
 GCC Runtime Library Exception 3.1 を保持します。通常の GCC による今回の結合は
@@ -83,7 +83,7 @@ Twemoji は Twitter / contributors の帰属と CC-BY-4.0 を保持します。
 
 ## 配布物の作成と検証
 
-ESP-IDF v5.5.4 を有効にし、リポジトリルートで実行します。依存は既存のセットアップ
+ESP-IDF v5.5.6 を有効にし、リポジトリルートで実行します。依存は既存のセットアップ
 手順どおりに固定版を取得します。ビルド専用ディレクトリを新規に作り、個人用 sdkconfig
 を流用しない構成です。
 
@@ -108,6 +108,17 @@ Python 配布物は `uv build` で作ります。最低対応 Hatchling 1.27.0 �
 MIT メタデータ・通知のバイト列、sdist の収録範囲と wheel への再ビルドを確認します。
 ソースリポジトリの配布では Git 管理対象と今回の生成フォント・通知を含め、
 Git 管理外の取得済み依存・ローカル設定を追加しないでください。
+
+## 2026-11-20 の依存更新
+
+Python の第三者依存104件を新しい lock と照合し、更新した10件の導入版から
+メタデータと通知を再取得しました。PyJWT の配布物で宣言された著作者一覧も収録しています。
+
+ESP-IDF 5.5.6 で CoreS3 をビルドし、app と bootloader のリンクマップを確認しました。
+リンクした archive は119件で、SDK が提供する Wi-Fi・Bluetooth・PHY 等の
+ビルド済み archive 10件のハッシュが変わりました。旧版の通知を保持し、新版で
+追加・変更されたソース先頭の通知を補いました。配布検証を通した app は
+3,347,408 bytes です。[CoreS3 配布記録](license-inventory/cores3-release.json)
 
 ## 2026-09-08 のローカル CFW 検証記録
 

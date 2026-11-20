@@ -213,6 +213,10 @@ def verify_build(build: Path, root: Path) -> dict:
     config = Path(project["config_file"]).read_text().splitlines()
     for required in (
         "CONFIG_BOARD_TYPE_M5STACK_STACK_CHAN=y",
+        "CONFIG_BT_NIMBLE_ROLE_PERIPHERAL=y",
+        "CONFIG_BT_NIMBLE_ROLE_BROADCASTER=y",
+        "# CONFIG_BT_NIMBLE_ROLE_CENTRAL is not set",
+        "# CONFIG_BT_NIMBLE_ROLE_OBSERVER is not set",
         "CONFIG_STACKCHAN_HERMES_HEAD_MOTION_LOCK=y",
         "CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y",
         'CONFIG_STACKCHAN_HERMES_DEFAULT_BRIDGE_URL=""',
