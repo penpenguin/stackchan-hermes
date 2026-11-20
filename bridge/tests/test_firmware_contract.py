@@ -749,7 +749,7 @@ def test_camera_network_work_starts_only_after_the_command_result_can_be_sent() 
 
     assert "void update();" in camera_header
     assert "worker_ = std::thread" not in start_body
-    assert "gate_.takePending(request)" in camera_source
+    assert "gate_.takePending()" in camera_source
     assert service.index("client_.update(nowMs);") < service.index("cameraCapture_.update();")
 
 

@@ -4,10 +4,24 @@
 #include <board.h>
 #include <esp_heap_caps.h>
 #include <cassert>
+#include <esp_pthread.h>
+#include <esp_rom_sys.h>
 #include <chrono>
 #include <thread>
 using namespace stackchan::hermes;
 using stackchan::bridge_client::CommandTargetResult;
+// Fail allocations on the dispatching thread only. Count every attempt through publication of the failure.
+thread_local bool denyNew = false;
+thread_local unsigned deniedAttempts = 0;
+void* operator new(std::size_t size)
+{
+    if (denyNew) { ++deniedAttempts; throw std::bad_alloc(); }
+    if (void* p = std::malloc(size ? size : 1)) { return p; }
+    throw std::bad_alloc();
+}
+void operator delete(void* p) noexcept { std::free(p); }
+void operator delete(void* p, std::size_t) noexcept { std::free(p); }
+
 WebSocket::~WebSocket() = default;
 StackChanCamera::StackChanCamera(const esp_video_init_config_t&) {}
 StackChanCamera::~StackChanCamera() { heap_caps_free(frame_.data); }
@@ -28,6 +42,36 @@ int main() {
     const std::string id="11111111-1111-4111-8111-111111111111";
     const auto reserved=response(200,R"({"state":"reserved","remaining_ms":10000})");
     const auto saved=response(200,"{\"state\":\"image_saved\",\"remaining_ms\":9000,\"sha256\":\"" + std::string(64,'0') + "\",\"size_bytes\":6}");
+    {
+        StackChanCamera camera({});
+        Board board;
+        board.camera = &camera;
+        CaptureNetwork network(std::make_shared<CaptureIoContext>());
+        OfficialCameraCapture capture(board, network, "ws://127.0.0.1:8765/v1/device/ws", "synthetic", "sim-001");
+        worker_fake::configResult = ESP_ERR_INVALID_ARG;
+        assert(capture.start(id, 80, 10000) == CommandTargetResult::Success);
+        capture.update();
+        assert(std::strstr(worker_fake::diagnostic, "stage=pthread_config reason=esp_error code=258"));
+        capture.update();
+        CameraCaptureCompletion completion;
+        assert(capture.completion(completion) && !completion.ok && completion.captureId == id);
+        assert(completion.error == stackchan::bridge_client::CameraCompletionError::InternalError);
+        worker_fake::configResult = ESP_OK;
+        capture.acknowledgeCompletion(id);
+        assert(capture.start(id, 80, 10000) == CommandTargetResult::Success);
+        denyNew = true;
+        capture.update();
+        denyNew = false;
+        assert(deniedAttempts == 1);
+        assert(std::strstr(worker_fake::diagnostic, "stage=context_prepare reason=bad_alloc"));
+        assert(std::strstr(worker_fake::diagnostic, "internal_free=20000 internal_largest=10000"));
+        assert(std::strstr(worker_fake::diagnostic, "psram_free=90000 psram_largest=70000 stack_bytes=12288"));
+        assert(capture.cancel(id));
+        assert(capture.start(id, 80, 10000) == CommandTargetResult::DeviceBusy);
+        capture.update();
+        assert(capture.completion(completion) && !completion.ok && completion.captureId == id);
+        assert(completion.error == stackchan::bridge_client::CameraCompletionError::InternalError);
+    }
     for (int fault=0;fault<9;++fault) {
         camera_fake::reset(); worker_fake::encodes=0; worker_fake::captures=0;
         worker_fake::failEncoding=fault==4; worker_fake::failAllocation=fault==5;

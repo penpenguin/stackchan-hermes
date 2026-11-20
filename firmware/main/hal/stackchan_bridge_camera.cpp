@@ -1,4 +1,5 @@
 #include "stackchan_bridge_camera.h"
+#include "camera_failure_log.h"
 #include "stackchan_bridge_camera_upload.h"
 
 #include <algorithm>
@@ -31,7 +32,7 @@ public:
         configuration.stack_size = kCameraWorkerStackSize;
         configuration.inherit_cfg = false;
         configuration.thread_name = "hermes_camera";
-        applied_ = esp_pthread_set_cfg(&configuration) == ESP_OK;
+        result_ = esp_pthread_set_cfg(&configuration);
     }
 
     ~ScopedPthreadConfig()
@@ -44,24 +45,25 @@ public:
 
     bool applied() const
     {
-        return applied_;
+        return result_ == ESP_OK;
     }
+
+    esp_err_t result() const { return result_; }
 
 private:
     void restore()
     {
-        if (!applied_) {
+        if (!applied()) {
             return;
         }
         const auto configuration =
             hasPrevious_ ? previous_ : esp_pthread_get_default_config();
         (void)esp_pthread_set_cfg(&configuration);
-        applied_ = false;
     }
 
     esp_pthread_cfg_t previous_ = {};
     bool hasPrevious_ = false;
-    bool applied_ = false;
+    esp_err_t result_;
 };
 
 #ifndef CONFIG_IDF_TARGET_ESP32
@@ -171,7 +173,7 @@ bool OfficialCameraCapture::cancel(const std::string& id)
     std::lock_guard<std::mutex> lock(mutex_);
     if (!gate_.busy() || gate_.current().captureId != id) { return false; }
     if (io_) { io_->cancelled.store(true); }
-    else { gate_.complete(); }
+    else if (!completionReady_) { gate_.complete(); }
     return true;
 }
 bool OfficialCameraCapture::completion(CameraCaptureCompletion& output)
@@ -186,43 +188,47 @@ void OfficialCameraCapture::acknowledgeCompletion(const std::string& id)
 }
 void OfficialCameraCapture::update()
 {
-    std::thread finished;
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        if (completionReady_) { finished = std::move(worker_); }
-    }
-    // No network or encoder work remains once completionReady_ is published.
-    if (finished.joinable()) { finished.join(); }
     std::lock_guard<std::mutex> lock(mutex_);
     if (completionReady_) {
+        // Publication is the worker's final locked operation. It can now be joined under this lock.
+        if (worker_.joinable()) { worker_.join(); }
         completionReady_ = false;
         io_.reset();
-        gate_.complete();
+        completion_.captureId = gate_.complete().captureId;
         ESP_LOGI(kTag, "capture_id=%s stage=released busy=0 ok=%d", completion_.captureId.c_str(), completion_.ok);
         notifications_.push(std::move(completion_));
         completion_ = {};
     }
-    bridge_client::CameraCaptureRequest request;
-    if (worker_.joinable() || !gate_.takePending(request)) { return; }
+    if (!gate_.takePending()) { return; }
+    const auto& request = gate_.current();
+    const char* stage = "context_prepare";
     try {
         io_ = std::make_shared<CaptureIoContext>();
         io_->captureId = request.captureId;
         io_->startedMs = request.startedMs;
+        stage = "pthread_config";
         ScopedPthreadConfig cameraThreadConfig;
-        if (!cameraThreadConfig.applied()) { throw std::bad_alloc(); }
-        worker_ = std::thread(&OfficialCameraCapture::run, this, request);
+        if (!cameraThreadConfig.applied()) {
+            logCaptureFailure(stage, "esp_error", cameraThreadConfig.result(), kCameraWorkerStackSize);
+        } else {
+            stage = "thread_create";
+            worker_ = std::thread(&OfficialCameraCapture::run, this);
+            return;
+        }
+    } catch (const std::bad_alloc&) {
+        logCaptureFailure(stage, "bad_alloc", 0, kCameraWorkerStackSize);
     } catch (...) {
-        completion_ = {};
-        completion_.captureId = request.captureId;
-        completion_.error = bridge_client::CameraCompletionError::InternalError;
-        completion_.deadlineMs = request.startedMs + request.timeoutMs;
-        completionReady_ = true;
+        logCaptureFailure(stage, "unknown_exception", 0, kCameraWorkerStackSize);
     }
+    completion_.error = bridge_client::CameraCompletionError::InternalError;
+    completion_.deadlineMs = request.startedMs + request.timeoutMs;
+    completionReady_ = true;
 }
-void OfficialCameraCapture::run(bridge_client::CameraCaptureRequest request)
+void OfficialCameraCapture::run()
 {
+    // The gate owns this immutable request until update() has joined this worker.
+    const auto& request = gate_.current();
     CameraCaptureCompletion result;
-    result.captureId = request.captureId;
     result.deadlineMs = request.startedMs + request.timeoutMs;
     try { result.ok = captureAndUpload(request, result); }
     catch (...) { result.ok = false; result.error = bridge_client::CameraCompletionError::InternalError; }

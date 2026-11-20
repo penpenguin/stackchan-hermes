@@ -115,15 +115,14 @@ void testAcceptedCaptureWaitsForExplicitPostResponseDispatch()
 
     expect(gate.tryStart(request) == CameraRequestError::None, "capture was not reserved");
 
-    CameraCaptureRequest dispatched;
-    expect(gate.takePending(dispatched), "reserved capture was not pending dispatch");
-    expect(dispatched.captureId == kCaptureId, "dispatched capture lost its ID");
-    expect(dispatched.quality == 70, "dispatched capture lost its quality");
-    expect(!gate.takePending(dispatched), "capture work was dispatched more than once");
+    expect(gate.takePending(), "reserved capture was not pending dispatch");
+    expect(gate.current().captureId == kCaptureId, "dispatched capture lost its ID");
+    expect(gate.current().quality == 70, "dispatched capture lost its quality");
+    expect(!gate.takePending(), "capture work was dispatched more than once");
     expect(gate.busy(), "dispatched capture released ownership before completion");
 
     gate.complete();
-    expect(!gate.takePending(dispatched), "completed capture retained pending work");
+    expect(!gate.takePending(), "completed capture retained pending work");
 }
 
 void testInvalidCaptureRequestNeverOwnsTheCamera()

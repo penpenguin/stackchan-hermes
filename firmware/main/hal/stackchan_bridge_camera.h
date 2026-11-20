@@ -39,7 +39,7 @@ public:
     void acknowledgeCompletion(const std::string& captureId);
 
 private:
-    void run(bridge_client::CameraCaptureRequest request);
+    void run();
     bool captureAndUpload(const bridge_client::CameraCaptureRequest& request, CameraCaptureCompletion& result);
 
     Board& board_;

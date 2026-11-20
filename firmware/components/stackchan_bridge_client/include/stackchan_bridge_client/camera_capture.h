@@ -87,8 +87,8 @@ private:
 class CameraCaptureGate {
 public:
     CameraRequestError tryStart(const CameraCaptureRequest& request);
-    bool takePending(CameraCaptureRequest& output);
-    void complete();
+    bool takePending();
+    CameraCaptureRequest complete();
     bool busy() const;
     const CameraCaptureRequest& current() const;
 

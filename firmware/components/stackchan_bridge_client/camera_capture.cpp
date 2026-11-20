@@ -2,6 +2,7 @@
 
 #include <array>
 #include <limits>
+#include <utility>
 
 #include <ArduinoJson.h>
 
@@ -213,21 +214,20 @@ CameraRequestError CameraCaptureGate::tryStart(const CameraCaptureRequest& reque
     return CameraRequestError::None;
 }
 
-bool CameraCaptureGate::takePending(CameraCaptureRequest& output)
+bool CameraCaptureGate::takePending()
 {
     if (!busy_ || !pending_) {
         return false;
     }
-    output = current_;
     pending_ = false;
     return true;
 }
 
-void CameraCaptureGate::complete()
+CameraCaptureRequest CameraCaptureGate::complete()
 {
-    current_ = {};
     busy_ = false;
     pending_ = false;
+    return std::exchange(current_, {});
 }
 
 bool CameraCaptureGate::busy() const
