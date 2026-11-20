@@ -100,7 +100,7 @@ All items must be true before any write command:
 
 - hardware is confirmed as M5Stack StackChan/CoreS3 (expected K151);
 - exactly one intended serial device is identified by stable ID, not guessed from `/dev/tty*`;
-- ESP-IDF v5.5.4 environment is active and the pinned baseline builds;
+- ESP-IDF v5.5.6 environment is active and the pinned baseline builds;
 - full factory flash backup is exactly 16 MiB;
 - backup SHA-256 is recorded and recomputes identically;
 - partition table, current boot log, firmware/version identifiers, and restore command are saved;

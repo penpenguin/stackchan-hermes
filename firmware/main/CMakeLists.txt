@@ -251,7 +251,7 @@ idf_component_register(SRCS ${SOURCES}
                         espressif__mdns
                     )
 
-# Capture TCP polling rearms the pinned IDF 5.5.4 ESP-TLS descriptor sets.
+# Capture TCP polling rearms the pinned IDF 5.5.6 ESP-TLS descriptor sets.
 idf_component_get_property(CAPTURE_TLS_COMPONENT_PATH esp-tls COMPONENT_DIR)
 target_include_directories(${COMPONENT_LIB} PRIVATE "${CAPTURE_TLS_COMPONENT_PATH}/private_include")
 

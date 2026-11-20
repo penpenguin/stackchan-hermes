@@ -5,7 +5,7 @@ project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$project_root"
 
 if ! command -v idf.py >/dev/null 2>&1; then
-  echo "ERROR: ESP-IDF v5.5.4 is not active; idf.py was not found." >&2
+  echo "ERROR: ESP-IDF v5.5.6 is not active; idf.py was not found." >&2
   echo "See docs/hardware-setup.md. This check is intentionally not skipped." >&2
   exit 2
 fi

@@ -77,9 +77,11 @@ def test_vendor_snapshot_records_immutable_upstream_and_dependency_provenance() 
         "license": "MIT",
     }
     assert lock["toolchain"] == {
-        "esp_idf_version": "v5.5.4",
-        "esp_idf_commit": "735507283d5b2f9fb363a1901172dbd9e847945d",
+        "esp_idf_version": "v5.5.6",
+        "esp_idf_commit": "880a203ae603d08a94d06aa01e0d6761958e5e9e",
     }
+    contract = json.loads((FIRMWARE_ROOT / "stackchan-bridge-client.contract.json").read_text())
+    assert contract["required_esp_idf"] == lock["toolchain"]["esp_idf_version"]
     assert lock["critical_file_sha256"] == {
         "LICENSE": _file_sha256(FIRMWARE_ROOT / "LICENSE"),
         "dependencies.lock": _file_sha256(FIRMWARE_ROOT / "dependencies.lock"),
@@ -342,6 +344,12 @@ def test_decoder_cancellation_discards_in_flight_work_before_it_reaches_playback
         "void AudioService::SetPlaybackGainPercent", 1
     )[0]
     assert "playbackCompletion_.invalidateDecode();" in reset_decoder
+
+
+def test_ble_peripheral_build_excludes_advertising_report_receiver_roles() -> None:
+    defaults = (FIRMWARE_ROOT / "sdkconfig.defaults").read_text().splitlines()
+    assert "CONFIG_BT_NIMBLE_ROLE_CENTRAL=n" in defaults
+    assert "CONFIG_BT_NIMBLE_ROLE_OBSERVER=n" in defaults
 
 
 def test_firmware_gate_builds_a_fresh_hermes_enabled_configuration() -> None:

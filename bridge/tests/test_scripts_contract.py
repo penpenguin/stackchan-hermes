@@ -38,17 +38,17 @@ def test_verify_host_contains_the_documented_quality_gate() -> None:
     script = (ROOT / "scripts/verify-host.sh").read_text(encoding="utf-8")
     expected_commands = (
         "uv lock --check",
-        "uv run ruff format --check .",
-        "uv run ruff check .",
-        "uv run mypy bridge/src simulator/src",
-        "uv run pytest",
+        "uv run --locked ruff format --check .",
+        "uv run --locked ruff check .",
+        "uv run --locked mypy bridge/src simulator/src",
+        "uv run --locked pytest",
         "--cov-fail-under=85",
         "python scripts/validate-protocol.py",
         "python scripts/check-secrets.py",
-        "uv run pip-audit",
+        "uv export --locked --all-extras --all-groups --no-emit-project",
+        '--format pylock.toml --output-file "$audit_dir/pylock.toml"',
+        'uv run --locked pip-audit --locked --strict "$audit_dir"',
         "--cache-dir",
-        "--skip-editable",
-        "PIP_CACHE_DIR",
         "stackchan-bridge doctor --offline",
     )
     for command in expected_commands:

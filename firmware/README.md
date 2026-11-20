@@ -13,7 +13,7 @@ run independently of the former AI application. Updates use USB. See the
 
 ## Verify the integrated Firmware
 
-Activate ESP-IDF v5.5.4 only in the Firmware shell, then run:
+Activate ESP-IDF v5.5.6 only in the Firmware shell, then run:
 
 ```bash
 python3 ./fetch_repos.py
@@ -28,7 +28,7 @@ cd ..
 ```
 
 The final script verifies six fetched Git repositories, 60 downloaded ESP Component Registry
-resolutions and 30 host C++ tests. The WebSocket wire test compiles the modified transport against
+resolutions and 56 host CTest targets. The WebSocket wire test compiles the modified transport against
 the locked `78/esp-ml307` headers, so managed components must be resolved first. The final script
 then creates a fresh temporary `sdkconfig`, applies
 `sdkconfig.hermes.defaults`, and builds the Bridge-enabled image so an ignored local `sdkconfig`
@@ -36,7 +36,7 @@ cannot silently disable the integration. The original reviewed baseline had 59 m
 components; official `espressif/mdns==1.11.3` is the one integrated addition.
 
 The retained no-touch correction checkpoint predates the playback-completion target and recorded
-19 host C++ tests; that historical evidence remains distinct from the current 30-test suite.
+19 host C++ tests.
 
 `verify_managed_components.py` recomputes every downloaded component hash locally, without
 trusting only `.component_hash`. Do not run `idf.py update-dependencies` as part of reproduction.

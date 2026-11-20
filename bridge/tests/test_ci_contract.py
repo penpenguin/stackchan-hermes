@@ -22,7 +22,7 @@ def test_ci_uses_pinned_actions_and_the_local_host_gate() -> None:
     assert 'version: "0.12.6"' in workflow
     assert "./scripts/verify-host.sh" in workflow
     assert "firmware/UPSTREAM.md" in workflow
-    assert "container: espressif/idf:v5.5.4" in workflow
+    assert "container: espressif/idf:v5.5.6" in workflow
     assert "python3 ./fetch_repos.py" in workflow
     assert "idf.py reconfigure" in workflow
     assert "./scripts/verify-firmware.sh" in workflow

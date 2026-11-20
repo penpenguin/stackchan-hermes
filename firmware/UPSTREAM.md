@@ -8,10 +8,15 @@ Status: **vendor snapshot imported; unchanged baseline and integrated overlay bu
 - Pinned `firmware/` tree: `a981688092155fb4a84c530575e70c7f83ab42e6`
 - Upstream Firmware version: `1.5.1`
 - Import method: reviewed vendor snapshot
-- Required toolchain: ESP-IDF `v5.5.4`, commit
+- Original vendor toolchain: ESP-IDF `v5.5.4`, commit
   `735507283d5b2f9fb363a1901172dbd9e847945d`
 - Baseline license: MIT (`firmware/LICENSE` at the pinned commit)
 - Board default: M5Stack StackChan/CoreS3, expected product code `M5STACK-K151`
+
+The current CoreS3 build uses ESP-IDF v5.5.6, commit
+`880a203ae603d08a94d06aa01e0d6761958e5e9e`. The BLE GATT server uses peripheral and
+broadcaster roles. Central and observer roles are disabled in the project defaults.
+See the [dependency review](../docs/dependencies.md#security-review-2026-11-20).
 
 ## Review and build evidence
 

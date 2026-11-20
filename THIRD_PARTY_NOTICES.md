@@ -1,6 +1,6 @@
 # Third-party notices
 
-確認日: 2026-09-08。独自コードと文書には [MIT License](LICENSE) を適用します。
+更新日: 2026-11-20。独自コードと文書には [MIT License](LICENSE) を適用します。
 以下の第三者コード・依存物・参照実装には、それぞれの元のライセンスが適用されます。
 この一覧は来歴と確認状況の記録であり、各ライセンス全文の代わりや、配布物全体の
 監査完了を示すものではありません。対象別の配布条件と確認結果は
@@ -20,7 +20,7 @@ reviewed patch を lock し、build 前に検証します。参照だけの実�
 | `m5stack/StackChan` | `1b5765599fba8aaad1811d9a79358ccc7051f5f3` | [MIT](firmware/LICENSE), Copyright 2026 M5Stack Technology CO LTD | Reviewed Firmware vendor snapshot and board/HAL baseline; project changes are isolated and tracked |
 | `FTServo_Arduino` | 上記 snapshot 内 | [MIT](firmware/main/hal/drivers/FTServo_Arduino/LICENSE), Copyright 2024 ftservo | 取り込み済みのサーボドライバー。参照実装の旧 GPL SCServo とは別の対象 |
 | Bosch BMI270 SensorAPI | 上記 snapshot 内 | [BSD-3-Clause](firmware/main/hal/drivers/bmi270/BMI270_SensorAPI/LICENSE), Copyright 2023 Bosch Sensortec GmbH | 取り込み済みのセンサードライバー |
-| ESP-IDF | `v5.5.4` | [Apache-2.0 とコンポーネント固有の条件](https://docs.espressif.com/projects/esp-idf/en/v5.5.4/esp32/COPYRIGHT.html) | 必須 SDK。SDK 内の全ファイルに同一ライセンスが適用されるわけではない |
+| ESP-IDF | `v5.5.6` | [Apache-2.0 とコンポーネント固有の条件](https://docs.espressif.com/projects/esp-idf/en/v5.5.6/esp32/COPYRIGHT.html) | 必須 SDK。SDK 内の全ファイルに同一ライセンスが適用されるわけではない |
 | `espressif/mdns` | `1.11.3` in `firmware/dependencies.lock` | Apache-2.0（既存調査記録） | Official managed component used by Firmware Bridge discovery; fetched source is not tracked |
 | `78/esp-ml307` | `3.6.5` / `ab4de7c28c8b8f809eba2f56f38090d57fce984d` in `firmware/dependencies.lock` | [Apache-2.0 の保存済み全文](firmware/components/stackchan_bridge_client/third_party/esp-ml307-LICENSE) | `web_socket.cc` とネットワーク factory を build 時に変更表示付きの派生ファイルで置換。HTTP/TCP/TLS/WebSocket を残し、MQTT・汎用 UDP・携帯モデムを除外 |
 
@@ -69,10 +69,10 @@ wheel 内のネイティブライブラリを含む完全なライセンス判�
 | fastapi | 0.141.1 | MIT | |
 | httpx | 0.28.1 | BSD-3-Clause | |
 | ifaddr | 0.2.0 | MIT | |
-| mcp | 2.1.1 | MIT | [固定版の LICENSE](https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.1.1/LICENSE) |
+| mcp | 2.3.0 | MIT | [固定版の LICENSE](https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/v2.3.0/LICENSE) |
 | numpy | 2.5.2 | BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0 | 配布する wheel 内の数値計算ライブラリ等も個別確認 |
 | opuslib-next | 1.3.1 | BSD-3-Clause | libopus の ctypes binding。libopus 本体の条件も適用 |
-| pillow | 12.3.0 | MIT-CMU | 通常の MIT と区別する。導入物の LICENSE には AOM / Brotli などの通知も含まれる |
+| pillow | 13.0.0 | MIT-CMU | 通常の MIT と区別する。導入物の LICENSE には AOM / Brotli などの通知も含まれる |
 | platformdirs | 4.11.5 | MIT | |
 | prometheus-client | 0.26.0 | Apache-2.0 AND BSD-2-Clause | NOTICE に同梱 decorator 4.0.10 の BSD 通知あり |
 | pydantic | 2.13.4 | MIT | |
@@ -84,14 +84,14 @@ wheel 内のネイティブライブラリを含む完全なライセンス判�
 | websockets | 17.1 | BSD-3-Clause | |
 | zeroconf | 0.150.0 | LGPL-2.1-or-later | [固定版の COPYING](https://raw.githubusercontent.com/python-zeroconf/python-zeroconf/0.150.0/COPYING)。通常の直接依存に含まれる |
 
-MCP の推移依存 `mcp-types==2.1.1` も、導入物の `METADATA` で MIT と確認しました。
+MCP の推移依存 `mcp-types==2.3.0` も、導入物の `METADATA` で MIT と確認しました。
 推移・任意・開発依存を含む lock の第三者104件は [全件一覧](docs/license-inventory/python.md)
 と [通知集](LICENSES/README.md) に記録しました。lock 外の build ツール一式や、
 全プラットフォームの native binary の配布条件を確認したものではありません。
 
 任意の `stt-local` extra の `faster-whisper==1.2.1` は、
 [固定タグの LICENSE](https://raw.githubusercontent.com/SYSTRAN/faster-whisper/v1.2.1/LICENSE)
-で MIT と確認しました。この確認環境には未導入です。追加で取得する Python / native 依存や
+で MIT と確認しました。追加で取得する Python / native 依存や
 音声認識モデルの条件は、このパッケージ本体のライセンスと別に確認します。
 
 ### 宣言の再確認
