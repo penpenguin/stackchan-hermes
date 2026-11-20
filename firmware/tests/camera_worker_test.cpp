@@ -3,6 +3,7 @@
 #include "board/stackchan_camera.h"
 #include <board.h>
 #include <esp_heap_caps.h>
+#include <esp_log.h>
 #include <esp_pthread.h>
 #include <esp_rom_sys.h>
 
@@ -173,7 +174,10 @@ int main() {
         StackChanCamera camera({}); Board board; board.camera=&camera;
         CaptureNetwork network(std::make_shared<CaptureIoContext>());
         OfficialCameraCapture capture(board,network,"ws://127.0.0.1:8765/v1/device/ws","synthetic","sim-001");
+        capture_log::lines.clear();
+        camera_fake::now = UINT32_MAX - 10;
         assert(capture.start(id,80,10000)==CommandTargetResult::Success);
+        camera_fake::now += 25; // Cross the 32-bit uptime boundary before the worker runs.
         assert(capture.start(id,80,10000)==CommandTargetResult::DeviceBusy);
         CameraCaptureCompletion completion;
         bool done=false;
@@ -183,6 +187,20 @@ int main() {
         }
         assert(done);
         assert(completion.ok == (fault<2 || fault==6 || fault==8));
+        if (fault == 0 || fault == 2) {
+            const std::string prefix = "capture_id=" + id;
+            const std::string size = std::to_string(completion.sizeBytes);
+            assert(completion.sizeBytes == 6);
+            assert(capture_log::contains(prefix + " stage=jpeg_begin elapsed_ms=25"));
+            assert(capture_log::contains(prefix + " stage=jpeg_end elapsed_ms=25 planned_bytes=" + size + " busy=1"));
+            const auto rejected = stackchan::bridge_client::CameraUploadError::Rejected;
+            const std::string outcome = fault == 0 ? " status=201 error=0"
+                : " status=404 error=" + std::to_string(static_cast<int>(rejected));
+            assert(capture_log::contains(prefix + " attempt=1 stage=upload_end elapsed_ms=25 planned_bytes="
+                + size + " sent_bytes=" + size + outcome));
+            assert(capture_log::contains(prefix + " stage=worker_end elapsed_ms=25 ok="
+                + (fault == 0 ? "1" : "0") + " error=0"));
+        }
         assert(camera_fake::liveSockets==0);
         assert(worker_fake::allocations==0);
         assert(worker_fake::captures==1 && worker_fake::encodes<=1);
