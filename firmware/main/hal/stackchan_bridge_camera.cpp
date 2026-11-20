@@ -1,4 +1,5 @@
 #include "stackchan_bridge_camera.h"
+#include "capture_log.h"
 #include "stackchan_bridge_camera_upload.h"
 
 #include <algorithm>
@@ -227,8 +228,8 @@ void OfficialCameraCapture::run(bridge_client::CameraCaptureRequest request)
     try { result.ok = captureAndUpload(request, result); }
     catch (...) { result.ok = false; result.error = bridge_client::CameraCompletionError::InternalError; }
     if (result.ok) { result.error = bridge_client::CameraCompletionError::None; }
-    ESP_LOGI(kTag, "capture_id=%s stage=worker_end elapsed_ms=%llu ok=%d error=%d", request.captureId.c_str(),
-        static_cast<unsigned long long>(nowMs() - request.startedMs), result.ok, io_ ? io_->error.load() : ENOMEM);
+    ESP_LOGI(kTag, "capture_id=%s stage=worker_end elapsed_ms=%u ok=%d error=%d", request.captureId.c_str(),
+        captureLogElapsedMs(nowMs(), request.startedMs), result.ok, io_ ? io_->error.load() : ENOMEM);
     std::lock_guard<std::mutex> lock(mutex_);
     completion_ = std::move(result);
     completionReady_ = true;
@@ -259,8 +260,8 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
     } frameRelease{camera};
     if (!camera || !camera->Capture(deadline.workEnd(), &io_->cancelled) || !camera->GetFrameData()
         || camera->GetFrameWidth() != 320 || camera->GetFrameHeight() != 240) { return false; }
-    ESP_LOGI(kTag, "capture_id=%s stage=jpeg_begin elapsed_ms=%llu", request.captureId.c_str(),
-        static_cast<unsigned long long>(nowMs() - request.startedMs));
+    ESP_LOGI(kTag, "capture_id=%s stage=jpeg_begin elapsed_ms=%u", request.captureId.c_str(),
+        captureLogElapsedMs(nowMs(), request.startedMs));
     Encoder encoder{{}, io_.get(), deadline.workEnd()};
     encoder.bytes.reserve(65536);
     const bool encoded = image_to_jpeg_cb(const_cast<std::uint8_t*>(camera->GetFrameData()),
@@ -270,8 +271,8 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
     if (!encoded || !encoder.terminated || encoder.failed || encoder.bytes.empty()) { return false; }
     result.digest = digest(encoder.bytes);
     result.sizeBytes = encoder.bytes.size();
-    ESP_LOGI(kTag, "capture_id=%s stage=jpeg_end elapsed_ms=%llu planned_bytes=%u busy=1",
-        request.captureId.c_str(), static_cast<unsigned long long>(nowMs() - request.startedMs),
+    ESP_LOGI(kTag, "capture_id=%s stage=jpeg_end elapsed_ms=%u planned_bytes=%u busy=1",
+        request.captureId.c_str(), captureLogElapsedMs(nowMs(), request.startedMs),
         static_cast<unsigned>(result.sizeBytes));
     if (result.digest.empty()) { return false; }
     for (int attempt = 1; attempt <= 3 && nowMs() < deadline.workEnd() && !io_->cancelled.load(); ++attempt) {
@@ -295,8 +296,8 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
             response->SetTimeout(1);
             status = response->GetStatusCode();
             retryAfter = response->GetResponseHeader("Retry-After");
-            ESP_LOGI(kTag, "capture_id=%s attempt=%d stage=upload_end elapsed_ms=%llu planned_bytes=%u sent_bytes=%u status=%d error=%d",
-                request.captureId.c_str(), attempt, static_cast<unsigned long long>(nowMs() - request.startedMs),
+            ESP_LOGI(kTag, "capture_id=%s attempt=%d stage=upload_end elapsed_ms=%u planned_bytes=%u sent_bytes=%u status=%d error=%d",
+                request.captureId.c_str(), attempt, captureLogElapsedMs(nowMs(), request.startedMs),
                 static_cast<unsigned>(encoder.bytes.size()), static_cast<unsigned>(upload.jpegBytes()), status, static_cast<int>(error));
             if (error == bridge_client::CameraUploadError::None && status == 201) { return true; }
         }
