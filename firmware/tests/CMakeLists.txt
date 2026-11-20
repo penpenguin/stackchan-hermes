@@ -564,7 +564,7 @@ add_executable(camera_worker_test camera_worker_test.cpp ../main/hal/stackchan_b
 target_include_directories(camera_worker_test PRIVATE fakes/capture_worker fakes/capture_network
     ../managed_components/78__esp-ml307/include fakes/websocket_wire ../main/hal
     ../components/stackchan_bridge_client/include ../components/ArduinoJson/src)
-target_compile_options(camera_worker_test PRIVATE -include ${CMAKE_CURRENT_SOURCE_DIR}/fakes/capture_network/platform.h)
+target_compile_options(camera_worker_test PRIVATE -UNDEBUG -include ${CMAKE_CURRENT_SOURCE_DIR}/fakes/capture_network/platform.h)
 target_compile_features(camera_worker_test PRIVATE cxx_std_17)
 target_link_libraries(camera_worker_test PRIVATE pthread)
 add_test(NAME camera_worker_test COMMAND camera_worker_test)

@@ -18,12 +18,16 @@ using CameraCaptureCompletion = bridge_client::CaptureCompletionNotice;
 
 class OfficialCameraCapture {
 public:
+    using WorkerEntry = void (OfficialCameraCapture::*)();
+    using WorkerLauncher = std::thread (*)(WorkerEntry, OfficialCameraCapture*);
+
     OfficialCameraCapture(
         Board& board,
         NetworkInterface& network,
         std::string bridgeUrl,
         std::string deviceToken,
-        std::string deviceId
+        std::string deviceId,
+        WorkerLauncher launch = launchThread
     );
     ~OfficialCameraCapture();
 
@@ -39,8 +43,9 @@ public:
     void acknowledgeCompletion(const std::string& captureId);
 
 private:
+    static std::thread launchThread(WorkerEntry entry, OfficialCameraCapture* owner);
     void run();
-    bool captureAndUpload(const bridge_client::CameraCaptureRequest& request, CameraCaptureCompletion& result);
+    bool captureAndUpload(const bridge_client::CameraCaptureRequest& request, CameraCaptureCompletion& result, const char*& stage);
 
     Board& board_;
     NetworkInterface& network_;
@@ -51,6 +56,7 @@ private:
     bridge_client::CameraCaptureGate gate_;
     CameraCaptureCompletion completion_;
     bool completionReady_ = false;
+    WorkerLauncher launch_;
     std::thread worker_;
     bridge_client::CaptureCompletionQueue notifications_;
     std::shared_ptr<CaptureIoContext> io_;

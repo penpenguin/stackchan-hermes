@@ -768,7 +768,7 @@ def test_camera_worker_has_a_scoped_stack_budget_for_capture_and_upload() -> Non
     assert "esp_pthread_set_cfg(&configuration)" in camera_source
     assert "restore();" in camera_source
     assert "ScopedPthreadConfig cameraThreadConfig" in camera_source
-    assert "if (!cameraThreadConfig.applied())" in camera_source
+    assert "if (cameraThreadConfig.applied())" in camera_source
     assert re.search(r"PRIV_REQUIRES(?:(?!\)).)*\bpthread\b", main_cmake, re.DOTALL)
 
 
