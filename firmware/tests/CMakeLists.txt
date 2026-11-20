@@ -186,6 +186,19 @@ target_compile_features(head_touch_debouncer_test PRIVATE cxx_std_17)
 
 add_test(NAME head_touch_debouncer_test COMMAND $<TARGET_FILE:head_touch_debouncer_test>)
 
+# Stage the unmodified HAL source so its local platform headers can be replaced by fakes.
+set(HEAD_TOUCH_TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/head-touch")
+configure_file(../main/hal/hal_head_touch.cpp "${HEAD_TOUCH_TEST_DIR}/hal_head_touch.cpp" COPYONLY)
+foreach(header hal.h board/hal_bridge.h driver/i2c_master.h esp_err.h esp_log.h mooncake_log.h
+        freertos/FreeRTOS.h freertos/task.h)
+    file(WRITE "${HEAD_TOUCH_TEST_DIR}/${header}" "#include \"head_touch_fakes.h\"\n")
+endforeach()
+add_executable(head_touch_poll_test head_touch_poll_test.cpp "${HEAD_TOUCH_TEST_DIR}/hal_head_touch.cpp"
+    ../main/hal/drivers/Si12T/Si12T.cpp)
+target_include_directories(head_touch_poll_test PRIVATE "${HEAD_TOUCH_TEST_DIR}" fakes/head_touch ../main/hal)
+target_compile_features(head_touch_poll_test PRIVATE cxx_std_17)
+add_test(NAME head_touch_poll_test COMMAND head_touch_poll_test)
+
 add_executable(websocket_frame_limits_test
     websocket_frame_limits_test.cpp
 )
