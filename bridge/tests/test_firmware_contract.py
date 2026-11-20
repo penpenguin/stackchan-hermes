@@ -749,7 +749,7 @@ def test_camera_network_work_starts_only_after_the_command_result_can_be_sent() 
 
     assert "void update();" in camera_header
     assert "worker_ = std::thread" not in start_body
-    assert "gate_.takePending(request)" in camera_source
+    assert "gate_.takePending()" in camera_source
     assert service.index("client_.update(nowMs);") < service.index("cameraCapture_.update();")
 
 
@@ -768,7 +768,7 @@ def test_camera_worker_has_a_scoped_stack_budget_for_capture_and_upload() -> Non
     assert "esp_pthread_set_cfg(&configuration)" in camera_source
     assert "restore();" in camera_source
     assert "ScopedPthreadConfig cameraThreadConfig" in camera_source
-    assert "if (!cameraThreadConfig.applied())" in camera_source
+    assert "if (cameraThreadConfig.applied())" in camera_source
     assert re.search(r"PRIV_REQUIRES(?:(?!\)).)*\bpthread\b", main_cmake, re.DOTALL)
 
 

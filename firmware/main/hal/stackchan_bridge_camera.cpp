@@ -1,9 +1,11 @@
 #include "stackchan_bridge_camera.h"
+#include "camera_failure_log.h"
 #include "capture_log.h"
 #include "stackchan_bridge_camera_upload.h"
 
 #include <algorithm>
 #include <new>
+#include <system_error>
 #include <vector>
 #include <ArduinoJson.h>
 #include <board.h>
@@ -23,16 +25,41 @@ std::uint64_t nowMs() { return esp_timer_get_time() / 1000; }
 constexpr const char* kTag = "Capture";
 constexpr std::size_t kCameraWorkerStackSize = 12 * 1024;
 
+// Called from a catch handler. Exception messages and error-category text may contain credentials.
+void logCurrentException(const char* stage) noexcept
+{
+    try {
+        throw;
+    } catch (const std::bad_alloc&) {
+        logCaptureFailure(stage, "bad_alloc", 0, kCameraWorkerStackSize);
+    } catch (const std::system_error& error) {
+        logCaptureFailure(stage, "system_error", error.code().value(), kCameraWorkerStackSize);
+    } catch (const std::exception&) {
+        logCaptureFailure(stage, "std_exception", 0, kCameraWorkerStackSize);
+    } catch (...) {
+        logCaptureFailure(stage, "unknown_exception", 0, kCameraWorkerStackSize);
+    }
+}
+
 class ScopedPthreadConfig {
 public:
     ScopedPthreadConfig()
     {
-        hasPrevious_ = esp_pthread_get_cfg(&previous_) == ESP_OK;
+        const auto readResult = esp_pthread_get_cfg(&previous_);
+        hasPrevious_ = readResult == ESP_OK;
+        if (!hasPrevious_ && readResult != ESP_ERR_NOT_FOUND) {
+            logCaptureFailure("pthread_config_read", "esp_error", readResult, kCameraWorkerStackSize);
+            return;
+        }
         auto configuration = hasPrevious_ ? previous_ : esp_pthread_get_default_config();
         configuration.stack_size = kCameraWorkerStackSize;
         configuration.inherit_cfg = false;
         configuration.thread_name = "hermes_camera";
-        applied_ = esp_pthread_set_cfg(&configuration) == ESP_OK;
+        const auto result = esp_pthread_set_cfg(&configuration);
+        applied_ = result == ESP_OK;
+        if (!applied_) {
+            logCaptureFailure("pthread_config", "esp_error", result, kCameraWorkerStackSize);
+        }
     }
 
     ~ScopedPthreadConfig()
@@ -51,13 +78,15 @@ public:
 private:
     void restore()
     {
-        if (!applied_) {
+        if (!applied()) {
             return;
         }
         const auto configuration =
             hasPrevious_ ? previous_ : esp_pthread_get_default_config();
-        (void)esp_pthread_set_cfg(&configuration);
-        applied_ = false;
+        const auto result = esp_pthread_set_cfg(&configuration);
+        if (result != ESP_OK) {
+            logCaptureFailure("pthread_restore", "esp_error", result, kCameraWorkerStackSize);
+        }
     }
 
     esp_pthread_cfg_t previous_ = {};
@@ -85,13 +114,18 @@ struct Encoder {
 std::size_t encodeChunk(void* argument, std::size_t, const void* data, std::size_t size)
 {
     auto& output = *static_cast<Encoder*>(argument);
+    if (output.failed) { return 0; }
     if (output.io->cancelled.load() || nowMs() >= output.end) { output.failed = true; return 0; }
     if (!data || !size) { output.terminated = true; return 0; }
     if (size > bridge_client::kMaxJpegBytes - output.bytes.size()) { output.failed = true; return 0; }
     try {
         const auto* first = static_cast<const std::uint8_t*>(data);
         output.bytes.insert(output.bytes.end(), first, first + size);
-    } catch (...) { output.failed = true; return 0; }
+    } catch (...) {
+        output.failed = true;
+        logCurrentException("jpeg_encode");
+        return 0;
+    }
     return size;
 }
 std::string digest(const Jpeg& jpeg)
@@ -133,9 +167,13 @@ Receipt readReceipt(CaptureNetwork& network, const std::string& url, const std::
 } // namespace
 
 OfficialCameraCapture::OfficialCameraCapture(Board& board, NetworkInterface& network,
-    std::string bridgeUrl, std::string deviceToken, std::string deviceId)
+    std::string bridgeUrl, std::string deviceToken, std::string deviceId, WorkerLauncher launch)
     : board_(board), network_(network), bridgeUrl_(std::move(bridgeUrl)),
-      deviceToken_(std::move(deviceToken)), deviceId_(std::move(deviceId)) {}
+      deviceToken_(std::move(deviceToken)), deviceId_(std::move(deviceId)), launch_(launch) {}
+std::thread OfficialCameraCapture::launchThread(WorkerEntry entry, OfficialCameraCapture* owner)
+{
+    return std::thread(entry, owner);
+}
 OfficialCameraCapture::~OfficialCameraCapture()
 {
     if (io_) { io_->cancelled.store(true); }
@@ -172,7 +210,7 @@ bool OfficialCameraCapture::cancel(const std::string& id)
     std::lock_guard<std::mutex> lock(mutex_);
     if (!gate_.busy() || gate_.current().captureId != id) { return false; }
     if (io_) { io_->cancelled.store(true); }
-    else { gate_.complete(); }
+    else if (!completionReady_) { gate_.complete(); }
     return true;
 }
 bool OfficialCameraCapture::completion(CameraCaptureCompletion& output)
@@ -187,46 +225,51 @@ void OfficialCameraCapture::acknowledgeCompletion(const std::string& id)
 }
 void OfficialCameraCapture::update()
 {
-    std::thread finished;
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        if (completionReady_) { finished = std::move(worker_); }
-    }
-    // No network or encoder work remains once completionReady_ is published.
-    if (finished.joinable()) { finished.join(); }
     std::lock_guard<std::mutex> lock(mutex_);
     if (completionReady_) {
+        // Publication is the worker's final locked operation. It can now be joined under this lock.
+        if (worker_.joinable()) { worker_.join(); }
         completionReady_ = false;
         io_.reset();
-        gate_.complete();
+        completion_.captureId = gate_.complete().captureId;
         ESP_LOGI(kTag, "capture_id=%s stage=released busy=0 ok=%d", completion_.captureId.c_str(), completion_.ok);
         notifications_.push(std::move(completion_));
         completion_ = {};
     }
-    bridge_client::CameraCaptureRequest request;
-    if (worker_.joinable() || !gate_.takePending(request)) { return; }
+    if (!gate_.takePending()) { return; }
+    const auto& request = gate_.current();
+    const char* stage = "context_prepare";
     try {
         io_ = std::make_shared<CaptureIoContext>();
         io_->captureId = request.captureId;
         io_->startedMs = request.startedMs;
+        stage = "pthread_config";
         ScopedPthreadConfig cameraThreadConfig;
-        if (!cameraThreadConfig.applied()) { throw std::bad_alloc(); }
-        worker_ = std::thread(&OfficialCameraCapture::run, this, request);
+        if (cameraThreadConfig.applied()) {
+            stage = "thread_create";
+            worker_ = launch_(&OfficialCameraCapture::run, this);
+            return;
+        }
     } catch (...) {
-        completion_ = {};
-        completion_.captureId = request.captureId;
-        completion_.error = bridge_client::CameraCompletionError::InternalError;
-        completion_.deadlineMs = request.startedMs + request.timeoutMs;
-        completionReady_ = true;
+        logCurrentException(stage);
     }
+    completion_.error = bridge_client::CameraCompletionError::InternalError;
+    completion_.deadlineMs = request.startedMs + request.timeoutMs;
+    completionReady_ = true;
 }
-void OfficialCameraCapture::run(bridge_client::CameraCaptureRequest request)
+void OfficialCameraCapture::run()
 {
+    // The gate owns this immutable request until update() has joined this worker.
+    const auto& request = gate_.current();
     CameraCaptureCompletion result;
-    result.captureId = request.captureId;
     result.deadlineMs = request.startedMs + request.timeoutMs;
-    try { result.ok = captureAndUpload(request, result); }
-    catch (...) { result.ok = false; result.error = bridge_client::CameraCompletionError::InternalError; }
+    const char* stage = "url_prepare";
+    try {
+        result.ok = captureAndUpload(request, result, stage);
+    } catch (...) {
+        logCurrentException(stage);
+        result.error = bridge_client::CameraCompletionError::InternalError;
+    }
     if (result.ok) { result.error = bridge_client::CameraCompletionError::None; }
     ESP_LOGI(kTag, "capture_id=%s stage=worker_end elapsed_ms=%u ok=%d error=%d", request.captureId.c_str(),
         captureLogElapsedMs(nowMs(), request.startedMs), result.ok, io_ ? io_->error.load() : ENOMEM);
@@ -234,7 +277,8 @@ void OfficialCameraCapture::run(bridge_client::CameraCaptureRequest request)
     completion_ = std::move(result);
     completionReady_ = true;
 }
-bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureRequest& request, CameraCaptureCompletion& result)
+bool OfficialCameraCapture::captureAndUpload(
+    const bridge_client::CameraCaptureRequest& request, CameraCaptureCompletion& result, const char*& stage)
 {
 #ifdef CONFIG_IDF_TARGET_ESP32
     return false;
@@ -247,12 +291,14 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
     CaptureNetwork network(io_);
     io_->deadlineMs.store(deadline.operationDeadline(nowMs()));
     const auto queryStart = nowMs();
+    stage = "reservation_read";
     const auto initial = readReceipt(network, url, deviceToken_, deviceId_);
     if (initial.status != 200 || initial.state != "reserved") { return false; }
     deadline.constrain(queryStart, initial.remaining);
     result.deadlineMs = deadline.end();
     if (nowMs() >= deadline.workEnd() || io_->cancelled.load()) { return false; }
     ESP_LOGI(kTag, "capture_id=%s stage=camera_begin busy=1", request.captureId.c_str());
+    stage = "frame_capture";
     auto* camera = static_cast<StackChanCamera*>(board_.GetCamera());
     struct FrameRelease {
         StackChanCamera* camera;
@@ -262,6 +308,7 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
         || camera->GetFrameWidth() != 320 || camera->GetFrameHeight() != 240) { return false; }
     ESP_LOGI(kTag, "capture_id=%s stage=jpeg_begin elapsed_ms=%u", request.captureId.c_str(),
         captureLogElapsedMs(nowMs(), request.startedMs));
+    stage = "jpeg_encode";
     Encoder encoder{{}, io_.get(), deadline.workEnd()};
     encoder.bytes.reserve(65536);
     const bool encoded = image_to_jpeg_cb(const_cast<std::uint8_t*>(camera->GetFrameData()),
@@ -269,6 +316,7 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
         static_cast<v4l2_pix_fmt_t>(camera->GetFrameFormat()), request.quality, encodeChunk, &encoder);
     camera->ReleaseFrame();
     if (!encoded || !encoder.terminated || encoder.failed || encoder.bytes.empty()) { return false; }
+    stage = "jpeg_digest";
     result.digest = digest(encoder.bytes);
     result.sizeBytes = encoder.bytes.size();
     ESP_LOGI(kTag, "capture_id=%s stage=jpeg_end elapsed_ms=%u planned_bytes=%u busy=1",
@@ -277,6 +325,7 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
     if (result.digest.empty()) { return false; }
     for (int attempt = 1; attempt <= 3 && nowMs() < deadline.workEnd() && !io_->cancelled.load(); ++attempt) {
         io_->deadlineMs.store(deadline.operationDeadline(nowMs()));
+        stage = "upload";
         io_->attempt = attempt;
         io_->wireBytes = 0;
         int status = -1;
@@ -305,6 +354,7 @@ bool OfficialCameraCapture::captureAndUpload(const bridge_client::CameraCaptureR
         if (status < 0 && nowMs() < deadline.workEnd() && !io_->cancelled.load()) {
             io_->deadlineMs.store(deadline.operationDeadline(nowMs()));
             const auto before = nowMs();
+            stage = "receipt_reconcile";
             const auto receipt = readReceipt(network, url, deviceToken_, deviceId_);
             if (receipt.status == 200) {
                 deadline.constrain(before, receipt.remaining);
