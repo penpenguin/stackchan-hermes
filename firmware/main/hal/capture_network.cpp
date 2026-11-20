@@ -1,4 +1,5 @@
 #include "capture_network.h"
+#include "capture_log.h"
 
 #include <cerrno>
 #include <fcntl.h>
@@ -153,9 +154,9 @@ private:
     bool fail(int code) { context_->error.store(code); trace("io_error"); return false; }
     void trace(const char* stage) const
     {
-        ESP_LOGI("Capture", "capture_id=%s attempt=%d stage=%s elapsed_ms=%llu wire_bytes=%u error=%d busy=1",
+        ESP_LOGI("Capture", "capture_id=%s attempt=%d stage=%s elapsed_ms=%u wire_bytes=%u error=%d busy=1",
             context_->captureId.c_str(), context_->attempt, stage,
-            static_cast<unsigned long long>(nowMs() - context_->startedMs),
+            captureLogElapsedMs(nowMs(), context_->startedMs),
             static_cast<unsigned>(context_->wireBytes), context_->error.load());
     }
     void pause() { vTaskDelay(1); }

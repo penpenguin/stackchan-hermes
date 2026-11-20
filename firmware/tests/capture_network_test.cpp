@@ -1,13 +1,22 @@
 #include "platform.h"
 #include "capture_network.h"
+#include "capture_log.h"
 #include <cassert>
 #include <http_client.h>
+#include <esp_log.h>
 using namespace stackchan::hermes;
 WebSocket::~WebSocket() = default;
 int main() {
+    const std::uint64_t start = 43;
+    assert(captureLogElapsedMs(start + 120000, start) == 120000);
+    assert(captureLogElapsedMs(start + UINT32_MAX, start) == UINT32_MAX);
+    assert(captureLogElapsedMs(start + UINT32_MAX + 1, start) == UINT32_MAX);
     for (bool secure : {false,true}) {
         camera_fake::reset();
         auto context=std::make_shared<CaptureIoContext>(); context->deadlineMs=100;
+        context->captureId = "network-test";
+        context->attempt = 2;
+        capture_log::lines.clear();
         CaptureNetwork network(context);
         auto socket=secure?network.CreateSsl():network.CreateTcp();
         assert(socket->Connect("127.0.0.1",80));
@@ -16,6 +25,8 @@ int main() {
         assert(socket->Send("payload")==7);
         assert(socket->Send("0\r\n\r\n")==5);
         assert(received==camera_fake::response);
+        assert(capture_log::contains("capture_id=network-test attempt=2 stage=response_end elapsed_ms=0 wire_bytes="
+            + std::to_string(camera_fake::receivedWrites.size()) + " error=0 busy=1"));
         assert(camera_fake::liveSockets==0 && camera_fake::taskCreates==0);
         for(int fault=0;fault<4;++fault) {
             camera_fake::reset(); context->deadlineMs=100; context->cancelled=false;
@@ -64,6 +75,8 @@ int main() {
     auto socket=network.CreateTcp();
     assert(!socket->Connect("synthetic.invalid",80));
     assert(context->error==ETIMEDOUT);
+    assert(capture_log::contains("capture_id= attempt=0 stage=io_error elapsed_ms=50 wire_bytes=0 error="
+        + std::to_string(ETIMEDOUT) + " busy=1"));
     socket.reset();
     camera_fake::dnsCallback(nullptr,nullptr,camera_fake::dnsArgument); // Late callback owns no socket.
     assert(camera_fake::liveSockets==0);
