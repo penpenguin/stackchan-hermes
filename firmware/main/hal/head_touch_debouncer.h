@@ -57,6 +57,12 @@ public:
         return stableTouched_ ? HeadTouchTransition::Pressed : HeadTouchTransition::Released;
     }
 
+    void interruptSampleSequence()
+    {
+        candidateSamples_ = 0;
+        idleSamples_ = 0;
+    }
+
     bool isArmed() const
     {
         return armed_;

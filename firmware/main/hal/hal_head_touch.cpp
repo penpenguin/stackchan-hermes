@@ -109,6 +109,11 @@ public:
         return gesture;
     }
 
+    void interruptSampleSequence()
+    {
+        debouncer.interruptSampleSequence();
+    }
+
     void set_config(const TouchConfig& cfg)
     {
         config = cfg;
@@ -126,25 +131,25 @@ static void _head_touch_update_task(void* param)
     mclog::tagInfo(_tag, "start update task");
 
     si12t_handle_t si12t = (si12t_handle_t)param;
-    uint8_t touch_result = 0;
-    TouchData data;
 
     GestureRecognizer recognizer;
-    HeadPetGesture gesture;
 
     vTaskDelay(pdMS_TO_TICKS(200));
 
     while (1) {
-        // Read data
-        si12t_read_touch_result(si12t, &touch_result);
-        si12t_parse_touch_result_to(touch_result, data.intensity);
-        data.timestamp = xTaskGetTickCount();
+        uint8_t touch_result = 0;
+        if (si12t_read_touch_result(si12t, &touch_result) == ESP_OK) {
+            TouchData data;
+            si12t_parse_touch_result_to(touch_result, data.intensity);
+            data.timestamp = xTaskGetTickCount();
 
-        // Update and fire event
-        gesture = recognizer.update(data);
-        if (gesture != HeadPetGesture::None) {
-            hal_bridge::note_activity();
-            GetHAL().onHeadPetGesture.emit(gesture);
+            const auto gesture = recognizer.update(data);
+            if (gesture != HeadPetGesture::None) {
+                hal_bridge::note_activity();
+                GetHAL().onHeadPetGesture.emit(gesture);
+            }
+        } else {
+            recognizer.interruptSampleSequence();
         }
 
         vTaskDelay(pdMS_TO_TICKS(50));
